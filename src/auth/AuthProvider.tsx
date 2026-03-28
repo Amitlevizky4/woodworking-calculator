@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, useCallback } from 'rea
 import type { ReactNode } from 'react';
 import type { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
+import { useShopStore } from '@/stores/useShopStore';
 
 interface AuthContextType {
   user: User | null;
@@ -13,29 +14,11 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const SEED_STORAGE_KEY = 'woodworking-calc-seeded-users';
-
-function hasBeenSeeded(userId: string): boolean {
-  const seeded = localStorage.getItem(SEED_STORAGE_KEY);
-  if (!seeded) return false;
-  const parsed: string[] = JSON.parse(seeded);
-  return parsed.includes(userId);
-}
-
-function markAsSeeded(userId: string): void {
-  const seeded = localStorage.getItem(SEED_STORAGE_KEY);
-  const parsed: string[] = seeded ? JSON.parse(seeded) : [];
-  if (!parsed.includes(userId)) {
-    parsed.push(userId);
-    localStorage.setItem(SEED_STORAGE_KEY, JSON.stringify(parsed));
-  }
-}
-
-async function seedUserIfNeeded(userId: string): Promise<void> {
-  if (hasBeenSeeded(userId)) return;
-
-  await supabase.rpc('seed_user_data', { p_user_id: userId });
-  markAsSeeded(userId);
+async function initializeShopData(): Promise<void> {
+  await Promise.all([
+    useShopStore.getState().fetchShops(),
+    useShopStore.getState().checkAdmin(),
+  ]);
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -49,7 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(currentSession?.user ?? null);
 
       if (currentSession?.user) {
-        seedUserIfNeeded(currentSession.user.id);
+        initializeShopData();
       }
 
       setLoading(false);
@@ -62,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(newSession?.user ?? null);
 
       if (newSession?.user) {
-        seedUserIfNeeded(newSession.user.id);
+        initializeShopData();
       }
 
       setLoading(false);
@@ -83,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signOut = useCallback(async () => {
+    useShopStore.getState().reset();
     await supabase.auth.signOut();
   }, []);
 

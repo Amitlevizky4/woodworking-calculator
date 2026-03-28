@@ -9,6 +9,7 @@ import type {
   WoodPart,
 } from '@/types';
 import { supabase } from '@/lib/supabase';
+import { useShopStore } from '@/stores/useShopStore';
 
 type Language = 'en' | 'he';
 
@@ -41,6 +42,10 @@ interface AppState {
 
   toggleLanguage: () => void;
   initialize: () => Promise<void>;
+}
+
+function getActiveShopId(): string | null {
+  return useShopStore.getState().activeShopId;
 }
 
 async function getUserId(): Promise<string> {
@@ -175,6 +180,18 @@ export const useStore = create<AppState>()((set, get) => ({
     try {
       set({ loading: true });
 
+      const shopId = getActiveShopId();
+      if (!shopId) {
+        set({
+          categories: [],
+          materials: [],
+          projects: [],
+          templates: [],
+          loading: false,
+        });
+        return;
+      }
+
       const [
         categoriesRes,
         materialsRes,
@@ -185,12 +202,12 @@ export const useStore = create<AppState>()((set, get) => ({
         templateMaterialsRes,
         templateWoodPartsRes,
       ] = await Promise.all([
-        supabase.from('categories').select('*'),
-        supabase.from('materials').select('*, material_variants(*)'),
-        supabase.from('projects').select('*'),
+        supabase.from('categories').select('*').eq('shop_id', shopId),
+        supabase.from('materials').select('*, material_variants(*)').eq('shop_id', shopId),
+        supabase.from('projects').select('*').eq('shop_id', shopId),
         supabase.from('project_materials').select('*'),
         supabase.from('wood_parts').select('*'),
-        supabase.from('templates').select('*'),
+        supabase.from('templates').select('*').eq('shop_id', shopId),
         supabase.from('template_materials').select('*'),
         supabase.from('template_wood_parts').select('*'),
       ]);
@@ -244,13 +261,16 @@ export const useStore = create<AppState>()((set, get) => ({
 
   addProject: async (project) => {
     try {
+      const shopId = getActiveShopId();
+      if (!shopId) return;
       const userId = await getUserId();
 
       const { error: projectError } = await supabase
         .from('projects')
         .insert({
           id: project.id,
-          user_id: userId,
+          shop_id: shopId,
+          created_by: userId,
           name: project.name,
           type: project.type,
           description: project.description ?? null,
@@ -389,13 +409,16 @@ export const useStore = create<AppState>()((set, get) => ({
 
   addMaterial: async (material) => {
     try {
+      const shopId = getActiveShopId();
+      if (!shopId) return;
       const userId = await getUserId();
 
       const { error: materialError } = await supabase
         .from('materials')
         .insert({
           id: material.id,
-          user_id: userId,
+          shop_id: shopId,
+          created_by: userId,
           name: material.name,
           category_id: material.categoryId,
           unit: material.unit,
@@ -483,11 +506,14 @@ export const useStore = create<AppState>()((set, get) => ({
 
   addCategory: async (category) => {
     try {
+      const shopId = getActiveShopId();
+      if (!shopId) return;
       const userId = await getUserId();
 
       const { error } = await supabase.from('categories').insert({
         id: category.id,
-        user_id: userId,
+        shop_id: shopId,
+        created_by: userId,
         name: category.name,
         description: category.description ?? null,
         color: category.color,
@@ -536,13 +562,16 @@ export const useStore = create<AppState>()((set, get) => ({
 
   addTemplate: async (template) => {
     try {
+      const shopId = getActiveShopId();
+      if (!shopId) return;
       const userId = await getUserId();
 
       const { error: templateError } = await supabase
         .from('templates')
         .insert({
           id: template.id,
-          user_id: userId,
+          shop_id: shopId,
+          created_by: userId,
           name: template.name,
           template_name: template.templateName,
           template_description: template.templateDescription ?? null,
@@ -682,7 +711,10 @@ export const useStore = create<AppState>()((set, get) => ({
   initialize: async () => {
     if (get().initialized) return;
 
-    await get().fetchAll();
+    const shopId = getActiveShopId();
+    if (shopId) {
+      await get().fetchAll();
+    }
     set({ initialized: true });
   },
 }));

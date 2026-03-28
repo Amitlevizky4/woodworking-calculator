@@ -2,6 +2,8 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { Icon } from '@/components/Icon';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useAuth } from '@/auth/AuthProvider';
+import { useShopStore } from '@/stores/useShopStore';
+import { ShopSelector } from '@/components/ShopSelector';
 
 interface NavItem {
   readonly labelKey: string;
@@ -56,15 +58,28 @@ function SidebarUser() {
 function Sidebar() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { shops, activeShopId, role, isAdmin } = useShopStore();
+  const activeShop = shops.find((s) => s.id === activeShopId);
 
   return (
     <aside className="hidden md:flex md:flex-col md:fixed md:inset-y-0 md:left-0 md:w-64 bg-[#eeeeeb] border-r border-outline-variant z-30">
       <div className="p-6">
         <h1 className="font-headline text-primary font-bold text-lg">
-          The Precision Workshop
+          {activeShop?.name || 'The Precision Workshop'}
         </h1>
-        <p className="text-sm text-secondary mt-1">Workshop Admin</p>
-        <p className="text-xs text-secondary">Master Craftsman</p>
+        <span
+          className={`inline-block mt-1 px-2 py-0.5 text-xs font-bold rounded-full ${
+            role === 'manager'
+              ? 'bg-primary/10 text-primary'
+              : 'bg-secondary/10 text-secondary'
+          }`}
+        >
+          {role === 'manager' ? t('shop.manager') : t('shop.member')}
+        </span>
+      </div>
+
+      <div className="px-3 mb-2">
+        <ShopSelector />
       </div>
 
       <nav className="flex-1 px-3 space-y-1">
@@ -85,6 +100,38 @@ function Sidebar() {
             <span>{t(item.labelKey)}</span>
           </NavLink>
         ))}
+
+        {role === 'manager' && (
+          <NavLink
+            to="/shop/manage"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                isActive
+                  ? 'bg-[#f9f9f6] text-[#a43700] font-bold border-r-4 border-[#a43700]'
+                  : 'text-on-surface opacity-70 hover:bg-[#f4f4f1]'
+              }`
+            }
+          >
+            <Icon name="settings" className="text-xl" />
+            <span>{t('shop.shopSettings')}</span>
+          </NavLink>
+        )}
+
+        {isAdmin && (
+          <NavLink
+            to="/admin"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                isActive
+                  ? 'bg-[#f9f9f6] text-[#a43700] font-bold border-r-4 border-[#a43700]'
+                  : 'text-on-surface opacity-70 hover:bg-[#f4f4f1]'
+              }`
+            }
+          >
+            <Icon name="admin_panel_settings" className="text-xl" />
+            <span>{t('admin.title')}</span>
+          </NavLink>
+        )}
       </nav>
 
       <div className="p-4 space-y-3">

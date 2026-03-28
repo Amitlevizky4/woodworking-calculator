@@ -101,6 +101,44 @@ interface TranslationSet {
     precisionSubtitle: string;
     loading: string;
   };
+  shop: {
+    createShop: string;
+    joinShop: string;
+    shopName: string;
+    shopDescription: string;
+    members: string;
+    invitations: string;
+    generateInvite: string;
+    copyLink: string;
+    revoke: string;
+    role: string;
+    manager: string;
+    member: string;
+    removeFromShop: string;
+    makeManager: string;
+    makeMember: string;
+    switchShop: string;
+    shopSettings: string;
+    createNew: string;
+  };
+  onboarding: {
+    welcome: string;
+    createOrJoin: string;
+    createDescription: string;
+    joinDescription: string;
+    enterInviteCode: string;
+    inviteAccepted: string;
+    invalidInvite: string;
+    alreadyMember: string;
+  };
+  admin: {
+    title: string;
+    allShops: string;
+    adminManagement: string;
+    grantAdmin: string;
+    revokeAdmin: string;
+    accessDenied: string;
+  };
 }
 
 interface Translations {
@@ -212,6 +250,44 @@ export const translations: Translations = {
       precisionSubtitle: 'Precision analytics for the modern craftsman.',
       loading: 'Loading...',
     },
+    shop: {
+      createShop: 'Create Workshop',
+      joinShop: 'Join Workshop',
+      shopName: 'Workshop Name',
+      shopDescription: 'Description',
+      members: 'Members',
+      invitations: 'Invitations',
+      generateInvite: 'Generate Invite Link',
+      copyLink: 'Copy Link',
+      revoke: 'Revoke',
+      role: 'Role',
+      manager: 'Manager',
+      member: 'Member',
+      removeFromShop: 'Remove from Workshop',
+      makeManager: 'Make Manager',
+      makeMember: 'Make Member',
+      switchShop: 'Switch Workshop',
+      shopSettings: 'Workshop Settings',
+      createNew: 'Create New',
+    },
+    onboarding: {
+      welcome: 'Welcome to the Workshop',
+      createOrJoin: 'Create a new workshop or join an existing one',
+      createDescription: 'Set up your own workshop and invite your team',
+      joinDescription: 'Enter an invite code to join an existing workshop',
+      enterInviteCode: 'Enter Invite Code',
+      inviteAccepted: 'Invitation accepted successfully',
+      invalidInvite: 'Invalid or expired invite code',
+      alreadyMember: 'You are already a member of this workshop',
+    },
+    admin: {
+      title: 'Admin Panel',
+      allShops: 'All Workshops',
+      adminManagement: 'Admin Management',
+      grantAdmin: 'Grant Admin',
+      revokeAdmin: 'Revoke Admin',
+      accessDenied: 'Access denied. Admin privileges required.',
+    },
   },
   he: {
     nav: {
@@ -315,6 +391,44 @@ export const translations: Translations = {
       precisionWorkshop: '\u05E1\u05D3\u05E0\u05EA \u05D4\u05D3\u05D9\u05D5\u05E7',
       precisionSubtitle: '\u05D0\u05E0\u05DC\u05D9\u05D8\u05D9\u05E7\u05D4 \u05DE\u05D3\u05D5\u05D9\u05E7\u05EA \u05DC\u05D0\u05D5\u05DE\u05DF \u05D4\u05DE\u05D5\u05D3\u05E8\u05E0\u05D9.',
       loading: '\u05D8\u05D5\u05E2\u05DF...',
+    },
+    shop: {
+      createShop: '\u05D9\u05E6\u05D9\u05E8\u05EA \u05E1\u05D3\u05E0\u05D4',
+      joinShop: '\u05D4\u05E6\u05D8\u05E8\u05E4\u05D5\u05EA \u05DC\u05E1\u05D3\u05E0\u05D4',
+      shopName: '\u05E9\u05DD \u05D4\u05E1\u05D3\u05E0\u05D4',
+      shopDescription: '\u05EA\u05D9\u05D0\u05D5\u05E8',
+      members: '\u05D7\u05D1\u05E8\u05D9\u05DD',
+      invitations: '\u05D4\u05D6\u05DE\u05E0\u05D5\u05EA',
+      generateInvite: '\u05D9\u05E6\u05D9\u05E8\u05EA \u05E7\u05D9\u05E9\u05D5\u05E8 \u05D4\u05D6\u05DE\u05E0\u05D4',
+      copyLink: '\u05D4\u05E2\u05EA\u05E7\u05EA \u05E7\u05D9\u05E9\u05D5\u05E8',
+      revoke: '\u05D1\u05D9\u05D8\u05D5\u05DC',
+      role: '\u05EA\u05E4\u05E7\u05D9\u05D3',
+      manager: '\u05DE\u05E0\u05D4\u05DC',
+      member: '\u05D7\u05D1\u05E8',
+      removeFromShop: '\u05D4\u05E1\u05E8\u05D4 \u05DE\u05D4\u05E1\u05D3\u05E0\u05D4',
+      makeManager: '\u05DE\u05D9\u05E0\u05D5\u05D9 \u05DC\u05DE\u05E0\u05D4\u05DC',
+      makeMember: '\u05DE\u05D9\u05E0\u05D5\u05D9 \u05DC\u05D7\u05D1\u05E8',
+      switchShop: '\u05D4\u05D7\u05DC\u05E4\u05EA \u05E1\u05D3\u05E0\u05D4',
+      shopSettings: '\u05D4\u05D2\u05D3\u05E8\u05D5\u05EA \u05E1\u05D3\u05E0\u05D4',
+      createNew: '\u05D9\u05E6\u05D9\u05E8\u05D4 \u05D7\u05D3\u05E9\u05D4',
+    },
+    onboarding: {
+      welcome: '\u05D1\u05E8\u05D5\u05DB\u05D9\u05DD \u05D4\u05D1\u05D0\u05D9\u05DD \u05DC\u05E1\u05D3\u05E0\u05D4',
+      createOrJoin: '\u05E6\u05E8\u05D5 \u05E1\u05D3\u05E0\u05D4 \u05D7\u05D3\u05E9\u05D4 \u05D0\u05D5 \u05D4\u05E6\u05D8\u05E8\u05E4\u05D5 \u05DC\u05E1\u05D3\u05E0\u05D4 \u05E7\u05D9\u05D9\u05DE\u05EA',
+      createDescription: '\u05D4\u05E7\u05D9\u05DE\u05D5 \u05E1\u05D3\u05E0\u05D4 \u05DE\u05E9\u05DC\u05DB\u05DD \u05D5\u05D4\u05D6\u05DE\u05D9\u05E0\u05D5 \u05D0\u05EA \u05D4\u05E6\u05D5\u05D5\u05EA',
+      joinDescription: '\u05D4\u05D6\u05D9\u05E0\u05D5 \u05E7\u05D5\u05D3 \u05D4\u05D6\u05DE\u05E0\u05D4 \u05DC\u05D4\u05E6\u05D8\u05E8\u05E4\u05D5\u05EA \u05DC\u05E1\u05D3\u05E0\u05D4 \u05E7\u05D9\u05D9\u05DE\u05EA',
+      enterInviteCode: '\u05D4\u05D6\u05D9\u05E0\u05D5 \u05E7\u05D5\u05D3 \u05D4\u05D6\u05DE\u05E0\u05D4',
+      inviteAccepted: '\u05D4\u05D4\u05D6\u05DE\u05E0\u05D4 \u05D4\u05EA\u05E7\u05D1\u05DC\u05D4 \u05D1\u05D4\u05E6\u05DC\u05D7\u05D4',
+      invalidInvite: '\u05E7\u05D5\u05D3 \u05D4\u05D6\u05DE\u05E0\u05D4 \u05DC\u05D0 \u05EA\u05E7\u05D9\u05DF \u05D0\u05D5 \u05E4\u05D2 \u05EA\u05D5\u05E7\u05E3',
+      alreadyMember: '\u05D0\u05EA\u05DD \u05DB\u05D1\u05E8 \u05D7\u05D1\u05E8\u05D9\u05DD \u05D1\u05E1\u05D3\u05E0\u05D4 \u05D6\u05D5',
+    },
+    admin: {
+      title: '\u05E4\u05D0\u05E0\u05DC \u05E0\u05D9\u05D4\u05D5\u05DC',
+      allShops: '\u05DB\u05DC \u05D4\u05E1\u05D3\u05E0\u05D0\u05D5\u05EA',
+      adminManagement: '\u05E0\u05D9\u05D4\u05D5\u05DC \u05DE\u05E0\u05D4\u05DC\u05D9\u05DD',
+      grantAdmin: '\u05D4\u05E2\u05E0\u05E7\u05EA \u05D4\u05E8\u05E9\u05D0\u05D5\u05EA \u05DE\u05E0\u05D4\u05DC',
+      revokeAdmin: '\u05D1\u05D9\u05D8\u05D5\u05DC \u05D4\u05E8\u05E9\u05D0\u05D5\u05EA \u05DE\u05E0\u05D4\u05DC',
+      accessDenied: '\u05D2\u05D9\u05E9\u05D4 \u05E0\u05D3\u05D7\u05EA\u05D4. \u05E0\u05D3\u05E8\u05E9\u05D5\u05EA \u05D4\u05E8\u05E9\u05D0\u05D5\u05EA \u05DE\u05E0\u05D4\u05DC.',
     },
   },
 };

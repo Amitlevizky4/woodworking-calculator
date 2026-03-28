@@ -69,3 +69,36 @@ export interface Template
   templateName: string;
   templateDescription?: string;
 }
+
+export type ShopRole = 'manager' | 'member';
+
+export interface Shop {
+  id: string;
+  name: string;
+  description?: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ShopMember {
+  id: string;
+  shopId: string;
+  userId: string;
+  role: ShopRole;
+  joinedAt: string;
+  email?: string;
+  fullName?: string;
+  avatarUrl?: string;
+}
+
+export interface Invitation {
+  id: string;
+  shopId: string;
+  token: string;
+  createdBy: string;
+  expiresAt: string;
+  maxUses?: number;
+  useCount: number;
+  createdAt: string;
+}
