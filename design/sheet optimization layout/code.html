@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sheet Optimization | The Precision Workshop</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "error-container": "#ffdad6",
+              "on-secondary": "#ffffff",
+              "surface-variant": "#e2e3e0",
+              "background": "#f9f9f6",
+              "surface-tint": "#a83900",
+              "inverse-primary": "#ffb59a",
+              "error": "#ba1a1a",
+              "tertiary-container": "#358438",
+              "on-secondary-container": "#656464",
+              "on-tertiary-fixed-variant": "#005312",
+              "on-primary-container": "#fffbff",
+              "on-tertiary-container": "#f7fff1",
+              "on-surface": "#1a1c1b",
+              "tertiary": "#186a22",
+              "on-error-container": "#93000a",
+              "on-error": "#ffffff",
+              "primary-fixed-dim": "#ffb59a",
+              "on-background": "#1a1c1b",
+              "tertiary-fixed-dim": "#88d982",
+              "surface-container-low": "#f4f4f1",
+              "secondary-fixed": "#e4e2e1",
+              "tertiary-fixed": "#a3f69c",
+              "surface-dim": "#dadad7",
+              "on-primary": "#ffffff",
+              "secondary": "#5f5e5e",
+              "primary-fixed": "#ffdbcf",
+              "inverse-surface": "#2f312f",
+              "surface-bright": "#f9f9f6",
+              "secondary-container": "#e4e2e1",
+              "primary-container": "#cd4700",
+              "primary": "#a43700",
+              "on-tertiary-fixed": "#002204",
+              "surface-container-high": "#e8e8e5",
+              "outline-variant": "#e3bfb2",
+              "outline": "#8f7066",
+              "on-primary-fixed": "#380d00",
+              "on-secondary-fixed": "#1b1c1c",
+              "surface-container": "#eeeeeb",
+              "inverse-on-surface": "#f1f1ee",
+              "surface": "#f9f9f6",
+              "surface-container-lowest": "#ffffff",
+              "on-surface-variant": "#5a4138",
+              "secondary-fixed-dim": "#c8c6c6",
+              "on-secondary-fixed-variant": "#474747",
+              "on-primary-fixed-variant": "#802a00",
+              "surface-container-highest": "#e2e3e0",
+              "on-tertiary": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Inter"],
+              "label": ["Inter"],
+              "mono": ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tonal-zonation-bg-shift {
+            background-color: #f9f9f6;
+        }
+        .glass-panel {
+            background: rgba(232, 232, 229, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        .grain-texture {
+            background-image: radial-gradient(#8f7066 0.5px, transparent 0.5px);
+            background-size: 8px 8px;
+            opacity: 0.1;
+        }
+        .industrial-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(143, 112, 102, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(143, 112, 102, 0.05) 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body antialiased">
+<!-- TopAppBar -->
+<header class="bg-[#f9f9f6] dark:bg-neutral-900 text-orange-700 dark:text-orange-500 font-['Space_Grotesk'] font-bold tracking-tight w-full border-b-2 border-[#8f7066]/15 flex justify-between items-center px-6 py-3 w-full sticky top-0 z-50 flat-no-shadows">
+<div class="flex items-center gap-8">
+<div class="text-xl font-bold uppercase tracking-widest text-neutral-900 dark:text-neutral-50">
+                The Precision Workshop
+            </div>
+<div class="hidden md:flex items-center bg-surface-container-low px-3 py-1.5 rounded-sm">
+<span class="material-symbols-outlined text-sm mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-64 placeholder-neutral-500" placeholder="Search projects..." type="text"/>
+</div>
+</div>
+<nav class="flex items-center gap-6">
+<button class="text-neutral-600 dark:text-neutral-400 font-medium hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors px-3 py-1">HE/EN</button>
+<button class="bg-primary text-white px-5 py-2 rounded-md font-bold text-sm flex items-center gap-2 active:scale-95 duration-150">
+<span class="material-symbols-outlined text-base" data-icon="add">add</span>
+                New Project
+            </button>
+</nav>
+</header>
+<div class="flex min-h-[calc(100vh-60px)]">
+<!-- SideNavBar -->
+<aside class="bg-[#eeeeeb] dark:bg-neutral-800 text-orange-700 dark:text-orange-500 font-['Inter'] font-medium text-sm h-screen w-64 border-r-2 border-[#8f7066]/15 fixed left-0 top-0 h-full flex flex-col pt-20 z-40">
+<div class="px-6 mb-8">
+<div class="font-['Space_Grotesk'] font-bold text-orange-700 text-lg">Workshop Alpha</div>
+<div class="text-xs text-neutral-500 uppercase tracking-widest">Precision Mode</div>
+</div>
+<nav class="flex flex-col gap-1 px-3">
+<a class="flex items-center gap-3 px-4 py-3 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-200 dark:hover:bg-neutral-700/50 transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                    Dashboard
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-neutral-700 text-orange-700 dark:text-orange-400 rounded-md shadow-sm font-bold" href="#">
+<span class="material-symbols-outlined" data-icon="square_foot">square_foot</span>
+                    Projects
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-200 dark:hover:bg-neutral-700/50 transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="layers">layers</span>
+                    Materials Library
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-200 dark:hover:bg-neutral-700/50 transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="architecture">architecture</span>
+                    Templates
+                </a>
+</nav>
+<div class="mt-auto p-6 flex items-center gap-3 border-t border-[#8f7066]/10">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close-up portrait of a professional male woodworker in a workshop setting with warm natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqPFghgILAfFi4jyweVcbVuQ5HwD42djNy_kIPXccdUrAoAfaQ_iek4Hv-VJf5gpjpTtxkzK6SDVLjNI3hryle4QTpaosXgRp9xocPy9J8dDY_6dFygxc-7PmtVkKcBX1jJg6GP-rk9ufr45a9MFR8Al1boHRh3CPlb7fgwyQGl5n5TiqmoyBDBf5WwLZWMC1G5_CsHOu9ce-W80elRIMecYsiCjM2E6tdPAPoPZhe7YT6DT6uCnVlPuhnQaH2-gdMvSc8bgMfVrY7"/>
+</div>
+<div>
+<div class="text-sm font-bold text-on-surface">Alex Miller</div>
+<div class="text-xs text-secondary">Master Craftsman</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 p-8 industrial-grid">
+<!-- Project Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="text-primary font-mono text-sm font-bold tracking-tighter bg-primary-fixed px-2 py-0.5">PROJECT ID: #2024-W08</span>
+</div>
+<h1 class="text-4xl font-headline font-bold text-on-surface tracking-tight mb-2">Walnut Executive Desk</h1>
+<div class="flex items-center gap-4 text-secondary">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-lg" data-icon="texture">texture</span>
+<span class="font-medium">3/4" Walnut Plywood</span>
+</div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-lg" data-icon="straighten">straighten</span>
+<span class="font-medium">Imperial (inches)</span>
+</div>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-container-highest text-on-surface font-bold text-sm hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="picture_as_pdf">picture_as_pdf</span>
+                        EXPORT PDF
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-white font-bold text-sm hover:bg-primary-container transition-colors shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-lg" data-icon="print">print</span>
+                        PRINT CUT LIST
+                    </button>
+</div>
+</div>
+<!-- Summary Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+<div class="bg-surface-container-lowest p-6 border-b-2 border-outline/10 shadow-sm">
+<div class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Total Pieces</div>
+<div class="text-3xl font-mono font-bold text-on-surface">14</div>
+</div>
+<div class="bg-surface-container-lowest p-6 border-b-2 border-outline/10 shadow-sm">
+<div class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Total Area</div>
+<div class="text-3xl font-mono font-bold text-on-surface">62.4 <span class="text-base font-normal text-secondary">ft²</span></div>
+</div>
+<div class="bg-surface-container-lowest p-6 border-b-2 border-primary shadow-sm">
+<div class="text-xs font-bold text-primary uppercase tracking-widest mb-1">Waste Factor</div>
+<div class="text-3xl font-mono font-bold text-primary">12.8%</div>
+</div>
+<div class="bg-surface-container-lowest p-6 border-b-2 border-outline/10 shadow-sm">
+<div class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Required Sheets</div>
+<div class="text-3xl font-mono font-bold text-on-surface">03</div>
+</div>
+</div>
+<!-- Optimization Controls -->
+<div class="bg-surface-container-low p-6 mb-12 flex flex-wrap items-center justify-between gap-6 border-l-4 border-primary">
+<div class="flex flex-wrap items-center gap-8">
+<div class="flex flex-col gap-1">
+<label class="text-[10px] font-bold text-secondary uppercase tracking-widest">Blade Kerf</label>
+<div class="flex items-center gap-2">
+<input class="w-20 bg-surface-container-highest border-none border-b-2 border-outline focus:border-primary text-sm font-mono px-2 py-1" type="text" value="0.125"/>
+<span class="text-xs font-bold text-secondary">in</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-[10px] font-bold text-secondary uppercase tracking-widest">Grain Direction</label>
+<select class="bg-surface-container-highest border-none border-b-2 border-outline focus:border-primary text-sm font-bold px-2 py-1 min-w-[140px]">
+<option>Long Grain (X)</option>
+<option>Cross Grain (Y)</option>
+<option>None (Optimized)</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-[10px] font-bold text-secondary uppercase tracking-widest">Material</label>
+<select class="bg-surface-container-highest border-none border-b-2 border-outline focus:border-primary text-sm font-bold px-2 py-1 min-w-[200px]">
+<option>3/4" Walnut Plywood</option>
+<option>1/2" Walnut Plywood</option>
+<option>1/4" MDF Backing</option>
+</select>
+</div>
+</div>
+<button class="px-6 py-2.5 bg-on-surface text-surface font-bold text-sm flex items-center gap-2 hover:bg-neutral-800 transition-all">
+<span class="material-symbols-outlined text-lg" data-icon="refresh">refresh</span>
+                    RE-RUN OPTIMIZATION
+                </button>
+</div>
+<!-- Sheet Layouts -->
+<div class="space-y-16">
+<!-- Sheet 01 -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-4">
+<h2 class="text-xl font-headline font-bold">Sheet 01 <span class="text-secondary font-normal font-body text-sm ml-2">48" x 96"</span></h2>
+<span class="px-2 py-0.5 bg-tertiary-container text-on-tertiary-container text-[10px] font-bold rounded">EFFICIENCY: 94%</span>
+</div>
+<div class="text-xs font-mono text-secondary uppercase">Optimized via Best-Fit Algorithm</div>
+</div>
+<div class="relative w-full aspect-[2/1] bg-surface-container border-2 border-outline-variant group">
+<!-- Simulated Plywood Grain Overlay -->
+<div class="absolute inset-0 pointer-events-none opacity-20" style="background-image: repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(143,112,102,0.1) 41px);"></div>
+<!-- Layout Containers -->
+<div class="absolute inset-0 p-1 flex">
+<!-- Main Table Top Piece -->
+<div class="w-[75%] h-full p-0.5">
+<div class="w-full h-full bg-surface-container-lowest border-2 border-outline flex flex-col items-center justify-center relative overflow-hidden group/item">
+<div class="absolute inset-0 grain-texture"></div>
+<span class="text-xs font-bold text-primary mb-1 relative z-10">TABLE TOP</span>
+<span class="font-mono text-lg font-bold relative z-10">72.00" x 36.00"</span>
+<!-- Dimension markers -->
+<div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-2 text-[10px] font-mono text-secondary">
+<div class="w-8 h-px bg-outline-variant"></div> 72" <div class="w-8 h-px bg-outline-variant"></div>
+</div>
+</div>
+</div>
+<!-- Sidebar pieces -->
+<div class="w-[25%] h-full flex flex-col p-0.5 gap-1">
+<div class="h-[40%] bg-surface-container-lowest border-2 border-outline flex flex-col items-center justify-center relative overflow-hidden">
+<span class="text-[10px] font-bold text-primary relative z-10">SIDE PANEL A</span>
+<span class="font-mono text-sm font-bold relative z-10">24.00" x 28.50"</span>
+</div>
+<div class="h-[40%] bg-surface-container-lowest border-2 border-outline flex flex-col items-center justify-center relative overflow-hidden">
+<span class="text-[10px] font-bold text-primary relative z-10">SIDE PANEL B</span>
+<span class="font-mono text-sm font-bold relative z-10">24.00" x 28.50"</span>
+</div>
+<!-- Waste Area -->
+<div class="flex-1 bg-surface-dim/40 border-2 border-dashed border-outline-variant/30 flex flex-col items-center justify-center relative">
+<span class="material-symbols-outlined text-outline-variant/50" data-icon="delete_outline">delete_outline</span>
+<span class="text-[9px] font-bold text-secondary uppercase tracking-tighter">OFF-CUT</span>
+<span class="font-mono text-[10px] text-secondary">24" x 12.5"</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Sheet 02 -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-4">
+<h2 class="text-xl font-headline font-bold">Sheet 02 <span class="text-secondary font-normal font-body text-sm ml-2">48" x 96"</span></h2>
+<span class="px-2 py-0.5 bg-tertiary-container text-on-tertiary-container text-[10px] font-bold rounded">EFFICIENCY: 88%</span>
+</div>
+</div>
+<div class="relative w-full aspect-[2/1] bg-surface-container border-2 border-outline-variant">
+<div class="absolute inset-0 p-1 flex gap-1">
+<!-- Left Column -->
+<div class="w-[30%] h-full flex flex-col gap-1">
+<div class="h-[25%] bg-surface-container-lowest border-2 border-outline flex flex-col items-center justify-center relative overflow-hidden">
+<span class="text-[10px] font-bold text-primary relative z-10">LEG FRONT L</span>
+<span class="font-mono text-sm font-bold relative z-10">4.50" x 28.50"</span>
+</div>
+<div class="h-[25%] bg-surface-container-lowest border-2 border-outline flex flex-col items-center justify-center relative overflow-hidden">
+<span class="text-[10px] font-bold text-primary relative z-10">LEG FRONT R</span>
+<span class="font-mono text-sm font-bold relative z-10">4.50" x 28.50"</span>
+</div>
+<div class="h-[25%] bg-surface-container-lowest border-2 border-outline flex flex-col items-center justify-center relative overflow-hidden">
+<span class="text-[10px] font-bold text-primary relative z-10">LEG BACK L</span>
+<span class="font-mono text-sm font-bold relative z-10">4.50" x 28.50"</span>
+</div>
+<div class="h-[25%] bg-surface-container-lowest border-2 border-outline flex flex-col items-center justify-center relative overflow-hidden">
+<span class="text-[10px] font-bold text-primary relative z-10">LEG BACK R</span>
+<span class="font-mono text-sm font-bold relative z-10">4.50" x 28.50"</span>
+</div>
+</div>
+<!-- Middle Large Piece -->
+<div class="w-[40%] h-full">
+<div class="w-full h-full bg-surface-container-lowest border-2 border-outline flex flex-col items-center justify-center relative overflow-hidden">
+<div class="absolute inset-0 grain-texture"></div>
+<span class="text-xs font-bold text-primary mb-1 relative z-10">MODESTY PANEL</span>
+<span class="font-mono text-base font-bold relative z-10">48.00" x 18.00"</span>
+</div>
+</div>
+<!-- Right Waste Area -->
+<div class="flex-1 h-full bg-surface-dim/40 border-2 border-dashed border-outline-variant/30 flex flex-col items-center justify-center">
+<span class="material-symbols-outlined text-outline-variant/50" data-icon="delete_outline">delete_outline</span>
+<span class="text-[9px] font-bold text-secondary uppercase">WASTE</span>
+<span class="font-mono text-[10px] text-secondary">30" x 96"</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Detailed Cut Table -->
+<div class="mt-16">
+<h3 class="text-lg font-headline font-bold mb-6">Detailed Cut Tally</h3>
+<div class="bg-surface-container-lowest shadow-sm border border-outline-variant/20 overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-secondary">Label</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-secondary">Dimensions (in)</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-secondary">Qty</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-secondary">Sheet #</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-secondary text-right">Area (ft²)</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-low font-medium text-sm">
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="px-6 py-4 font-bold">Table Top</td>
+<td class="px-6 py-4 font-mono">72.000 x 36.000</td>
+<td class="px-6 py-4">1</td>
+<td class="px-6 py-4 text-primary font-bold">01</td>
+<td class="px-6 py-4 font-mono text-right">18.00</td>
+</tr>
+<tr class="bg-surface-container-low/20 hover:bg-surface-container-low/30 transition-colors">
+<td class="px-6 py-4 font-bold">Side Panels</td>
+<td class="px-6 py-4 font-mono">24.000 x 28.500</td>
+<td class="px-6 py-4">2</td>
+<td class="px-6 py-4 text-primary font-bold">01</td>
+<td class="px-6 py-4 font-mono text-right">9.50</td>
+</tr>
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="px-6 py-4 font-bold">Leg Front/Back</td>
+<td class="px-6 py-4 font-mono">04.500 x 28.500</td>
+<td class="px-6 py-4">4</td>
+<td class="px-6 py-4 text-primary font-bold">02</td>
+<td class="px-6 py-4 font-mono text-right">3.56</td>
+</tr>
+<tr class="bg-surface-container-low/20 hover:bg-surface-container-low/30 transition-colors">
+<td class="px-6 py-4 font-bold">Modesty Panel</td>
+<td class="px-6 py-4 font-mono">48.000 x 18.000</td>
+<td class="px-6 py-4">1</td>
+<td class="px-6 py-4 text-primary font-bold">02</td>
+<td class="px-6 py-4 font-mono text-right">6.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</div>
+<!-- Live Summary Floating HUD (Glassmorphism) -->
+<div class="fixed bottom-8 right-8 w-64 glass-panel border border-white/40 p-5 shadow-2xl z-50">
+<div class="text-[10px] font-bold text-on-surface uppercase tracking-widest mb-4 flex items-center justify-between">
+            Live Summary
+            <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-xs text-secondary">Material Cost</span>
+<span class="font-mono font-bold">$412.50</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-xs text-secondary">Cut Time (est.)</span>
+<span class="font-mono font-bold">42m</span>
+</div>
+<div class="flex justify-between items-center pt-2 border-t border-outline/10">
+<span class="text-xs font-bold">Total Waste</span>
+<span class="font-mono font-bold text-primary">8.4 ft²</span>
+</div>
+</div>
+<button class="w-full mt-6 py-2 bg-on-surface text-surface text-xs font-bold uppercase tracking-widest hover:bg-primary transition-colors duration-300">
+            Confirm Layout
+        </button>
+</div>
+</body></html>

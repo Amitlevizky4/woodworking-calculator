@@ -1,0 +1,1060 @@
+import { useState, useMemo, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
+import { useStore } from '@/stores/useStore';
+import { useTranslation } from '@/i18n/useTranslation';
+import { Icon } from '@/components/Icon';
+import {
+  calculateMaterialsCost,
+  calculateLaborCost,
+  calculateFinalPrice,
+  formatCurrency,
+} from '@/utils/cost-calculator';
+import { packSheets } from '@/utils/bin-packing';
+import type {
+  ProjectMaterial,
+  WoodPart,
+  Status,
+  MarkupAppliedTo,
+  Material,
+} from '@/types';
+import type { SheetLayout } from '@/utils/bin-packing';
+
+const PROJECT_TYPES = ['furniture', 'cabinet', 'shelf', 'table', 'custom'] as const;
+const STATUSES: Status[] = ['planning', 'in-progress', 'completed', 'on-hold'];
+const STATUS_KEYS: Record<Status, string> = {
+  planning: 'status.planning',
+  'in-progress': 'status.inProgress',
+  completed: 'status.completed',
+  'on-hold': 'status.onHold',
+};
+
+const PIECE_COLORS = [
+  'var(--color-primary)',
+  'var(--color-tertiary)',
+  'var(--color-outline)',
+  'var(--color-secondary)',
+];
+
+const INPUT_CLASS =
+  'w-full bg-surface-container-highest border-b-2 border-outline focus:border-primary focus:ring-0 px-4 py-3 outline-none rounded-t-md text-on-surface';
+
+function SectionHeader({ icon, label }: { icon: string; label: string }) {
+  return (
+    <div className="flex items-center gap-3 mb-6">
+      <Icon name={icon} className="text-primary text-2xl" />
+      <h2 className="font-headline font-bold text-lg uppercase tracking-wide text-on-surface">
+        {label}
+      </h2>
+    </div>
+  );
+}
+
+function MaterialPicker({
+  materials,
+  onSelect,
+  onClose,
+}: {
+  materials: Material[];
+  onSelect: (material: Material) => void;
+  onClose: () => void;
+}) {
+  const [search, setSearch] = useState('');
+  const { t } = useTranslation();
+
+  const filtered = materials.filter((m) =>
+    m.name.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  return (
+    <div className="absolute top-full left-0 right-0 z-20 mt-1 bg-surface-container-highest border border-outline-variant rounded-lg shadow-xl max-h-64 overflow-auto">
+      <div className="sticky top-0 bg-surface-container-highest p-2 border-b border-outline-variant">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder={t('common.search')}
+          className={INPUT_CLASS}
+          autoFocus
+        />
+      </div>
+      {filtered.length === 0 ? (
+        <div className="p-4 text-center text-secondary text-sm">
+          No materials found
+        </div>
+      ) : (
+        filtered.map((material) => (
+          <button
+            key={material.id}
+            type="button"
+            onClick={() => {
+              onSelect(material);
+              onClose();
+            }}
+            className="w-full text-start px-4 py-3 hover:bg-surface-container transition-colors flex justify-between items-center"
+          >
+            <span className="text-on-surface">{material.name}</span>
+            <span className="font-mono text-sm text-secondary">
+              {formatCurrency(material.basePrice)}
+            </span>
+          </button>
+        ))
+      )}
+    </div>
+  );
+}
+
+function SheetVisualization({ sheets }: { sheets: SheetLayout[] }) {
+  if (sheets.length === 0) return null;
+
+  return (
+    <div className="space-y-4 mt-6">
+      {sheets.map((sheet) => (
+        <div key={sheet.id} className="space-y-2">
+          <p className="text-xs font-bold uppercase text-secondary tracking-wide">
+            Sheet {sheet.id}
+          </p>
+          <div className="aspect-[2/1] bg-surface-container border-2 border-outline-variant rounded-lg overflow-hidden">
+            <svg
+              viewBox="0 0 2440 1220"
+              className="w-full h-full"
+              preserveAspectRatio="xMidYMid meet"
+            >
+              <rect
+                x={0}
+                y={0}
+                width={2440}
+                height={1220}
+                fill="none"
+                stroke="var(--color-outline-variant)"
+                strokeWidth={2}
+                strokeDasharray="8 4"
+              />
+              {sheet.pieces.map((piece, idx) => {
+                const color = PIECE_COLORS[idx % PIECE_COLORS.length];
+                const fontSize = Math.min(piece.width, piece.height) * 0.15;
+                const clampedFont = Math.max(24, Math.min(fontSize, 60));
+
+                return (
+                  <g key={`${piece.partId}-${idx}`}>
+                    <rect
+                      x={piece.x}
+                      y={piece.y}
+                      width={piece.width}
+                      height={piece.height}
+                      fill={color}
+                      fillOpacity={0.2}
+                      stroke={color}
+                      strokeWidth={3}
+                      rx={4}
+                    />
+                    {piece.width > 80 && piece.height > 50 && (
+                      <>
+                        <text
+                          x={piece.x + piece.width / 2}
+                          y={piece.y + piece.height / 2 - clampedFont * 0.3}
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                          fill="var(--color-on-surface)"
+                          fontSize={clampedFont}
+                          fontWeight="bold"
+                        >
+                          {piece.partName}
+                        </text>
+                        <text
+                          x={piece.x + piece.width / 2}
+                          y={piece.y + piece.height / 2 + clampedFont * 0.7}
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                          fill="var(--color-secondary)"
+                          fontSize={clampedFont * 0.7}
+                        >
+                          {piece.width}x{piece.height}
+                        </text>
+                      </>
+                    )}
+                  </g>
+                );
+              })}
+            </svg>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function LiveCostSummary({
+  materialsCost,
+  laborCost,
+  subtotal,
+  markupAmount,
+  discountAmount,
+  finalPrice,
+}: {
+  materialsCost: number;
+  laborCost: number;
+  subtotal: number;
+  markupAmount: number;
+  discountAmount: number;
+  finalPrice: number;
+}) {
+  const { t } = useTranslation();
+
+  return (
+    <div className="lg:col-span-4">
+      <div className="sticky top-28">
+        <div className="bg-surface-container rounded-2xl p-6 border border-outline-variant relative overflow-hidden">
+          <div
+            className="absolute inset-0 opacity-[0.03]"
+            style={{
+              backgroundImage:
+                'linear-gradient(var(--color-outline) 1px, transparent 1px), linear-gradient(90deg, var(--color-outline) 1px, transparent 1px)',
+              backgroundSize: '24px 24px',
+            }}
+          />
+          <div className="relative z-10 space-y-4">
+            <SectionHeader icon="monitoring" label={t('calculator.liveFinancialSummary')} />
+
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-secondary text-sm">{t('calculator.materials')}</span>
+                <span className="font-mono text-on-surface">
+                  {formatCurrency(materialsCost)}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-secondary text-sm">{t('calculator.laborCost')}</span>
+                <span className="font-mono text-on-surface">
+                  {formatCurrency(laborCost)}
+                </span>
+              </div>
+
+              <hr className="border-outline-variant" />
+
+              <div className="flex justify-between items-center">
+                <span className="text-secondary text-sm font-medium">
+                  {t('calculator.subtotal')}
+                </span>
+                <span className="font-mono text-on-surface font-medium">
+                  {formatCurrency(subtotal)}
+                </span>
+              </div>
+
+              {markupAmount > 0 && (
+                <div className="flex justify-between items-center">
+                  <span className="text-secondary text-sm">{t('calculator.markup')}</span>
+                  <span className="font-mono text-tertiary">
+                    +{formatCurrency(markupAmount)}
+                  </span>
+                </div>
+              )}
+
+              {discountAmount > 0 && (
+                <div className="flex justify-between items-center">
+                  <span className="text-secondary text-sm">{t('calculator.discount')}</span>
+                  <span className="font-mono text-error">
+                    -{formatCurrency(discountAmount)}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className="bg-on-surface text-surface rounded-xl p-5 mt-4">
+              <p className="text-xs uppercase tracking-wide opacity-70 mb-1">
+                {t('calculator.finalPrice')}
+              </p>
+              <p className="font-mono text-3xl font-bold">
+                {formatCurrency(finalPrice)}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function Calculator() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const projects = useStore((s) => s.projects);
+  const allMaterials = useStore((s) => s.materials);
+  const addProject = useStore((s) => s.addProject);
+  const updateProject = useStore((s) => s.updateProject);
+  const addTemplate = useStore((s) => s.addTemplate);
+
+  const existingProject = id ? projects.find((p) => p.id === id) : undefined;
+
+  const [name, setName] = useState(existingProject?.name ?? '');
+  const [buyerName, setBuyerName] = useState(existingProject?.buyerName ?? '');
+  const [projectType, setProjectType] = useState(existingProject?.type ?? 'furniture');
+  const [description, setDescription] = useState(existingProject?.description ?? '');
+  const [date, setDate] = useState(
+    existingProject?.date ?? new Date().toISOString().split('T')[0],
+  );
+  const [status, setStatus] = useState<Status>(existingProject?.status ?? 'planning');
+  const [selectedMaterials, setSelectedMaterials] = useState<ProjectMaterial[]>(
+    existingProject?.materials ?? [],
+  );
+  const [woodParts, setWoodParts] = useState<WoodPart[]>(
+    existingProject?.woodParts ?? [],
+  );
+  const [laborHours, setLaborHours] = useState(existingProject?.laborHours ?? 0);
+  const [hourlyRate, setHourlyRate] = useState(existingProject?.hourlyRate ?? 150);
+  const [markupFactor, setMarkupFactor] = useState(existingProject?.markupFactor ?? 1.3);
+  const [markupAppliedTo, setMarkupAppliedTo] = useState<MarkupAppliedTo>(
+    existingProject?.markupAppliedTo ?? 'materials+labor',
+  );
+  const [discountPercent, setDiscountPercent] = useState(
+    existingProject?.discountPercent ?? 0,
+  );
+
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
+  const [isOptimized, setIsOptimized] = useState(false);
+
+  const materialsCost = useMemo(
+    () => calculateMaterialsCost(selectedMaterials, allMaterials),
+    [selectedMaterials, allMaterials],
+  );
+
+  const laborCost = useMemo(
+    () => calculateLaborCost(laborHours, hourlyRate),
+    [laborHours, hourlyRate],
+  );
+
+  const costBreakdown = useMemo(
+    () =>
+      calculateFinalPrice({
+        materialsCost,
+        laborCost,
+        markupFactor,
+        markupAppliedTo,
+        discountPercent,
+      }),
+    [materialsCost, laborCost, markupFactor, markupAppliedTo, discountPercent],
+  );
+
+  const packingResult = useMemo(() => {
+    if (!isOptimized || woodParts.length === 0) return null;
+    const validParts = woodParts.filter(
+      (p) => p.lengthMm > 0 && p.widthMm > 0 && p.quantity > 0,
+    );
+    if (validParts.length === 0) return null;
+    return packSheets(validParts);
+  }, [woodParts, isOptimized]);
+
+  const totalPartsCount = useMemo(
+    () => woodParts.reduce((sum, p) => sum + p.quantity, 0),
+    [woodParts],
+  );
+
+  const getMaterialById = useCallback(
+    (materialId: string) => allMaterials.find((m) => m.id === materialId),
+    [allMaterials],
+  );
+
+  const getUnitCost = useCallback(
+    (pm: ProjectMaterial): number => {
+      const material = getMaterialById(pm.materialId);
+      if (!material) return 0;
+      if (pm.variantId && material.variants) {
+        const variant = material.variants.find((v) => v.id === pm.variantId);
+        if (variant) return variant.price;
+      }
+      return material.basePrice;
+    },
+    [getMaterialById],
+  );
+
+  const handleAddMaterial = useCallback((material: Material) => {
+    setSelectedMaterials((prev) => {
+      const exists = prev.some((pm) => pm.materialId === material.id);
+      if (exists) return prev;
+      return [
+        ...prev,
+        {
+          materialId: material.id,
+          variantId: material.variants?.[0]?.id,
+          quantity: 1,
+        },
+      ];
+    });
+  }, []);
+
+  const handleRemoveMaterial = useCallback((materialId: string) => {
+    setSelectedMaterials((prev) => prev.filter((pm) => pm.materialId !== materialId));
+  }, []);
+
+  const handleMaterialQuantityChange = useCallback(
+    (materialId: string, quantity: number) => {
+      setSelectedMaterials((prev) =>
+        prev.map((pm) =>
+          pm.materialId === materialId ? { ...pm, quantity: Math.max(0, quantity) } : pm,
+        ),
+      );
+    },
+    [],
+  );
+
+  const handleMaterialVariantChange = useCallback(
+    (materialId: string, variantId: string) => {
+      setSelectedMaterials((prev) =>
+        prev.map((pm) =>
+          pm.materialId === materialId ? { ...pm, variantId } : pm,
+        ),
+      );
+    },
+    [],
+  );
+
+  const handleAddWoodPart = useCallback(() => {
+    setWoodParts((prev) => [
+      ...prev,
+      { id: uuidv4(), name: '', lengthMm: 0, widthMm: 0, quantity: 1 },
+    ]);
+    setIsOptimized(false);
+  }, []);
+
+  const handleRemoveWoodPart = useCallback((partId: string) => {
+    setWoodParts((prev) => prev.filter((p) => p.id !== partId));
+    setIsOptimized(false);
+  }, []);
+
+  const handleWoodPartChange = useCallback(
+    (partId: string, field: keyof WoodPart, value: string | number) => {
+      setWoodParts((prev) =>
+        prev.map((p) => (p.id === partId ? { ...p, [field]: value } : p)),
+      );
+      setIsOptimized(false);
+    },
+    [],
+  );
+
+  const handleOptimize = useCallback(() => {
+    setIsOptimized(true);
+  }, []);
+
+  const handleSave = useCallback(() => {
+    const now = new Date().toISOString();
+    const project = {
+      id: existingProject?.id ?? uuidv4(),
+      name,
+      type: projectType,
+      description: description || undefined,
+      date,
+      status,
+      buyerName: buyerName || undefined,
+      materials: selectedMaterials,
+      woodParts,
+      laborHours,
+      hourlyRate,
+      markupFactor,
+      markupAppliedTo,
+      discountPercent,
+      createdAt: existingProject?.createdAt ?? now,
+      updatedAt: now,
+    };
+
+    if (existingProject) {
+      updateProject(project);
+    } else {
+      addProject(project);
+    }
+    navigate('/projects');
+  }, [
+    existingProject,
+    name,
+    projectType,
+    description,
+    date,
+    status,
+    buyerName,
+    selectedMaterials,
+    woodParts,
+    laborHours,
+    hourlyRate,
+    markupFactor,
+    markupAppliedTo,
+    discountPercent,
+    addProject,
+    updateProject,
+    navigate,
+  ]);
+
+  const handleSaveAsTemplate = useCallback(() => {
+    const now = new Date().toISOString();
+    addTemplate({
+      id: uuidv4(),
+      name,
+      templateName: name,
+      templateDescription: description,
+      type: projectType,
+      materials: selectedMaterials,
+      woodParts,
+      laborHours,
+      hourlyRate,
+      markupFactor,
+      markupAppliedTo,
+      discountPercent,
+      createdAt: now,
+      updatedAt: now,
+    });
+    alert('Template saved!');
+  }, [
+    name,
+    description,
+    projectType,
+    selectedMaterials,
+    woodParts,
+    laborHours,
+    hourlyRate,
+    markupFactor,
+    markupAppliedTo,
+    discountPercent,
+    addTemplate,
+  ]);
+
+  const handlePrint = useCallback(() => {
+    window.print();
+  }, []);
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      {/* Left column */}
+      <div className="lg:col-span-8 space-y-10">
+        {/* PROJECT INFORMATION */}
+        <section className="bg-surface-container rounded-2xl p-6">
+          <SectionHeader icon="info" label={t('calculator.projectInfo')} />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+                {t('projects.projectName')}
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className={INPUT_CLASS}
+                placeholder={t('projects.projectName')}
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+                {t('calculator.buyerClient')}
+              </label>
+              <input
+                type="text"
+                value={buyerName}
+                onChange={(e) => setBuyerName(e.target.value)}
+                className={INPUT_CLASS}
+                placeholder={t('calculator.buyerClient')}
+              />
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+              {t('calculator.projectType')}
+            </label>
+            <select
+              value={projectType}
+              onChange={(e) => setProjectType(e.target.value)}
+              className={INPUT_CLASS}
+            >
+              {PROJECT_TYPES.map((pt) => (
+                <option key={pt} value={pt}>
+                  {t(`projectTypes.${pt}`)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="mb-4">
+            <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+              Description
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className={`${INPUT_CLASS} min-h-[80px] resize-y`}
+              rows={3}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+                Date
+              </label>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className={INPUT_CLASS}
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+                {t('projects.status')}
+              </label>
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value as Status)}
+                className={INPUT_CLASS}
+              >
+                {STATUSES.map((s) => (
+                  <option key={s} value={s}>
+                    {t(STATUS_KEYS[s])}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </section>
+
+        {/* MATERIALS LIST */}
+        <section className="bg-surface-container rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <Icon name="inventory_2" className="text-primary text-2xl" />
+              <h2 className="font-headline font-bold text-lg uppercase tracking-wide text-on-surface">
+                {t('calculator.materialsList')}
+              </h2>
+            </div>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsPickerOpen(!isPickerOpen)}
+                className="flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+              >
+                <Icon name="add" className="text-lg" />
+                {t('calculator.addFromLibrary')}
+              </button>
+              {isPickerOpen && (
+                <MaterialPicker
+                  materials={allMaterials}
+                  onSelect={handleAddMaterial}
+                  onClose={() => setIsPickerOpen(false)}
+                />
+              )}
+            </div>
+          </div>
+
+          {selectedMaterials.length === 0 ? (
+            <div className="text-center py-8 text-secondary text-sm">
+              No materials added. Click &quot;Add from Library&quot; to begin.
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-outline-variant">
+                    <th className="text-[10px] font-bold uppercase text-secondary text-start pb-2 pe-4">
+                      Material / Grade
+                    </th>
+                    <th className="text-[10px] font-bold uppercase text-secondary text-start pb-2 pe-4">
+                      Variant / Size
+                    </th>
+                    <th className="text-[10px] font-bold uppercase text-secondary text-start pb-2 pe-4">
+                      Qty
+                    </th>
+                    <th className="text-[10px] font-bold uppercase text-secondary text-start pb-2 pe-4">
+                      Unit Cost
+                    </th>
+                    <th className="text-[10px] font-bold uppercase text-secondary text-start pb-2 pe-4">
+                      Total
+                    </th>
+                    <th className="pb-2" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {selectedMaterials.map((pm) => {
+                    const material = getMaterialById(pm.materialId);
+                    if (!material) return null;
+                    const unitCost = getUnitCost(pm);
+                    const total = unitCost * pm.quantity;
+
+                    return (
+                      <tr
+                        key={pm.materialId}
+                        className="border-b border-outline-variant/50"
+                      >
+                        <td className="py-3 pe-4">
+                          <span className="text-on-surface text-sm font-medium">
+                            {material.name}
+                          </span>
+                        </td>
+                        <td className="py-3 pe-4">
+                          {material.variants && material.variants.length > 0 ? (
+                            <select
+                              value={pm.variantId ?? ''}
+                              onChange={(e) =>
+                                handleMaterialVariantChange(pm.materialId, e.target.value)
+                              }
+                              className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none text-sm text-on-surface focus:border-primary"
+                            >
+                              {material.variants.map((v) => (
+                                <option key={v.id} value={v.id}>
+                                  {v.label}
+                                </option>
+                              ))}
+                            </select>
+                          ) : (
+                            <span className="text-secondary text-sm">--</span>
+                          )}
+                        </td>
+                        <td className="py-3 pe-4">
+                          <input
+                            type="number"
+                            value={pm.quantity}
+                            onChange={(e) =>
+                              handleMaterialQuantityChange(
+                                pm.materialId,
+                                parseFloat(e.target.value) || 0,
+                              )
+                            }
+                            min={0}
+                            step="any"
+                            className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none w-20 font-mono text-sm text-on-surface focus:border-primary"
+                          />
+                        </td>
+                        <td className="py-3 pe-4 font-mono text-sm text-secondary">
+                          {formatCurrency(unitCost)}
+                        </td>
+                        <td className="py-3 pe-4 font-mono text-sm font-medium text-primary">
+                          {formatCurrency(total)}
+                        </td>
+                        <td className="py-3">
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveMaterial(pm.materialId)}
+                            className="text-error hover:text-error/80 transition-colors"
+                          >
+                            <Icon name="close" className="text-lg" />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+
+        {/* SHEET OPTIMIZATION */}
+        <section className="bg-surface-container rounded-2xl p-6">
+          <SectionHeader icon="view_quilt" label={t('calculator.sheetOptimization')} />
+
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="bg-surface-container-low rounded-xl p-4 text-center">
+              <p className="text-[10px] font-bold uppercase text-secondary mb-1">
+                Total Parts
+              </p>
+              <p className="font-mono text-2xl font-bold text-on-surface">
+                {totalPartsCount}
+              </p>
+            </div>
+            <div className="bg-surface-container-low rounded-xl p-4 text-center">
+              <p className="text-[10px] font-bold uppercase text-secondary mb-1">
+                Waste Yield
+              </p>
+              <p className="font-mono text-2xl font-bold text-on-surface">
+                {packingResult ? `${packingResult.wastePercent}%` : '--'}
+              </p>
+            </div>
+            <div className="bg-surface-container-low rounded-xl p-4 text-center">
+              <p className="text-[10px] font-bold uppercase text-secondary mb-1">
+                Sheets Needed
+              </p>
+              <p className="font-mono text-2xl font-bold text-on-surface">
+                {packingResult ? packingResult.totalSheets : '--'}
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleOptimize}
+            disabled={woodParts.length === 0}
+            className="mb-6 flex items-center gap-2 bg-tertiary-container text-on-tertiary-container px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+          >
+            <Icon name="auto_fix_high" className="text-lg" />
+            Optimize Cut List
+          </button>
+
+          {woodParts.length > 0 && (
+            <div className="overflow-x-auto mb-4">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-outline-variant">
+                    <th className="text-[10px] font-bold uppercase text-secondary text-start pb-2 pe-4">
+                      Part Name
+                    </th>
+                    <th className="text-[10px] font-bold uppercase text-secondary text-start pb-2 pe-4">
+                      Length (mm)
+                    </th>
+                    <th className="text-[10px] font-bold uppercase text-secondary text-start pb-2 pe-4">
+                      Width (mm)
+                    </th>
+                    <th className="text-[10px] font-bold uppercase text-secondary text-start pb-2 pe-4">
+                      Qty
+                    </th>
+                    <th className="pb-2" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {woodParts.map((part) => (
+                    <tr
+                      key={part.id}
+                      className="border-b border-outline-variant/50"
+                    >
+                      <td className="py-3 pe-4">
+                        <input
+                          type="text"
+                          value={part.name}
+                          onChange={(e) =>
+                            handleWoodPartChange(part.id, 'name', e.target.value)
+                          }
+                          placeholder="Part name"
+                          className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none text-sm text-on-surface focus:border-primary w-full"
+                        />
+                      </td>
+                      <td className="py-3 pe-4">
+                        <input
+                          type="number"
+                          value={part.lengthMm || ''}
+                          onChange={(e) =>
+                            handleWoodPartChange(
+                              part.id,
+                              'lengthMm',
+                              parseInt(e.target.value) || 0,
+                            )
+                          }
+                          min={0}
+                          className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none w-24 font-mono text-sm text-on-surface focus:border-primary"
+                        />
+                      </td>
+                      <td className="py-3 pe-4">
+                        <input
+                          type="number"
+                          value={part.widthMm || ''}
+                          onChange={(e) =>
+                            handleWoodPartChange(
+                              part.id,
+                              'widthMm',
+                              parseInt(e.target.value) || 0,
+                            )
+                          }
+                          min={0}
+                          className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none w-24 font-mono text-sm text-on-surface focus:border-primary"
+                        />
+                      </td>
+                      <td className="py-3 pe-4">
+                        <input
+                          type="number"
+                          value={part.quantity || ''}
+                          onChange={(e) =>
+                            handleWoodPartChange(
+                              part.id,
+                              'quantity',
+                              parseInt(e.target.value) || 0,
+                            )
+                          }
+                          min={0}
+                          className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none w-20 font-mono text-sm text-on-surface focus:border-primary"
+                        />
+                      </td>
+                      <td className="py-3">
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveWoodPart(part.id)}
+                          className="text-error hover:text-error/80 transition-colors"
+                        >
+                          <Icon name="delete" className="text-lg" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={handleAddWoodPart}
+            className="w-full border-2 border-dashed border-outline-variant text-secondary hover:border-primary hover:text-primary py-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+          >
+            <Icon name="add" className="text-lg" />
+            {t('calculator.addComponent')}
+          </button>
+
+          {packingResult && (
+            <SheetVisualization sheets={packingResult.sheets} />
+          )}
+        </section>
+
+        {/* LABOR & ADJUSTMENTS row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* LABOR EFFORT */}
+          <section className="bg-surface-container rounded-2xl p-6">
+            <SectionHeader icon="engineering" label={t('calculator.laborEffort')} />
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+                  {t('calculator.hoursEstimated')}
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    value={laborHours || ''}
+                    onChange={(e) => setLaborHours(parseFloat(e.target.value) || 0)}
+                    min={0}
+                    step="0.5"
+                    className={`${INPUT_CLASS} pe-14 font-mono`}
+                  />
+                  <span className="absolute end-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
+                    hrs
+                  </span>
+                </div>
+              </div>
+              <div>
+                <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+                  {t('calculator.hourlyRate')}
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    value={hourlyRate || ''}
+                    onChange={(e) => setHourlyRate(parseFloat(e.target.value) || 0)}
+                    min={0}
+                    className={`${INPUT_CLASS} pe-14 font-mono`}
+                  />
+                  <span className="absolute end-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
+                    &#8362;/hr
+                  </span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ADJUSTMENTS */}
+          <section className="bg-surface-container rounded-2xl p-6">
+            <SectionHeader icon="payments" label={t('calculator.adjustments')} />
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+                  {t('calculator.markupMultiplier')}
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    value={markupFactor || ''}
+                    onChange={(e) => setMarkupFactor(parseFloat(e.target.value) || 1)}
+                    min={1}
+                    step="0.05"
+                    className={`${INPUT_CLASS} pe-20 font-mono`}
+                  />
+                  <span className="absolute end-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
+                    x factor
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="markupAppliedTo"
+                    value="materials"
+                    checked={markupAppliedTo === 'materials'}
+                    onChange={() => setMarkupAppliedTo('materials')}
+                    className="accent-primary"
+                  />
+                  <span className="text-sm text-on-surface">Materials only</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="markupAppliedTo"
+                    value="materials+labor"
+                    checked={markupAppliedTo === 'materials+labor'}
+                    onChange={() => setMarkupAppliedTo('materials+labor')}
+                    className="accent-primary"
+                  />
+                  <span className="text-sm text-on-surface">Materials + Labor</span>
+                </label>
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+                  {t('calculator.loyaltyDiscount')}
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    value={discountPercent || ''}
+                    onChange={(e) =>
+                      setDiscountPercent(parseFloat(e.target.value) || 0)
+                    }
+                    min={0}
+                    max={100}
+                    className={`${INPUT_CLASS} pe-16 font-mono`}
+                  />
+                  <span className="absolute end-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
+                    % pct
+                  </span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        {/* ACTION FOOTER */}
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="button"
+            onClick={handleSave}
+            className="flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity"
+          >
+            <Icon name="save" className="text-lg" />
+            {t('calculator.saveProject')}
+          </button>
+          <button
+            type="button"
+            onClick={handleSaveAsTemplate}
+            className="flex items-center gap-2 bg-secondary-container text-on-secondary-container px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity"
+          >
+            <Icon name="bookmark" className="text-lg" />
+            {t('calculator.saveAsTemplate')}
+          </button>
+          <button
+            type="button"
+            onClick={handlePrint}
+            className="flex items-center gap-2 border border-primary text-primary px-6 py-3 rounded-lg font-medium hover:bg-primary/5 transition-colors"
+          >
+            <Icon name="print" className="text-lg" />
+            {t('calculator.printToPdf')}
+          </button>
+        </div>
+      </div>
+
+      {/* Right sidebar - Live Financial Summary */}
+      <LiveCostSummary
+        materialsCost={costBreakdown.materialsCost}
+        laborCost={costBreakdown.laborCost}
+        subtotal={costBreakdown.subtotal}
+        markupAmount={costBreakdown.markupAmount}
+        discountAmount={costBreakdown.discountAmount}
+        finalPrice={costBreakdown.finalPrice}
+      />
+    </div>
+  );
+}

@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+
+.glass-panel {
+  background: rgba(232, 232, 229, 0.8);
+  backdrop-filter: blur(20px);
+}
+
+.dust-shadow {
+  box-shadow: 0 12px 40px rgba(26, 28, 27, 0.08);
+}
+
+.grain-texture {
+  background-image: radial-gradient(#8f7066 0.5px, transparent 0.5px);
+  background-size: 8px 8px;
+  opacity: 0.1;
+}
+
+.industrial-grid {
+  background-size: 40px 40px;
+  background-image: linear-gradient(
+      to right,
+      rgba(143, 112, 102, 0.05) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(143, 112, 102, 0.05) 1px, transparent 1px);
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
+  main {
+    margin-left: 0 !important;
+  }
+}

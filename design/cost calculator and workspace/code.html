@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>New Project | The Precision Workshop</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .mono { font-family: 'ui-monospace', 'SFMono-Regular', Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+        /* Custom scrollbar for technical feel */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #eeeeeb; }
+        ::-webkit-scrollbar-thumb { background: #8f7066; border-radius: 10px; }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-fixed-dim": "#88d982",
+              "on-primary-fixed": "#380d00",
+              "secondary": "#5f5e5e",
+              "inverse-surface": "#2f312f",
+              "surface-container-low": "#f4f4f1",
+              "surface-variant": "#e2e3e0",
+              "on-surface-variant": "#5a4138",
+              "outline-variant": "#e3bfb2",
+              "tertiary": "#186a22",
+              "on-secondary-container": "#656464",
+              "on-surface": "#1a1c1b",
+              "on-tertiary-fixed-variant": "#005312",
+              "on-primary-container": "#fffbff",
+              "on-secondary-fixed-variant": "#474747",
+              "outline": "#8f7066",
+              "on-error-container": "#93000a",
+              "surface-container-highest": "#e2e3e0",
+              "on-tertiary": "#ffffff",
+              "secondary-fixed": "#e4e2e1",
+              "inverse-on-surface": "#f1f1ee",
+              "on-primary-fixed-variant": "#802a00",
+              "on-secondary-fixed": "#1b1c1c",
+              "secondary-fixed-dim": "#c8c6c6",
+              "secondary-container": "#e4e2e1",
+              "surface-container-high": "#e8e8e5",
+              "primary-container": "#cd4700",
+              "surface-container-lowest": "#ffffff",
+              "on-background": "#1a1c1b",
+              "on-tertiary-fixed": "#002204",
+              "error-container": "#ffdad6",
+              "primary-fixed-dim": "#ffb59a",
+              "background": "#f9f9f6",
+              "on-primary": "#ffffff",
+              "on-tertiary-container": "#f7fff1",
+              "surface-container": "#eeeeeb",
+              "error": "#ba1a1a",
+              "surface": "#f9f9f6",
+              "inverse-primary": "#ffb59a",
+              "surface-dim": "#dadad7",
+              "tertiary-container": "#358438",
+              "surface-tint": "#a83900",
+              "tertiary-fixed": "#a3f69c",
+              "on-secondary": "#ffffff",
+              "primary-fixed": "#ffdbcf",
+              "on-error": "#ffffff",
+              "primary": "#a43700",
+              "surface-bright": "#f9f9f6"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-surface font-body text-on-surface flex min-h-screen">
+<!-- SideNavBar (Suppressed on focus/transactional screens but kept as this is a dashboard-entry tool) -->
+<nav class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 bg-[#eeeeeb] dark:bg-stone-800 py-6 z-50">
+<div class="px-6 mb-10">
+<span class="font-headline text-lg font-bold text-[#a43700]">The Precision Workshop</span>
+<p class="text-[10px] uppercase tracking-widest opacity-50 mt-1">Workshop Admin</p>
+</div>
+<div class="flex-1 space-y-1 px-2">
+<a class="flex items-center px-4 py-3 text-[#1a1c1b] dark:text-[#eeeeeb] opacity-70 hover:bg-[#f4f4f1] dark:hover:bg-stone-700 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3">dashboard</span>
+<span class="font-medium text-sm">Dashboard</span>
+</a>
+<a class="flex items-center px-4 py-3 bg-[#f9f9f6] dark:bg-stone-900 text-[#a43700] font-bold rounded-l-md border-r-4 border-[#a43700] transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3">square_foot</span>
+<span class="font-medium text-sm">Projects</span>
+</a>
+<a class="flex items-center px-4 py-3 text-[#1a1c1b] dark:text-[#eeeeeb] opacity-70 hover:bg-[#f4f4f1] dark:hover:bg-stone-700 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3">layers</span>
+<span class="font-medium text-sm">Materials Library</span>
+</a>
+<a class="flex items-center px-4 py-3 text-[#1a1c1b] dark:text-[#eeeeeb] opacity-70 hover:bg-[#f4f4f1] dark:hover:bg-stone-700 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3">description</span>
+<span class="font-medium text-sm">Templates</span>
+</a>
+</div>
+<div class="px-4 mt-auto">
+<button class="w-full bg-primary text-on-primary py-3 rounded flex items-center justify-center gap-2 font-bold Active:opacity-80 transition-all scale-95">
+<span class="material-symbols-outlined">calculate</span>
+                Quick Calc
+            </button>
+</div>
+</nav>
+<!-- Main Content Stage -->
+<main class="flex-1 md:ml-64 min-h-screen">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center px-8 py-4 w-full sticky top-0 z-40 bg-surface/80 backdrop-blur-md">
+<div>
+<h1 class="font-headline font-bold text-2xl tracking-tight text-on-surface uppercase">New Project Calculator</h1>
+<p class="text-xs text-secondary mono">PRJ-2023-V04-B</p>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-4 py-2 text-sm font-bold text-primary border border-primary rounded hover:bg-primary/5 transition-colors">HE/EN</button>
+<div class="h-8 w-[1px] bg-outline-variant/30"></div>
+<button class="px-6 py-2 bg-primary text-on-primary font-bold rounded-lg shadow-lg hover:brightness-110 active:scale-95 transition-all">
+                    New Project
+                </button>
+</div>
+</header>
+<div class="p-8 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Input Canvas (Left) -->
+<div class="lg:col-span-8 space-y-10">
+<!-- Section: Project Identity -->
+<section>
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">info</span>
+<h2 class="font-headline font-bold text-lg uppercase tracking-wide">Project Information</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-surface-container-low p-6 rounded-xl">
+<div class="flex flex-col gap-1">
+<label class="text-[10px] font-bold uppercase text-outline">Project Name</label>
+<input class="bg-surface-container-highest border-b-2 border-outline focus:border-primary focus:ring-0 px-4 py-3 outline-none transition-colors" placeholder="e.g. Walnut Executive Desk" type="text"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-[10px] font-bold uppercase text-outline">Buyer / Client</label>
+<input class="bg-surface-container-highest border-b-2 border-outline focus:border-primary focus:ring-0 px-4 py-3 outline-none transition-colors" placeholder="Client Name or ID" type="text"/>
+</div>
+</div>
+</section>
+<!-- Section: Materials -->
+<section>
+<div class="flex justify-between items-center mb-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">inventory_2</span>
+<h2 class="font-headline font-bold text-lg uppercase tracking-wide">Materials List</h2>
+</div>
+<button class="text-primary text-sm font-bold flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-sm">add_circle</span> Add from Library
+                        </button>
+</div>
+<div class="overflow-x-auto bg-surface-container-low rounded-xl">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high border-b border-outline-variant/20">
+<th class="px-6 py-4 text-[10px] font-bold uppercase text-secondary">Material / Grade</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase text-secondary">Variant / Size</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase text-secondary">Qty</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase text-secondary">Unit Cost</th>
+<th class="px-6 py-4 text-[10px] font-bold uppercase text-secondary">Total</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="hover:bg-surface transition-colors">
+<td class="px-6 py-4 font-medium">Black Walnut (A-Grade)</td>
+<td class="px-6 py-4 text-sm text-secondary">8/4 Rough Sawn</td>
+<td class="px-6 py-4 mono font-bold">12 BF</td>
+<td class="px-6 py-4 mono">$14.50</td>
+<td class="px-6 py-4 mono font-bold text-primary">$174.00</td>
+</tr>
+<tr class="bg-surface-container-low/50 hover:bg-surface transition-colors">
+<td class="px-6 py-4 font-medium">Baltic Birch Plywood</td>
+<td class="px-6 py-4 text-sm text-secondary">18mm (4' x 8')</td>
+<td class="px-6 py-4 mono font-bold">2 SH</td>
+<td class="px-6 py-4 mono">$115.00</td>
+<td class="px-6 py-4 mono font-bold text-primary">$230.00</td>
+</tr>
+<tr class="hover:bg-surface transition-colors">
+<td class="px-6 py-4 font-medium">Rubio Monocoat</td>
+<td class="px-6 py-4 text-sm text-secondary">Pure (350ml)</td>
+<td class="px-6 py-4 mono font-bold">1 CAN</td>
+<td class="px-6 py-4 mono">$58.00</td>
+<td class="px-6 py-4 mono font-bold text-primary">$58.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Section: Wood Parts & Optimization -->
+<section>
+<div class="flex justify-between items-center mb-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">view_quilt</span>
+<h2 class="font-headline font-bold text-lg uppercase tracking-wide">Sheet Optimization</h2>
+</div>
+<div class="flex items-center gap-3">
+<span class="px-3 py-1 bg-on-secondary-container text-white text-[10px] font-bold rounded uppercase mono">4.2 Sheets Needed</span>
+<button class="bg-tertiary text-on-tertiary px-4 py-1 text-xs font-bold rounded hover:brightness-110">Optimize Cut List</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+<div class="bg-surface-container p-4 rounded-lg flex items-center justify-between">
+<div>
+<p class="text-[10px] font-bold text-secondary uppercase">Total Parts</p>
+<p class="mono text-xl font-bold">24</p>
+</div>
+<span class="material-symbols-outlined text-outline">precision_manufacturing</span>
+</div>
+<div class="bg-surface-container p-4 rounded-lg flex items-center justify-between">
+<div>
+<p class="text-[10px] font-bold text-secondary uppercase">Waste Yield</p>
+<p class="mono text-xl font-bold">18.4%</p>
+</div>
+<span class="material-symbols-outlined text-tertiary">eco</span>
+</div>
+<div class="bg-surface-container p-4 rounded-lg flex items-center justify-between">
+<div>
+<p class="text-[10px] font-bold text-secondary uppercase">Est. Cut Time</p>
+<p class="mono text-xl font-bold">145m</p>
+</div>
+<span class="material-symbols-outlined text-outline">timer</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl space-y-4">
+<div class="grid grid-cols-12 gap-4 text-[10px] font-bold text-outline uppercase px-2">
+<div class="col-span-4">Part Name</div>
+<div class="col-span-2 text-center">Length (mm)</div>
+<div class="col-span-2 text-center">Width (mm)</div>
+<div class="col-span-2 text-center">Qty</div>
+<div class="col-span-2"></div>
+</div>
+<!-- Row 1 -->
+<div class="grid grid-cols-12 gap-4 items-center bg-surface p-2 rounded border border-outline-variant/10 shadow-sm">
+<input class="col-span-4 bg-transparent border-none focus:ring-0 text-sm font-medium" type="text" value="Main Table Top"/>
+<input class="col-span-2 bg-surface-container-high mono text-center text-sm py-1 rounded" type="text" value="1800"/>
+<input class="col-span-2 bg-surface-container-high mono text-center text-sm py-1 rounded" type="text" value="900"/>
+<input class="col-span-2 bg-surface-container-high mono text-center text-sm py-1 rounded" type="text" value="1"/>
+<div class="col-span-2 flex justify-end">
+<button class="material-symbols-outlined text-secondary opacity-30 hover:opacity-100 hover:text-error transition-all">delete</button>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="grid grid-cols-12 gap-4 items-center bg-surface p-2 rounded border border-outline-variant/10 shadow-sm">
+<input class="col-span-4 bg-transparent border-none focus:ring-0 text-sm font-medium" type="text" value="Side Panel L/R"/>
+<input class="col-span-2 bg-surface-container-high mono text-center text-sm py-1 rounded" type="text" value="750"/>
+<input class="col-span-2 bg-surface-container-high mono text-center text-sm py-1 rounded" type="text" value="650"/>
+<input class="col-span-2 bg-surface-container-high mono text-center text-sm py-1 rounded" type="text" value="2"/>
+<div class="col-span-2 flex justify-end">
+<button class="material-symbols-outlined text-secondary opacity-30 hover:opacity-100 hover:text-error transition-all">delete</button>
+</div>
+</div>
+<button class="w-full py-3 border-2 border-dashed border-outline-variant/40 rounded-lg text-secondary text-sm font-bold flex items-center justify-center gap-2 hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">add</span> Add Component
+                        </button>
+</div>
+</section>
+<!-- Section: Labor & Financials -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div>
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">engineering</span>
+<h2 class="font-headline font-bold text-lg uppercase tracking-wide">Labor Effort</h2>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl space-y-6">
+<div class="flex flex-col gap-1">
+<label class="text-[10px] font-bold uppercase text-outline">Hours Estimated</label>
+<div class="relative">
+<input class="w-full mono bg-surface-container-highest border-b-2 border-outline focus:border-primary px-4 py-3 outline-none" type="text" value="45.0"/>
+<span class="absolute right-4 top-3 text-secondary text-xs uppercase font-bold">hrs</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-[10px] font-bold uppercase text-outline">Hourly Rate</label>
+<div class="relative">
+<input class="w-full mono bg-surface-container-highest border-b-2 border-outline focus:border-primary px-4 py-3 outline-none" type="text" value="85.00"/>
+<span class="absolute right-4 top-3 text-secondary text-xs uppercase font-bold">usd/hr</span>
+</div>
+</div>
+</div>
+</div>
+<div>
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">payments</span>
+<h2 class="font-headline font-bold text-lg uppercase tracking-wide">Adjustments</h2>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl space-y-6">
+<div class="flex flex-col gap-1">
+<label class="text-[10px] font-bold uppercase text-outline">Markup Multiplier</label>
+<div class="relative">
+<input class="w-full mono bg-surface-container-highest border-b-2 border-outline focus:border-primary px-4 py-3 outline-none" type="text" value="1.45"/>
+<span class="absolute right-4 top-3 text-secondary text-xs uppercase font-bold">x factor</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-[10px] font-bold uppercase text-outline">Loyalty Discount</label>
+<div class="relative">
+<input class="w-full mono bg-surface-container-highest border-b-2 border-outline focus:border-primary px-4 py-3 outline-none" type="text" value="5.0"/>
+<span class="absolute right-4 top-3 text-secondary text-xs uppercase font-bold">% pct</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Action Footer -->
+<div class="flex flex-wrap gap-4 pt-6 border-t border-outline-variant/30">
+<button class="px-8 py-3 bg-primary text-on-primary font-bold rounded-lg flex items-center gap-2 hover:brightness-110 shadow-xl transition-all active:scale-95">
+<span class="material-symbols-outlined">save</span> Save Project
+                    </button>
+<button class="px-8 py-3 bg-secondary-container text-on-secondary-container font-bold rounded-lg flex items-center gap-2 hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined">auto_awesome_motion</span> Save as Template
+                    </button>
+<button class="px-8 py-3 text-primary border border-primary font-bold rounded-lg flex items-center gap-2 hover:bg-primary/5 transition-all">
+<span class="material-symbols-outlined">picture_as_pdf</span> Print to PDF
+                    </button>
+</div>
+</div>
+<!-- Sticky Live Cost Summary (Right) -->
+<div class="lg:col-span-4">
+<div class="sticky top-28 space-y-6">
+<!-- The HUD (Heads Up Display) Panel -->
+<div class="bg-surface-container-highest/60 backdrop-blur-xl border border-white/40 p-8 rounded-2xl shadow-2xl overflow-hidden relative">
+<!-- Technical Grid Overlay Decoration -->
+<div class="absolute inset-0 opacity-5 pointer-events-none" style="background-size: 20px 20px; background-image: linear-gradient(to right, #8f7066 1px, transparent 1px), linear-gradient(to bottom, #8f7066 1px, transparent 1px);"></div>
+<div class="relative z-10">
+<h3 class="text-[10px] font-bold uppercase tracking-widest text-secondary mb-8 border-b border-outline-variant/20 pb-2">Live Financial Summary</h3>
+<div class="space-y-4 mb-8">
+<div class="flex justify-between items-end">
+<span class="text-xs text-outline uppercase font-medium">Materials</span>
+<span class="mono text-lg font-bold">$462.00</span>
+</div>
+<div class="flex justify-between items-end">
+<span class="text-xs text-outline uppercase font-medium">Labor Cost</span>
+<span class="mono text-lg font-bold">$3,825.00</span>
+</div>
+<div class="h-[1px] bg-outline-variant/20 my-2"></div>
+<div class="flex justify-between items-end">
+<span class="text-xs text-secondary font-bold uppercase">Subtotal</span>
+<span class="mono text-xl font-bold">$4,287.00</span>
+</div>
+<div class="flex justify-between items-end text-tertiary">
+<span class="text-xs font-bold uppercase">Markup (1.45x)</span>
+<span class="mono text-lg font-bold">+$1,929.15</span>
+</div>
+<div class="flex justify-between items-end text-error">
+<span class="text-xs font-bold uppercase">Discount (5%)</span>
+<span class="mono text-lg font-bold">-$310.80</span>
+</div>
+</div>
+<div class="bg-on-surface p-6 rounded-xl text-surface shadow-inner">
+<p class="text-[10px] font-bold uppercase tracking-widest opacity-60 mb-2">Final Estimated Price</p>
+<div class="flex justify-between items-baseline">
+<span class="font-headline text-3xl font-bold mono">$5,905</span>
+<span class="text-xl font-medium mono opacity-80">.35</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Resource Card -->
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">person</span>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface">Caleb M. Workshop</p>
+<p class="text-[10px] text-secondary">Lead Craftsman</p>
+</div>
+</div>
+<div class="bg-white/40 p-4 rounded-lg">
+<img alt="Workshop Detail" class="w-full h-32 object-cover rounded-md mb-3" data-alt="industrial workbench with precision measuring tools, digital calipers, and architectural blueprints in a sunlit modern woodshop" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqtam1nkmfGE0U2-ocWN1ITXNB3AAolbsvyMnxLl0x1Lryqdo6Sf9fX9gus98Ozy7tpmUY3cGBqCGbHieQ7Wg0-sfpJ-bqc9k5gsWIdIW9_FHmltSxujstRFwknNqJ77gxL3YaTnY9Xvts0oScuE2JSr4rL8g7k9c5nr8g5OzLo-pw8NFGJUrjmY7wGbPR4jXqo9zTgIzKuP-D-uYd0TOvUKnVfBStjUm_q1SgK62hlqGP8LCEed5Ikm7b_9ddqfj7Mj0lUlJ7b6IS"/>
+<p class="text-[10px] text-secondary leading-relaxed">Ensure all measurements include kerf allowance (3.2mm) for precise CNC or table saw output.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-surface shadow-[0_-4px_20px_rgba(0,0,0,0.05)] flex justify-around items-center px-4 py-3 z-50">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-[10px] font-bold">Dash</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-secondary" href="#">
+<span class="material-symbols-outlined">square_foot</span>
+<span class="text-[10px] font-bold">Project</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-secondary" href="#">
+<span class="material-symbols-outlined">inventory</span>
+<span class="text-[10px] font-bold">Items</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-secondary" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-bold">Admin</span>
+</a>
+</nav>
+</body></html>

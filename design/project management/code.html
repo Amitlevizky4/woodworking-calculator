@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Projects List | The Precision Workshop</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "tertiary-fixed-dim": "#88d982",
+                "on-primary-fixed": "#380d00",
+                "secondary": "#5f5e5e",
+                "inverse-surface": "#2f312f",
+                "surface-container-low": "#f4f4f1",
+                "surface-variant": "#e2e3e0",
+                "on-surface-variant": "#5a4138",
+                "outline-variant": "#e3bfb2",
+                "tertiary": "#186a22",
+                "on-secondary-container": "#656464",
+                "on-surface": "#1a1c1b",
+                "on-tertiary-fixed-variant": "#005312",
+                "on-primary-container": "#fffbff",
+                "on-secondary-fixed-variant": "#474747",
+                "outline": "#8f7066",
+                "on-error-container": "#93000a",
+                "surface-container-highest": "#e2e3e0",
+                "on-tertiary": "#ffffff",
+                "secondary-fixed": "#e4e2e1",
+                "inverse-on-surface": "#f1f1ee",
+                "on-primary-fixed-variant": "#802a00",
+                "on-secondary-fixed": "#1b1c1c",
+                "secondary-fixed-dim": "#c8c6c6",
+                "secondary-container": "#e4e2e1",
+                "surface-container-high": "#e8e8e5",
+                "primary-container": "#cd4700",
+                "surface-container-lowest": "#ffffff",
+                "on-background": "#1a1c1b",
+                "on-tertiary-fixed": "#002204",
+                "error-container": "#ffdad6",
+                "primary-fixed-dim": "#ffb59a",
+                "background": "#f9f9f6",
+                "on-primary": "#ffffff",
+                "on-tertiary-container": "#f7fff1",
+                "surface-container": "#eeeeeb",
+                "error": "#ba1a1a",
+                "surface": "#f9f9f6",
+                "inverse-primary": "#ffb59a",
+                "surface-dim": "#dadad7",
+                "tertiary-container": "#358438",
+                "surface-tint": "#a83900",
+                "tertiary-fixed": "#a3f69c",
+                "on-secondary": "#ffffff",
+                "primary-fixed": "#ffdbcf",
+                "on-error": "#ffffff",
+                "primary": "#a43700",
+                "surface-bright": "#f9f9f6"
+              },
+              fontFamily: {
+                "headline": ["Space Grotesk"],
+                "body": ["Inter"],
+                "label": ["Inter"],
+                "mono": ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace"]
+              },
+              borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-panel {
+            background: rgba(232, 232, 229, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        .dust-shadow {
+            box-shadow: 0 12px 40px rgba(26, 28, 27, 0.08);
+        }
+        .measurement-chip {
+            font-family: ui-monospace, 'Courier New', monospace;
+        }
+        input:focus {
+            outline: none;
+            border-bottom: 2px solid #a43700 !important;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface">
+<!-- SideNavBar Anchor -->
+<aside class="hidden md:flex flex-col h-full py-6 bg-[#eeeeeb] dark:bg-stone-800 h-screen w-64 fixed left-0 top-0 z-40">
+<div class="px-6 mb-10">
+<span class="font-['Space_Grotesk'] text-lg font-bold text-[#a43700]">The Precision Workshop</span>
+<div class="mt-4 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center overflow-hidden border border-outline/10">
+<img class="w-full h-full object-cover" data-alt="close-up portrait of a professional woodworker with a beard wearing a denim apron in a sunlit workshop" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfDUWvT6dR1lqhI0JDLJtz08h86eKQ_GFprUczTyK8rgtgjVfzpV1JGPLa_vROyBQlBzHgioWzdfz3KGNKKcB0Z8PeoUdfG5asV8aac9EZvKeaPacd3y80bCIB0m4-msm13njE_WrjtJXOFPNRoGluQiEAUs4RRrifmocjCTmITDWxPPer0Vv5GUd7pxrkrcOwj6r9mT52fxOrg7zERFHn5PwZB1rUJElWkPKxopaxRYIQWg8z1_E30R6AZ-KsQhKhP9Kn0M5daHvV"/>
+</div>
+<div>
+<p class="font-['Inter'] text-sm font-bold text-on-surface">Workshop Admin</p>
+<p class="font-['Inter'] text-[10px] uppercase tracking-wider text-secondary">Master Craftsman</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-6 py-3 text-on-surface opacity-70 font-['Inter'] text-sm font-medium hover:bg-[#f4f4f1] hover:opacity-100 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center px-6 py-3 bg-[#f9f9f6] text-[#a43700] font-bold rounded-l-md border-r-4 border-[#a43700] font-['Inter'] text-sm font-medium transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="square_foot">square_foot</span>
+                Projects
+            </a>
+<a class="flex items-center px-6 py-3 text-on-surface opacity-70 font-['Inter'] text-sm font-medium hover:bg-[#f4f4f1] hover:opacity-100 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="layers">layers</span>
+                Materials Library
+            </a>
+<a class="flex items-center px-6 py-3 text-on-surface opacity-70 font-['Inter'] text-sm font-medium hover:bg-[#f4f4f1] hover:opacity-100 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="description">description</span>
+                Templates
+            </a>
+</nav>
+<div class="px-6 mt-auto">
+<button class="w-full py-3 bg-primary text-on-primary font-bold rounded-lg flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="calculate">calculate</span>
+                Quick Calc
+            </button>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="md:ml-64 min-h-screen">
+<!-- TopAppBar Anchor -->
+<header class="flex justify-between items-center px-6 py-3 w-full sticky top-0 z-30 bg-[#f9f9f6] border-b-0">
+<div class="flex items-center gap-4">
+<h1 class="font-['Space_Grotesk'] font-bold tracking-tight text-xl text-on-surface uppercase">Projects</h1>
+<div class="h-6 w-[1px] bg-outline-variant/30"></div>
+<div class="hidden lg:flex items-center gap-2 text-xs font-mono text-secondary">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                    8 ACTIVE JOBS
+                </div>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-4 py-2 bg-surface-container-low text-secondary font-['Inter'] text-xs font-bold uppercase tracking-widest hover:bg-surface-container-high transition-colors">
+                    HE/EN
+                </button>
+<button class="bg-primary text-on-primary font-['Space_Grotesk'] font-bold tracking-tight px-6 py-2 rounded-lg flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                    New Project
+                </button>
+</div>
+</header>
+<section class="p-6 md:p-10 space-y-10">
+<!-- Filter & Search Bar -->
+<div class="bg-surface-container-low p-6 rounded-xl flex flex-col lg:flex-row gap-6 items-end">
+<div class="flex-1 w-full space-y-2">
+<label class="font-['Inter'] text-[10px] uppercase tracking-widest text-secondary font-bold">Search Workshop Registry</label>
+<div class="relative">
+<span class="absolute left-0 top-1/2 -translate-y-1/2 material-symbols-outlined text-secondary ml-4" data-icon="search">search</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-highest border-b-2 border-outline focus:border-primary transition-colors font-['Inter'] text-sm" placeholder="Search by project name or material..." type="text"/>
+</div>
+</div>
+<div class="w-full lg:w-48 space-y-2">
+<label class="font-['Inter'] text-[10px] uppercase tracking-widest text-secondary font-bold">Category</label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-highest border-b-2 border-outline px-4 py-4 pr-10 font-['Inter'] text-sm focus:border-primary">
+<option>All Categories</option>
+<option>Furniture</option>
+<option>Decor</option>
+<option>Outdoor</option>
+<option>Restoration</option>
+</select>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-secondary pointer-events-none" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<div class="w-full lg:w-48 space-y-2">
+<label class="font-['Inter'] text-[10px] uppercase tracking-widest text-secondary font-bold">Status</label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-highest border-b-2 border-outline px-4 py-4 pr-10 font-['Inter'] text-sm focus:border-primary">
+<option>All Status</option>
+<option>Planning</option>
+<option>In Progress</option>
+<option>Completed</option>
+</select>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-secondary pointer-events-none" data-icon="filter_list">filter_list</span>
+</div>
+</div>
+</div>
+<!-- Projects Layout: Industrial Table/Card Hybrid -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="text-[10px] uppercase tracking-[0.2em] text-secondary font-bold border-b border-outline-variant/20">
+<th class="pb-6 px-4">Preview</th>
+<th class="pb-6 px-4">Project Identity</th>
+<th class="pb-6 px-4">Status</th>
+<th class="pb-6 px-4">Timeline</th>
+<th class="pb-6 px-4 text-right">Metrics</th>
+<th class="pb-6 px-4 text-right">Valuation</th>
+<th class="pb-6 px-4"></th>
+</tr>
+</thead>
+<tbody class="font-['Inter']">
+<!-- Project Row 1 -->
+<tr class="group hover:bg-surface-container-low transition-colors border-b border-outline-variant/10">
+<td class="py-6 px-4">
+<div class="w-20 h-20 bg-surface-container-highest flex items-center justify-center border-2 border-dashed border-outline/30 group-hover:border-primary/50 transition-colors relative overflow-hidden rounded-md">
+<span class="material-symbols-outlined text-outline/50 group-hover:text-primary transition-colors" data-icon="add_a_photo">add_a_photo</span>
+<p class="absolute bottom-1 text-[8px] uppercase tracking-tighter text-outline font-bold">Upload</p>
+</div>
+</td>
+<td class="py-6 px-4">
+<div class="flex flex-col">
+<span class="text-on-surface font-bold text-lg">Live Edge Dining Table</span>
+<span class="text-secondary text-xs font-medium">Furniture | Walnut &amp; Epoxy</span>
+</div>
+</td>
+<td class="py-6 px-4">
+<span class="px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider rounded-sm border border-primary/20">In Progress</span>
+</td>
+<td class="py-6 px-4">
+<div class="flex flex-col">
+<span class="text-on-surface text-sm">Oct 12, 2023</span>
+<span class="text-secondary text-[10px] uppercase tracking-wide">EST: 45 Days</span>
+</div>
+</td>
+<td class="py-6 px-4 text-right">
+<div class="flex flex-col items-end gap-1">
+<div class="flex items-center gap-1">
+<span class="text-[10px] text-secondary font-bold uppercase">Materials:</span>
+<span class="measurement-chip bg-secondary-container px-2 py-0.5 rounded text-xs font-bold">14 PCS</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="text-[10px] text-secondary font-bold uppercase">Labor:</span>
+<span class="measurement-chip bg-secondary-container px-2 py-0.5 rounded text-xs font-bold">32.5 HRS</span>
+</div>
+</div>
+</td>
+<td class="py-6 px-4 text-right">
+<span class="font-mono text-lg font-bold text-on-surface">$3,450.00</span>
+</td>
+<td class="py-6 px-4">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-white rounded-md transition-colors text-secondary hover:text-primary" title="View Details">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+<button class="p-2 hover:bg-white rounded-md transition-colors text-secondary hover:text-primary" title="Edit Project">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+<button class="p-2 hover:bg-white rounded-md transition-colors text-error" title="Delete Project">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Project Row 2 -->
+<tr class="group hover:bg-surface-container-low transition-colors border-b border-outline-variant/10">
+<td class="py-6 px-4">
+<div class="w-20 h-20 bg-surface-container-highest flex items-center justify-center overflow-hidden rounded-md border border-outline/10">
+<img class="w-full h-full object-cover" data-alt="finished wooden floating shelf with minimalist aesthetic mounted on a white wall holding a small succulent" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCch6p2kQXhNNQgvD7IBXBlSdMKGwpQAdPAn1zOBK8C4yRrtzspkVYc_eDmWUUuwgfLrAoQAvdQKvNsgDYfuU9fmNqhkAnK0VIM4x4udfQt5XJLgkShKU0Y-G7SAPTwF58kJ7GinZ2crBcrO2AW3iORYo0UuoZrhcvmjBULm2rpX5W9VsRkwyle3H7V514V4WrWHaF6aNyUTo95Qa5BgEw4nMOHzz55BZzHzRsdwqTk_uujLlpFPNpjGclK7JPgyjCTTwn5CV89AwxD"/>
+</div>
+</td>
+<td class="py-6 px-4">
+<div class="flex flex-col">
+<span class="text-on-surface font-bold text-lg">Minimalist Floating Shelves</span>
+<span class="text-secondary text-xs font-medium">Decor | White Oak</span>
+</div>
+</td>
+<td class="py-6 px-4">
+<span class="px-3 py-1 bg-tertiary/10 text-tertiary text-[10px] font-bold uppercase tracking-wider rounded-sm border border-tertiary/20">Completed</span>
+</td>
+<td class="py-6 px-4">
+<div class="flex flex-col">
+<span class="text-on-surface text-sm">Sep 28, 2023</span>
+<span class="text-secondary text-[10px] uppercase tracking-wide">FINALIZED</span>
+</div>
+</td>
+<td class="py-6 px-4 text-right">
+<div class="flex flex-col items-end gap-1">
+<div class="flex items-center gap-1">
+<span class="text-[10px] text-secondary font-bold uppercase">Materials:</span>
+<span class="measurement-chip bg-secondary-container px-2 py-0.5 rounded text-xs font-bold">04 PCS</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="text-[10px] text-secondary font-bold uppercase">Labor:</span>
+<span class="measurement-chip bg-secondary-container px-2 py-0.5 rounded text-xs font-bold">06.0 HRS</span>
+</div>
+</div>
+</td>
+<td class="py-6 px-4 text-right">
+<span class="font-mono text-lg font-bold text-on-surface">$580.00</span>
+</td>
+<td class="py-6 px-4">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-white rounded-md transition-colors text-secondary hover:text-primary" title="View Details">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+<button class="p-2 hover:bg-white rounded-md transition-colors text-secondary hover:text-primary" title="Edit Project">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+<button class="p-2 hover:bg-white rounded-md transition-colors text-error" title="Delete Project">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Project Row 3 -->
+<tr class="group hover:bg-surface-container-low transition-colors border-b border-outline-variant/10">
+<td class="py-6 px-4">
+<div class="w-20 h-20 bg-surface-container-highest flex items-center justify-center border-2 border-dashed border-outline/30 group-hover:border-primary/50 transition-colors relative overflow-hidden rounded-md">
+<span class="material-symbols-outlined text-outline/50 group-hover:text-primary transition-colors" data-icon="add_a_photo">add_a_photo</span>
+<p class="absolute bottom-1 text-[8px] uppercase tracking-tighter text-outline font-bold">Upload</p>
+</div>
+</td>
+<td class="py-6 px-4">
+<div class="flex flex-col">
+<span class="text-on-surface font-bold text-lg">Custom Adirondack Set</span>
+<span class="text-secondary text-xs font-medium">Outdoor | Cedar</span>
+</div>
+</td>
+<td class="py-6 px-4">
+<span class="px-3 py-1 bg-surface-variant text-secondary text-[10px] font-bold uppercase tracking-wider rounded-sm border border-outline/20">Planning</span>
+</td>
+<td class="py-6 px-4">
+<div class="flex flex-col">
+<span class="text-on-surface text-sm">Pending</span>
+<span class="text-secondary text-[10px] uppercase tracking-wide">START: NOV 05</span>
+</div>
+</td>
+<td class="py-6 px-4 text-right">
+<div class="flex flex-col items-end gap-1">
+<div class="flex items-center gap-1">
+<span class="text-[10px] text-secondary font-bold uppercase">Materials:</span>
+<span class="measurement-chip bg-secondary-container px-2 py-0.5 rounded text-xs font-bold">28 PCS</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="text-[10px] text-secondary font-bold uppercase">Labor:</span>
+<span class="measurement-chip bg-secondary-container px-2 py-0.5 rounded text-xs font-bold">18.0 HRS</span>
+</div>
+</div>
+</td>
+<td class="py-6 px-4 text-right">
+<span class="font-mono text-lg font-bold text-on-surface">$1,200.00</span>
+</td>
+<td class="py-6 px-4">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-white rounded-md transition-colors text-secondary hover:text-primary" title="View Details">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+<button class="p-2 hover:bg-white rounded-md transition-colors text-secondary hover:text-primary" title="Edit Project">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+<button class="p-2 hover:bg-white rounded-md transition-colors text-error" title="Delete Project">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Dashboard Stats HUD (Asymmetric Floating Panel) -->
+<div class="flex justify-end pt-10">
+<div class="glass-panel dust-shadow p-8 rounded-2xl w-full lg:w-96 border border-white/40 flex flex-col gap-6">
+<h3 class="font-['Space_Grotesk'] font-bold text-lg text-primary uppercase tracking-tighter">Workshop Summary</h3>
+<div class="space-y-4">
+<div class="flex justify-between items-end border-b border-outline/10 pb-2">
+<span class="text-xs font-bold text-secondary uppercase tracking-widest">Active Valuation</span>
+<span class="font-mono text-2xl font-bold">$12,450.00</span>
+</div>
+<div class="flex justify-between items-end border-b border-outline/10 pb-2">
+<span class="text-xs font-bold text-secondary uppercase tracking-widest">Billable Hours</span>
+<span class="font-mono text-2xl font-bold">142.5 h</span>
+</div>
+<div class="flex justify-between items-end">
+<span class="text-xs font-bold text-secondary uppercase tracking-widest">Efficiency Rate</span>
+<span class="font-mono text-2xl font-bold text-tertiary">94%</span>
+</div>
+</div>
+<div class="p-4 bg-primary rounded-lg">
+<p class="text-[10px] text-on-primary uppercase font-bold tracking-widest mb-1 opacity-80">Next Milestone</p>
+<p class="text-on-primary font-bold text-sm">Walnut Table Sanding (Grade 220)</p>
+<div class="w-full bg-white/20 h-1 mt-3 rounded-full overflow-hidden">
+<div class="bg-white h-full" style="width: 75%;"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Contextual FAB (Only for main screens) -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-on-primary rounded-full dust-shadow flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined text-2xl" data-icon="add">add</span>
+</button>
+</body></html>
