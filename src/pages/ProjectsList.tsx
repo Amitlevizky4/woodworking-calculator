@@ -126,7 +126,12 @@ function ProjectRow({ project, allMaterials, onNavigate, onDelete }: {
         </div>
       </td>
       <td className="py-4 px-4">
-        <p className="font-bold text-lg">{project.name}</p>
+        <button
+          onClick={() => onNavigate(`/projects/${project.id}`)}
+          className="text-left hover:text-primary transition-colors"
+        >
+          <p className="font-bold text-lg">{project.name}</p>
+        </button>
         <p className="text-secondary text-xs mt-0.5">
           {project.type}
           {project.description && ` - ${project.description}`}
@@ -157,7 +162,7 @@ function ProjectRow({ project, allMaterials, onNavigate, onDelete }: {
         <p className="font-mono text-lg font-bold">{formatCurrency(finalPrice)}</p>
       </td>
       <td className="py-4 px-4">
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center gap-1">
           <button
             onClick={() => onNavigate(`/projects/${project.id}`)}
             className="p-2 rounded hover:bg-surface-container-high transition-colors"
@@ -287,7 +292,10 @@ export function ProjectsList() {
   }, [projects, materials, search, categoryFilter, statusFilter]);
 
   const handleDelete = (id: string) => {
-    deleteProject(id);
+    const project = projects.find((p) => p.id === id);
+    if (project && window.confirm(`Delete "${project.name}"? This cannot be undone.`)) {
+      deleteProject(id);
+    }
   };
 
   return (
