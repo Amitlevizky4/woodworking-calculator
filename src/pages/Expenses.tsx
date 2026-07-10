@@ -24,6 +24,18 @@ const CATEGORIES: readonly ExpenseCategory[] = [
   'other',
 ];
 
+// Channels align with lead-source values so marketing spend can be matched to
+// revenue by channel in Reports.
+const CHANNELS = [
+  'instagram',
+  'facebook_group',
+  'marketplace',
+  'word_of_mouth',
+  'designer',
+  'friends_family',
+  'other',
+] as const;
+
 const MONTH_NAMES = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
@@ -52,6 +64,7 @@ interface ExpenseFormState {
   supplier: string;
   description: string;
   projectId: string;
+  channel: string;
 }
 
 function ExpenseModal({
@@ -73,6 +86,7 @@ function ExpenseModal({
     supplier: initial?.supplier ?? '',
     description: initial?.description ?? '',
     projectId: initial?.projectId ?? '',
+    channel: initial?.channel ?? '',
   });
 
   const set = (patch: Partial<ExpenseFormState>) =>
@@ -88,6 +102,7 @@ function ExpenseModal({
       supplier: form.supplier || undefined,
       description: form.description || undefined,
       projectId: form.projectId || undefined,
+      channel: form.category === 'marketing' ? form.channel || undefined : undefined,
       receiptUrl: initial?.receiptUrl,
       recurringId: initial?.recurringId,
       periodMonth: initial?.periodMonth,
@@ -175,6 +190,26 @@ function ExpenseModal({
             className={INPUT_CLASS}
           />
         </div>
+
+        {form.category === 'marketing' && (
+          <div>
+            <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+              {t('reports.channelRoi')}
+            </label>
+            <select
+              value={form.channel}
+              onChange={(e) => set({ channel: e.target.value })}
+              className={INPUT_CLASS}
+            >
+              <option value="">{t('expenses.noProject')}</option>
+              {CHANNELS.map((c) => (
+                <option key={c} value={c}>
+                  {t(`leadSource.${c}`)}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div>
           <label className="text-[10px] font-bold uppercase text-secondary block mb-1">

@@ -1,8 +1,10 @@
 import type {
   Expense,
   ExpenseCategory,
+  LeadSource,
   Project,
   RecurringExpense,
+  TimeLog,
 } from '@/types';
 
 // Expense categories treated as "fixed" overhead in the P&L split. Everything
@@ -232,4 +234,161 @@ export function missingRecurringPeriods(
     guard++;
   }
   return missing;
+}
+
+// ============================================
+// Phase 2 — time logs, quarters, product & channel analytics
+// ============================================
+
+export function quarterKeyOf(dateStr: string): string {
+  const [year, month] = dateStr.slice(0, 7).split('-').map(Number);
+  const quarter = Math.floor((month - 1) / 3) + 1;
+  return `${year}-Q${quarter}`;
+}
+
+export function sumTimeLogHours(logs: TimeLog[], projectId: string): number {
+  return logs
+    .filter((log) => log.projectId === projectId)
+    .reduce((sum, log) => sum + log.hours, 0);
+}
+
+/** Hours used for profitability: logged time if any exists, else the manual
+ *  actual_hours entered on the project. */
+export function effectiveHoursForProject(
+  project: Project,
+  logs: TimeLog[],
+): number {
+  const logged = sumTimeLogHours(logs, project.id);
+  return logged > 0 ? logged : (project.actualHours ?? 0);
+}
+
+export interface LeadSourceRoiRow {
+  leadSource: LeadSource;
+  count: number;
+  revenue: number;
+}
+
+/** Projects and committed revenue grouped by lead source. Pass a quarter key
+ *  (e.g. '2026-Q1') to restrict to projects dated in that quarter. */
+export function calculateLeadSourceRoi(
+  projects: Project[],
+  quarter?: string,
+): LeadSourceRoiRow[] {
+  const groups = new Map<LeadSource, { count: number; revenue: number }>();
+
+  for (const project of projects) {
+    if (!project.leadSource) continue;
+    if (quarter && quarterKeyOf(project.date) !== quarter) continue;
+
+    const g = groups.get(project.leadSource) ?? { count: 0, revenue: 0 };
+    g.count += 1;
+    g.revenue += project.agreedPrice ?? 0;
+    groups.set(project.leadSource, g);
+  }
+
+  return Array.from(groups.entries())
+    .map(([leadSource, g]): LeadSourceRoiRow => ({ leadSource, ...g }))
+    .sort((a, b) => b.revenue - a.revenue);
+}
+
+export interface ChannelRoiRow {
+  channel: string;
+  spend: number;
+  revenue: number;
+}
+
+/** Marketing spend (from expenses with category 'marketing' and a channel)
+ *  next to committed revenue attributed to the matching lead source. Optionally
+ *  restricted to a quarter (by expense date and project date respectively). */
+export function calculateChannelRoi(
+  projects: Project[],
+  expenses: Expense[],
+  quarter?: string,
+): ChannelRoiRow[] {
+  const spend = new Map<string, number>();
+  const revenue = new Map<string, number>();
+
+  for (const expense of expenses) {
+    if (expense.category !== 'marketing' || !expense.channel) continue;
+    if (quarter && quarterKeyOf(expense.date) !== quarter) continue;
+    spend.set(expense.channel, (spend.get(expense.channel) ?? 0) + expense.amount);
+  }
+
+  for (const project of projects) {
+    if (!project.leadSource) continue;
+    if (quarter && quarterKeyOf(project.date) !== quarter) continue;
+    revenue.set(
+      project.leadSource,
+      (revenue.get(project.leadSource) ?? 0) + (project.agreedPrice ?? 0),
+    );
+  }
+
+  const channels = new Set<string>([...spend.keys(), ...revenue.keys()]);
+  return Array.from(channels)
+    .map((channel): ChannelRoiRow => ({
+      channel,
+      spend: spend.get(channel) ?? 0,
+      revenue: revenue.get(channel) ?? 0,
+    }))
+    .sort((a, b) => b.revenue - a.revenue);
+}
+
+export interface ProfitGroupInput {
+  key: string;
+  agreedPrice: number;
+  materialsCost: number;
+  linkedExpenses: number;
+  hours: number;
+}
+
+export interface ProfitGroupRow {
+  key: string;
+  count: number;
+  avgPrice: number;
+  avgHours: number;
+  avgRate: number | null;
+  totalProfit: number;
+}
+
+/** Aggregate per-project profitability into rows grouped by `key`. Callers
+ *  precompute materialsCost/linkedExpenses/hours so this stays pure. */
+export function aggregateProfitByGroup(
+  items: ProfitGroupInput[],
+): ProfitGroupRow[] {
+  const groups = new Map<
+    string,
+    { count: number; priceSum: number; hoursSum: number; rateSum: number; rateCount: number; profitSum: number }
+  >();
+
+  for (const item of items) {
+    const profit = item.agreedPrice - item.materialsCost - item.linkedExpenses;
+    const g = groups.get(item.key) ?? {
+      count: 0,
+      priceSum: 0,
+      hoursSum: 0,
+      rateSum: 0,
+      rateCount: 0,
+      profitSum: 0,
+    };
+    g.count += 1;
+    g.priceSum += item.agreedPrice;
+    g.hoursSum += item.hours;
+    g.profitSum += profit;
+    if (item.hours > 0) {
+      g.rateSum += profit / item.hours;
+      g.rateCount += 1;
+    }
+    groups.set(item.key, g);
+  }
+
+  return Array.from(groups.entries())
+    .map(([key, g]): ProfitGroupRow => ({
+      key,
+      count: g.count,
+      avgPrice: g.priceSum / g.count,
+      avgHours: g.hoursSum / g.count,
+      avgRate: g.rateCount > 0 ? g.rateSum / g.rateCount : null,
+      totalProfit: g.profitSum,
+    }))
+    .sort((a, b) => b.totalProfit - a.totalProfit);
 }

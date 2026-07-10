@@ -163,10 +163,63 @@ interface TranslationSet {
     addToProject: string;
   };
   status: {
-    planning: string;
-    inProgress: string;
-    completed: string;
+    lead: string;
+    quoted: string;
+    depositPaid: string;
+    inProduction: string;
+    ready: string;
+    delivered: string;
+    closed: string;
     onHold: string;
+  };
+  pipeline: {
+    title: string;
+    onHold: string;
+    markOnHold: string;
+    resume: string;
+    empty: string;
+    quote: string;
+  };
+  productTypes2: {
+    title: string;
+    newType: string;
+    name: string;
+    assignHint: string;
+    none: string;
+  };
+  reports: {
+    title: string;
+    quarter: string;
+    allTime: string;
+    productProfitability: string;
+    leadSourceRoi: string;
+    channelRoi: string;
+    spend: string;
+    revenue: string;
+    net: string;
+    projects: string;
+    noData: string;
+  };
+  timeLog: {
+    title: string;
+    addEntry: string;
+    hours: string;
+    note: string;
+    totalLogged: string;
+    empty: string;
+  };
+  quote: {
+    title: string;
+    preparedFor: string;
+    date: string;
+    item: string;
+    total: string;
+    depositDue: string;
+    balanceDue: string;
+    estDelivery: string;
+    terms: string;
+    termsText: string;
+    print: string;
   };
   units: {
     meter: string;
@@ -403,10 +456,64 @@ export const translations: Translations = {
       addToProject: 'Add to Project',
     },
     status: {
-      planning: 'Planning',
-      inProgress: 'In Progress',
-      completed: 'Completed',
+      lead: 'Lead',
+      quoted: 'Quoted',
+      depositPaid: 'Deposit Paid',
+      inProduction: 'In Production',
+      ready: 'Ready',
+      delivered: 'Delivered',
+      closed: 'Closed',
       onHold: 'On Hold',
+    },
+    pipeline: {
+      title: 'Pipeline',
+      onHold: 'On Hold',
+      markOnHold: 'Put on hold',
+      resume: 'Resume',
+      empty: 'Nothing here',
+      quote: 'Quote',
+    },
+    productTypes2: {
+      title: 'Product Types',
+      newType: 'New Type',
+      name: 'Name',
+      assignHint: 'Assign types to projects to unlock profitability by product.',
+      none: 'None',
+    },
+    reports: {
+      title: 'Reports',
+      quarter: 'Quarter',
+      allTime: 'All Time',
+      productProfitability: 'Profitability by Product Type',
+      leadSourceRoi: 'Lead Source ROI',
+      channelRoi: 'Marketing Channel ROI',
+      spend: 'Spend',
+      revenue: 'Revenue',
+      net: 'Net',
+      projects: 'Projects',
+      noData: 'No data for this period',
+    },
+    timeLog: {
+      title: 'Time Log',
+      addEntry: 'Add Entry',
+      hours: 'Hours',
+      note: 'Note',
+      totalLogged: 'Total Logged',
+      empty: 'No hours logged yet',
+    },
+    quote: {
+      title: 'Quote',
+      preparedFor: 'Prepared for',
+      date: 'Date',
+      item: 'Item',
+      total: 'Total',
+      depositDue: '50% Deposit Due',
+      balanceDue: 'Balance on Delivery',
+      estDelivery: 'Estimated Delivery',
+      terms: 'Terms',
+      termsText:
+        'A 50% deposit confirms your order. The balance is due on delivery. Lead times are estimates and may vary with material availability.',
+      print: 'Print / Save PDF',
     },
     units: {
       meter: 'Meter',
@@ -636,10 +743,64 @@ export const translations: Translations = {
       addToProject: '\u05D4\u05D5\u05E1\u05E4\u05D4 \u05DC\u05E4\u05E8\u05D5\u05D9\u05E7\u05D8',
     },
     status: {
-      planning: '\u05D1\u05EA\u05DB\u05E0\u05D5\u05DF',
-      inProgress: '\u05D1\u05D1\u05D9\u05E6\u05D5\u05E2',
-      completed: '\u05D4\u05D5\u05E9\u05DC\u05DD',
+      lead: '\u05DC\u05D9\u05D3',
+      quoted: '\u05D4\u05E6\u05E2\u05EA \u05DE\u05D7\u05D9\u05E8',
+      depositPaid: '\u05DE\u05E7\u05D3\u05DE\u05D4 \u05E9\u05D5\u05DC\u05DE\u05D4',
+      inProduction: '\u05D1\u05D9\u05D9\u05E6\u05D5\u05E8',
+      ready: '\u05DE\u05D5\u05DB\u05DF',
+      delivered: '\u05E0\u05DE\u05E1\u05E8',
+      closed: '\u05E1\u05D2\u05D5\u05E8',
       onHold: '\u05D1\u05D4\u05DE\u05EA\u05E0\u05D4',
+    },
+    pipeline: {
+      title: '\u05E6\u05E0\u05E8\u05EA \u05D4\u05D6\u05DE\u05E0\u05D5\u05EA',
+      onHold: '\u05D1\u05D4\u05DE\u05EA\u05E0\u05D4',
+      markOnHold: '\u05D4\u05E2\u05D1\u05E8 \u05DC\u05D4\u05DE\u05EA\u05E0\u05D4',
+      resume: '\u05D7\u05D9\u05D3\u05D5\u05E9',
+      empty: '\u05D0\u05D9\u05DF \u05DB\u05D0\u05DF \u05E4\u05E8\u05D9\u05D8\u05D9\u05DD',
+      quote: '\u05D4\u05E6\u05E2\u05EA \u05DE\u05D7\u05D9\u05E8',
+    },
+    productTypes2: {
+      title: '\u05E1\u05D5\u05D2\u05D9 \u05DE\u05D5\u05E6\u05E8\u05D9\u05DD',
+      newType: '\u05E1\u05D5\u05D2 \u05D7\u05D3\u05E9',
+      name: '\u05E9\u05DD',
+      assignHint: '\u05E9\u05D9\u05D9\u05DB\u05D5 \u05E1\u05D5\u05D2\u05D9\u05DD \u05DC\u05E4\u05E8\u05D5\u05D9\u05E7\u05D8\u05D9\u05DD \u05DB\u05D3\u05D9 \u05DC\u05E8\u05D0\u05D5\u05EA \u05E8\u05D5\u05D5\u05D7\u05D9\u05D5\u05EA \u05DC\u05E4\u05D9 \u05DE\u05D5\u05E6\u05E8.',
+      none: '\u05DC\u05DC\u05D0',
+    },
+    reports: {
+      title: '\u05D3\u05D5\u05D7\u05D5\u05EA',
+      quarter: '\u05E8\u05D1\u05E2\u05D5\u05DF',
+      allTime: '\u05DB\u05DC \u05D4\u05D6\u05DE\u05DF',
+      productProfitability: '\u05E8\u05D5\u05D5\u05D7\u05D9\u05D5\u05EA \u05DC\u05E4\u05D9 \u05E1\u05D5\u05D2 \u05DE\u05D5\u05E6\u05E8',
+      leadSourceRoi: 'ROI \u05DC\u05E4\u05D9 \u05DE\u05E7\u05D5\u05E8 \u05D4\u05E4\u05E0\u05D9\u05D4',
+      channelRoi: 'ROI \u05DC\u05E4\u05D9 \u05E2\u05E8\u05D5\u05E5 \u05E9\u05D9\u05D5\u05D5\u05E7',
+      spend: '\u05D4\u05D5\u05E6\u05D0\u05D4',
+      revenue: '\u05D4\u05DB\u05E0\u05E1\u05D4',
+      net: '\u05E0\u05D8\u05D5',
+      projects: '\u05E4\u05E8\u05D5\u05D9\u05E7\u05D8\u05D9\u05DD',
+      noData: '\u05D0\u05D9\u05DF \u05E0\u05EA\u05D5\u05E0\u05D9\u05DD \u05DC\u05EA\u05E7\u05D5\u05E4\u05D4 \u05D6\u05D5',
+    },
+    timeLog: {
+      title: '\u05D9\u05D5\u05DE\u05DF \u05E9\u05E2\u05D5\u05EA',
+      addEntry: '\u05D4\u05D5\u05E1\u05E4\u05EA \u05E8\u05D9\u05E9\u05D5\u05DD',
+      hours: '\u05E9\u05E2\u05D5\u05EA',
+      note: '\u05D4\u05E2\u05E8\u05D4',
+      totalLogged: '\u05E1\u05DA \u05E9\u05E2\u05D5\u05EA',
+      empty: '\u05D8\u05E8\u05DD \u05E0\u05E8\u05E9\u05DE\u05D5 \u05E9\u05E2\u05D5\u05EA',
+    },
+    quote: {
+      title: '\u05D4\u05E6\u05E2\u05EA \u05DE\u05D7\u05D9\u05E8',
+      preparedFor: '\u05E2\u05D1\u05D5\u05E8',
+      date: '\u05EA\u05D0\u05E8\u05D9\u05DA',
+      item: '\u05E4\u05E8\u05D9\u05D8',
+      total: '\u05E1\u05DA \u05D4\u05DB\u05DC',
+      depositDue: '\u05DE\u05E7\u05D3\u05DE\u05D4 50%',
+      balanceDue: '\u05D9\u05EA\u05E8\u05D4 \u05D1\u05DE\u05E1\u05D9\u05E8\u05D4',
+      estDelivery: '\u05DE\u05E1\u05D9\u05E8\u05D4 \u05DE\u05E9\u05D5\u05E2\u05E8\u05EA',
+      terms: '\u05EA\u05E0\u05D0\u05D9\u05DD',
+      termsText:
+        '\u05DE\u05E7\u05D3\u05DE\u05D4 \u05D1\u05D2\u05D5\u05D1\u05D4 50% \u05DE\u05D0\u05E9\u05E8\u05EA \u05D0\u05EA \u05D4\u05D4\u05D6\u05DE\u05E0\u05D4. \u05D4\u05D9\u05EA\u05E8\u05D4 \u05EA\u05E9\u05D5\u05DC\u05DD \u05D1\u05DE\u05E1\u05D9\u05E8\u05D4. \u05D6\u05DE\u05E0\u05D9 \u05D4\u05D0\u05E1\u05E4\u05E7\u05D4 \u05DE\u05E9\u05D5\u05E2\u05E8\u05D9\u05DD \u05D5\u05E2\u05E9\u05D5\u05D9\u05D9\u05DD \u05DC\u05D4\u05E9\u05EA\u05E0\u05D5\u05EA \u05D1\u05D4\u05EA\u05D0\u05DD \u05DC\u05D6\u05DE\u05D9\u05E0\u05D5\u05EA \u05D4\u05D7\u05D5\u05DE\u05E8\u05D9\u05DD.',
+      print: '\u05D4\u05D3\u05E4\u05E1\u05D4 / \u05E9\u05DE\u05D9\u05E8\u05EA PDF',
     },
     units: {
       meter: '\u05DE\u05D8\u05E8',

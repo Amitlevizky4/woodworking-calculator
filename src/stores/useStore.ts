@@ -5,7 +5,9 @@ import type {
   MaterialVariant,
   Project,
   ProjectMaterial,
+  ProductType,
   Template,
+  TimeLog,
   WoodPart,
 } from '@/types';
 import { supabase } from '@/lib/supabase';
@@ -18,6 +20,8 @@ interface AppState {
   materials: Material[];
   categories: Category[];
   templates: Template[];
+  productTypes: ProductType[];
+  timeLogs: TimeLog[];
   language: Language;
   loading: boolean;
   initialized: boolean;
@@ -39,6 +43,13 @@ interface AppState {
   addTemplate: (template: Template) => Promise<void>;
   updateTemplate: (template: Template) => Promise<void>;
   deleteTemplate: (id: string) => Promise<void>;
+
+  addProductType: (productType: ProductType) => Promise<void>;
+  updateProductType: (productType: ProductType) => Promise<void>;
+  deleteProductType: (id: string) => Promise<void>;
+
+  addTimeLog: (log: TimeLog) => Promise<void>;
+  deleteTimeLog: (id: string) => Promise<void>;
 
   toggleLanguage: () => void;
   initialize: () => Promise<void>;
@@ -91,6 +102,8 @@ function mapDbProject(
     description: (row.description as string) ?? undefined,
     date: row.date as string,
     status: row.status as Project['status'],
+    onHold: (row.on_hold as boolean) ?? false,
+    productTypeId: (row.product_type_id as string) ?? undefined,
     buyerName: (row.buyer_name as string) ?? undefined,
     platform: (row.platform as string) ?? undefined,
     laborHours: row.labor_hours as number,
@@ -142,6 +155,7 @@ function mapDbTemplate(
     name: row.name as string,
     type: row.type as string,
     description: (row.description as string) ?? undefined,
+    productTypeId: (row.product_type_id as string) ?? undefined,
     templateName: row.template_name as string,
     templateDescription: (row.template_description as string) ?? undefined,
     laborHours: row.labor_hours as number,
@@ -179,6 +193,8 @@ export const useStore = create<AppState>()((set, get) => ({
   materials: [],
   categories: [],
   templates: [],
+  productTypes: [],
+  timeLogs: [],
   language:
     (localStorage.getItem('woodworking-lang') as Language) || 'en',
   loading: false,
@@ -195,6 +211,8 @@ export const useStore = create<AppState>()((set, get) => ({
           materials: [],
           projects: [],
           templates: [],
+          productTypes: [],
+          timeLogs: [],
           loading: false,
         });
         return;
@@ -209,6 +227,8 @@ export const useStore = create<AppState>()((set, get) => ({
         templatesRes,
         templateMaterialsRes,
         templateWoodPartsRes,
+        productTypesRes,
+        timeLogsRes,
       ] = await Promise.all([
         supabase.from('categories').select('*').eq('shop_id', shopId),
         supabase.from('materials').select('*, material_variants(*)').eq('shop_id', shopId),
@@ -218,6 +238,8 @@ export const useStore = create<AppState>()((set, get) => ({
         supabase.from('templates').select('*').eq('shop_id', shopId),
         supabase.from('template_materials').select('*'),
         supabase.from('template_wood_parts').select('*'),
+        supabase.from('product_types').select('*').eq('shop_id', shopId),
+        supabase.from('time_logs').select('*').eq('shop_id', shopId),
       ]);
 
       const categories: Category[] = (categoriesRes.data ?? []).map(
@@ -260,7 +282,32 @@ export const useStore = create<AppState>()((set, get) => ({
           ),
       );
 
-      set({ categories, materials, projects, templates, loading: false });
+      const productTypes: ProductType[] = (productTypesRes.data ?? []).map(
+        (row) => ({
+          id: row.id as string,
+          name: row.name as string,
+          color: row.color as string,
+        }),
+      );
+
+      const timeLogs: TimeLog[] = (timeLogsRes.data ?? []).map((row) => ({
+        id: row.id as string,
+        projectId: row.project_id as string,
+        date: row.date as string,
+        hours: row.hours as number,
+        note: (row.note as string) ?? undefined,
+        createdAt: row.created_at as string,
+      }));
+
+      set({
+        categories,
+        materials,
+        projects,
+        templates,
+        productTypes,
+        timeLogs,
+        loading: false,
+      });
     } catch (error) {
       console.error('Failed to fetch data from Supabase:', error);
       set({ loading: false });
@@ -284,6 +331,8 @@ export const useStore = create<AppState>()((set, get) => ({
           description: project.description ?? null,
           date: project.date,
           status: project.status,
+          on_hold: project.onHold,
+          product_type_id: project.productTypeId ?? null,
           buyer_name: project.buyerName ?? null,
           platform: project.platform ?? null,
           labor_hours: project.laborHours,
@@ -350,6 +399,8 @@ export const useStore = create<AppState>()((set, get) => ({
           description: project.description ?? null,
           date: project.date,
           status: project.status,
+          on_hold: project.onHold,
+          product_type_id: project.productTypeId ?? null,
           buyer_name: project.buyerName ?? null,
           platform: project.platform ?? null,
           labor_hours: project.laborHours,
@@ -600,6 +651,7 @@ export const useStore = create<AppState>()((set, get) => ({
           template_name: template.templateName,
           template_description: template.templateDescription ?? null,
           type: template.type,
+          product_type_id: template.productTypeId ?? null,
           description: template.description ?? null,
           labor_hours: template.laborHours,
           hourly_rate: template.hourlyRate,
@@ -655,6 +707,7 @@ export const useStore = create<AppState>()((set, get) => ({
           template_name: template.templateName,
           template_description: template.templateDescription ?? null,
           type: template.type,
+          product_type_id: template.productTypeId ?? null,
           description: template.description ?? null,
           labor_hours: template.laborHours,
           hourly_rate: template.hourlyRate,
@@ -723,6 +776,92 @@ export const useStore = create<AppState>()((set, get) => ({
       await get().fetchAll();
     } catch (error) {
       console.error('Failed to delete template:', error);
+    }
+  },
+
+  addProductType: async (productType) => {
+    try {
+      const shopId = getActiveShopId();
+      if (!shopId) return;
+      const userId = await getUserId();
+
+      const { error } = await supabase.from('product_types').insert({
+        id: productType.id,
+        shop_id: shopId,
+        created_by: userId,
+        name: productType.name,
+        color: productType.color,
+      });
+
+      if (error) throw error;
+
+      await get().fetchAll();
+    } catch (error) {
+      console.error('Failed to add product type:', error);
+    }
+  },
+
+  updateProductType: async (productType) => {
+    try {
+      const { error } = await supabase
+        .from('product_types')
+        .update({ name: productType.name, color: productType.color })
+        .eq('id', productType.id);
+
+      if (error) throw error;
+
+      await get().fetchAll();
+    } catch (error) {
+      console.error('Failed to update product type:', error);
+    }
+  },
+
+  deleteProductType: async (id) => {
+    try {
+      const { error } = await supabase
+        .from('product_types')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+
+      await get().fetchAll();
+    } catch (error) {
+      console.error('Failed to delete product type:', error);
+    }
+  },
+
+  addTimeLog: async (log) => {
+    try {
+      const shopId = getActiveShopId();
+      if (!shopId) return;
+      const userId = await getUserId();
+
+      const { error } = await supabase.from('time_logs').insert({
+        id: log.id,
+        shop_id: shopId,
+        project_id: log.projectId,
+        created_by: userId,
+        date: log.date,
+        hours: log.hours,
+        note: log.note ?? null,
+      });
+
+      if (error) throw error;
+
+      await get().fetchAll();
+    } catch (error) {
+      console.error('Failed to add time log:', error);
+    }
+  },
+
+  deleteTimeLog: async (id) => {
+    try {
+      const { error } = await supabase.from('time_logs').delete().eq('id', id);
+      if (error) throw error;
+
+      await get().fetchAll();
+    } catch (error) {
+      console.error('Failed to delete time log:', error);
     }
   },
 

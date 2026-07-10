@@ -59,6 +59,7 @@ function mapDbExpense(row: Record<string, unknown>): Expense {
     supplier: (row.supplier as string) ?? undefined,
     description: (row.description as string) ?? undefined,
     projectId: (row.project_id as string) ?? undefined,
+    channel: (row.channel as string) ?? undefined,
     receiptUrl: (row.receipt_url as string) ?? undefined,
     recurringId: (row.recurring_id as string) ?? undefined,
     periodMonth: (row.period_month as string) ?? undefined,
@@ -158,6 +159,7 @@ export const useBusinessStore = create<BusinessState>()((set, get) => ({
         supplier: expense.supplier ?? null,
         description: expense.description ?? null,
         project_id: expense.projectId ?? null,
+        channel: expense.channel ?? null,
         receipt_url: expense.receiptUrl ?? null,
       });
 
@@ -180,6 +182,7 @@ export const useBusinessStore = create<BusinessState>()((set, get) => ({
           supplier: expense.supplier ?? null,
           description: expense.description ?? null,
           project_id: expense.projectId ?? null,
+          channel: expense.channel ?? null,
           receipt_url: expense.receiptUrl ?? null,
         })
         .eq('id', expense.id);

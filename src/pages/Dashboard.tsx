@@ -27,21 +27,8 @@ import {
   calculateTrailing12Revenue,
   trailingMonths,
 } from '@/utils/business-metrics';
-import type { Expense, Project, Status } from '@/types';
-
-const STATUS_BADGE_CLASSES: Record<Status, string> = {
-  planning: 'bg-surface-variant text-secondary',
-  'in-progress': 'bg-primary/10 text-primary',
-  completed: 'bg-tertiary/10 text-tertiary',
-  'on-hold': 'bg-secondary-container text-on-secondary-container',
-};
-
-const STATUS_LABELS: Record<Status, string> = {
-  planning: 'Planning',
-  'in-progress': 'In Progress',
-  completed: 'Completed',
-  'on-hold': 'On Hold',
-};
+import { STATUS_BADGE_CLASSES, STATUS_TKEY } from '@/utils/pipeline';
+import type { Expense, Project } from '@/types';
 
 const MONTH_NAMES = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -402,7 +389,7 @@ function MoneySection({
         };
       }),
     };
-  }, [projects, expenses, settings]);
+  }, [projects, expenses]);
 
   return (
     <div className="space-y-6">
@@ -461,8 +448,10 @@ function StatsGrid({ projects, allMaterials }: {
   const { t } = useTranslation();
 
   const stats = useMemo(() => {
-    const activeProjects = projects.filter((p) => p.status === 'in-progress');
-    const completedProjects = projects.filter((p) => p.status === 'completed');
+    const activeProjects = projects.filter((p) => p.status === 'in_production');
+    const completedProjects = projects.filter(
+      (p) => p.status === 'delivered' || p.status === 'closed',
+    );
 
     const totalFinalPrices = projects.map((p) => getProjectFinalPrice(p, allMaterials));
     const avgBuildCost = projects.length > 0
@@ -595,7 +584,7 @@ function RecentProjectsTable({ projects, allMaterials }: {
                 <td className="py-3 font-medium">{project.name}</td>
                 <td className="py-3">
                   <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${STATUS_BADGE_CLASSES[project.status]}`}>
-                    {STATUS_LABELS[project.status]}
+                    {t(STATUS_TKEY[project.status])}
                   </span>
                 </td>
                 <td className="py-3 font-mono font-bold">{formatCurrency(finalPrice)}</td>
