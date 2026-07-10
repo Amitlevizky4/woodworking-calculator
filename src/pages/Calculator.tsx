@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { useStore } from '@/stores/useStore';
+import { useBusinessStore } from '@/stores/useBusinessStore';
 import { useTranslation } from '@/i18n/useTranslation';
 import { Icon } from '@/components/Icon';
 import {
@@ -10,6 +11,7 @@ import {
   calculateFinalPrice,
   formatCurrency,
 } from '@/utils/cost-calculator';
+import { evaluateTargetHourlyRate } from '@/utils/business-metrics';
 import { packSheets } from '@/utils/bin-packing';
 import type {
   ProjectMaterial,
@@ -17,10 +19,20 @@ import type {
   Status,
   MarkupAppliedTo,
   Material,
+  LeadSource,
 } from '@/types';
 import type { SheetLayout } from '@/utils/bin-packing';
 
 const PROJECT_TYPES = ['furniture', 'cabinet', 'shelf', 'table', 'custom'] as const;
+const LEAD_SOURCES: LeadSource[] = [
+  'instagram',
+  'facebook_group',
+  'marketplace',
+  'word_of_mouth',
+  'designer',
+  'friends_family',
+  'other',
+];
 const STATUSES: Status[] = ['planning', 'in-progress', 'completed', 'on-hold'];
 const STATUS_KEYS: Record<Status, string> = {
   planning: 'status.planning',
@@ -191,6 +203,9 @@ function LiveCostSummary({
   markupAmount,
   discountAmount,
   finalPrice,
+  effectiveRate,
+  targetHourlyRate,
+  meetsTarget,
 }: {
   materialsCost: number;
   laborCost: number;
@@ -198,6 +213,9 @@ function LiveCostSummary({
   markupAmount: number;
   discountAmount: number;
   finalPrice: number;
+  effectiveRate: number | null;
+  targetHourlyRate: number;
+  meetsTarget: boolean;
 }) {
   const { t } = useTranslation();
 
@@ -268,6 +286,36 @@ function LiveCostSummary({
                 {formatCurrency(finalPrice)}
               </p>
             </div>
+
+            {effectiveRate !== null && (
+              <div
+                className={`rounded-xl p-4 mt-3 flex items-center justify-between ${
+                  meetsTarget
+                    ? 'bg-tertiary/10 text-tertiary'
+                    : 'bg-error/10 text-error'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Icon
+                    name={meetsTarget ? 'check_circle' : 'error'}
+                    className="text-lg"
+                  />
+                  <div>
+                    <p className="text-xs font-medium">
+                      {meetsTarget
+                        ? t('calculator.meetsTarget')
+                        : t('calculator.belowTarget')}
+                    </p>
+                    <p className="text-[10px] opacity-70">
+                      {t('calculator.targetHourlyRate')}: {formatCurrency(targetHourlyRate)}/hr
+                    </p>
+                  </div>
+                </div>
+                <p className="font-mono text-lg font-bold">
+                  {formatCurrency(effectiveRate)}/hr
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -285,6 +333,7 @@ export function Calculator() {
   const addProject = useStore((s) => s.addProject);
   const updateProject = useStore((s) => s.updateProject);
   const addTemplate = useStore((s) => s.addTemplate);
+  const settings = useBusinessStore((s) => s.settings);
 
   const existingProject = id ? projects.find((p) => p.id === id) : undefined;
 
@@ -311,6 +360,27 @@ export function Calculator() {
   const [discountPercent, setDiscountPercent] = useState(
     existingProject?.discountPercent ?? 0,
   );
+  const [targetHourlyRate, setTargetHourlyRate] = useState(
+    settings.targetHourlyRate,
+  );
+
+  // Income & payment tracking
+  const [quotedPrice, setQuotedPrice] = useState(existingProject?.quotedPrice ?? 0);
+  const [agreedPrice, setAgreedPrice] = useState(existingProject?.agreedPrice ?? 0);
+  const [depositAmount, setDepositAmount] = useState(
+    existingProject?.depositAmount ?? 0,
+  );
+  const [depositPaidAt, setDepositPaidAt] = useState(
+    existingProject?.depositPaidAt ?? '',
+  );
+  const [balancePaidAt, setBalancePaidAt] = useState(
+    existingProject?.balancePaidAt ?? '',
+  );
+  const [deliveredAt, setDeliveredAt] = useState(existingProject?.deliveredAt ?? '');
+  const [actualHours, setActualHours] = useState(existingProject?.actualHours ?? 0);
+  const [leadSource, setLeadSource] = useState<LeadSource | ''>(
+    existingProject?.leadSource ?? '',
+  );
 
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [isOptimized, setIsOptimized] = useState(false);
@@ -335,6 +405,17 @@ export function Calculator() {
         discountPercent,
       }),
     [materialsCost, laborCost, markupFactor, markupAppliedTo, discountPercent],
+  );
+
+  const targetRateResult = useMemo(
+    () =>
+      evaluateTargetHourlyRate({
+        price: costBreakdown.finalPrice,
+        materialsCost,
+        laborHours,
+        targetHourlyRate,
+      }),
+    [costBreakdown.finalPrice, materialsCost, laborHours, targetHourlyRate],
   );
 
   const packingResult = useMemo(() => {
@@ -454,6 +535,14 @@ export function Calculator() {
       markupFactor,
       markupAppliedTo,
       discountPercent,
+      quotedPrice: quotedPrice || undefined,
+      agreedPrice: agreedPrice || undefined,
+      depositAmount: depositAmount || undefined,
+      depositPaidAt: depositPaidAt || undefined,
+      balancePaidAt: balancePaidAt || undefined,
+      deliveredAt: deliveredAt || undefined,
+      actualHours: actualHours || undefined,
+      leadSource: leadSource || undefined,
       createdAt: existingProject?.createdAt ?? now,
       updatedAt: now,
     };
@@ -479,6 +568,14 @@ export function Calculator() {
     markupFactor,
     markupAppliedTo,
     discountPercent,
+    quotedPrice,
+    agreedPrice,
+    depositAmount,
+    depositPaidAt,
+    balancePaidAt,
+    deliveredAt,
+    actualHours,
+    leadSource,
     addProject,
     updateProject,
     navigate,
@@ -941,6 +1038,25 @@ export function Calculator() {
                   </span>
                 </div>
               </div>
+              <div>
+                <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+                  {t('calculator.targetHourlyRate')}
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    value={targetHourlyRate || ''}
+                    onChange={(e) =>
+                      setTargetHourlyRate(parseFloat(e.target.value) || 0)
+                    }
+                    min={0}
+                    className={`${INPUT_CLASS} pe-14 font-mono`}
+                  />
+                  <span className="absolute end-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
+                    &#8362;/hr
+                  </span>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -1017,6 +1133,113 @@ export function Calculator() {
           </section>
         </div>
 
+        {/* INCOME & PAYMENTS */}
+        <section className="bg-surface-container rounded-2xl p-6">
+          <SectionHeader icon="account_balance_wallet" label={t('income.payments')} />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+                {t('income.quotedPrice')}
+              </label>
+              <input
+                type="number"
+                value={quotedPrice || ''}
+                onChange={(e) => setQuotedPrice(parseFloat(e.target.value) || 0)}
+                min={0}
+                className={`${INPUT_CLASS} font-mono`}
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+                {t('income.agreedPrice')}
+              </label>
+              <input
+                type="number"
+                value={agreedPrice || ''}
+                onChange={(e) => setAgreedPrice(parseFloat(e.target.value) || 0)}
+                min={0}
+                className={`${INPUT_CLASS} font-mono`}
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+                {t('income.depositAmount')}
+              </label>
+              <input
+                type="number"
+                value={depositAmount || ''}
+                onChange={(e) => setDepositAmount(parseFloat(e.target.value) || 0)}
+                min={0}
+                className={`${INPUT_CLASS} font-mono`}
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+                {t('income.actualHours')}
+              </label>
+              <input
+                type="number"
+                value={actualHours || ''}
+                onChange={(e) => setActualHours(parseFloat(e.target.value) || 0)}
+                min={0}
+                step="0.5"
+                className={`${INPUT_CLASS} font-mono`}
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+                {t('income.depositPaid')}
+              </label>
+              <input
+                type="date"
+                value={depositPaidAt}
+                onChange={(e) => setDepositPaidAt(e.target.value)}
+                className={INPUT_CLASS}
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+                {t('income.balancePaid')}
+              </label>
+              <input
+                type="date"
+                value={balancePaidAt}
+                onChange={(e) => setBalancePaidAt(e.target.value)}
+                className={INPUT_CLASS}
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+                {t('income.delivered')}
+              </label>
+              <input
+                type="date"
+                value={deliveredAt}
+                onChange={(e) => setDeliveredAt(e.target.value)}
+                className={INPUT_CLASS}
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+                {t('income.leadSource')}
+              </label>
+              <select
+                value={leadSource}
+                onChange={(e) => setLeadSource(e.target.value as LeadSource | '')}
+                className={INPUT_CLASS}
+              >
+                <option value="">{t('income.notSet')}</option>
+                {LEAD_SOURCES.map((ls) => (
+                  <option key={ls} value={ls}>
+                    {t(`leadSource.${ls}`)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </section>
+
         {/* ACTION FOOTER */}
         <div className="flex flex-wrap gap-3">
           <button
@@ -1054,6 +1277,9 @@ export function Calculator() {
         markupAmount={costBreakdown.markupAmount}
         discountAmount={costBreakdown.discountAmount}
         finalPrice={costBreakdown.finalPrice}
+        effectiveRate={targetRateResult.effectiveRate}
+        targetHourlyRate={targetHourlyRate}
+        meetsTarget={targetRateResult.meets}
       />
     </div>
   );

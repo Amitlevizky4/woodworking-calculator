@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '@/stores/useStore';
+import { useBusinessStore } from '@/stores/useBusinessStore';
 import { useTranslation } from '@/i18n/useTranslation';
 import { Icon } from '@/components/Icon';
 import {
@@ -9,6 +10,7 @@ import {
   calculateFinalPrice,
   formatCurrency,
 } from '@/utils/cost-calculator';
+import { calculateEffectiveHourlyRate } from '@/utils/business-metrics';
 import { packSheets } from '@/utils/bin-packing';
 import { SheetVisualization } from '@/components/SheetVisualization';
 import type { Status } from '@/types';
@@ -53,6 +55,20 @@ function CostCard({
         {label}
       </p>
       <p className="font-mono text-2xl font-bold mt-2">{value}</p>
+    </div>
+  );
+}
+
+function InfoCell({ label, value }: { label: string; value: string | null }) {
+  const { t } = useTranslation();
+  return (
+    <div className="bg-surface-container-low p-4 rounded-xl border-b-2 border-outline-variant">
+      <p className="text-[10px] font-bold uppercase tracking-widest text-secondary">
+        {label}
+      </p>
+      <p className={`font-mono text-lg font-bold mt-1 ${value ? '' : 'text-secondary'}`}>
+        {value ?? t('income.notSet')}
+      </p>
     </div>
   );
 }
@@ -199,11 +215,33 @@ export function ProjectDetails() {
   const navigate = useNavigate();
   const projects = useStore((state) => state.projects);
   const allMaterials = useStore((state) => state.materials);
+  const expenses = useBusinessStore((state) => state.expenses);
 
   const project = useMemo(
     () => projects.find((p) => p.id === id) ?? null,
     [projects, id],
   );
+
+  const linkedExpensesTotal = useMemo(
+    () =>
+      project
+        ? expenses
+            .filter((e) => e.projectId === project.id)
+            .reduce((sum, e) => sum + e.amount, 0)
+        : 0,
+    [project, expenses],
+  );
+
+  const effectiveRate = useMemo(() => {
+    if (!project) return null;
+    const materialsCost = calculateMaterialsCost(project.materials, allMaterials);
+    return calculateEffectiveHourlyRate({
+      agreedPrice: project.agreedPrice ?? 0,
+      materialsCost,
+      linkedExpenses: linkedExpensesTotal,
+      actualHours: project.actualHours ?? 0,
+    });
+  }, [project, allMaterials, linkedExpensesTotal]);
 
   const costBreakdown = useMemo(() => {
     if (!project) return null;
@@ -326,6 +364,13 @@ export function ProjectDetails() {
 
           <div className="flex gap-2 no-print">
             <button
+              onClick={() => navigate(`/calculator/${project.id}`)}
+              className="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg text-sm font-medium hover:bg-surface-container transition-colors"
+            >
+              <Icon name="edit" className="text-base" />
+              {t('common.edit')}
+            </button>
+            <button
               onClick={handlePrint}
               className="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg text-sm font-medium hover:bg-surface-container transition-colors"
             >
@@ -373,6 +418,50 @@ export function ProjectDetails() {
           </div>
         </div>
       )}
+
+      <div>
+        <h2 className="font-headline text-lg font-bold uppercase tracking-wide mb-4">
+          {t('income.payments')}
+        </h2>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <InfoCell
+            label={t('income.quotedPrice')}
+            value={project.quotedPrice ? formatCurrency(project.quotedPrice) : null}
+          />
+          <InfoCell
+            label={t('income.agreedPrice')}
+            value={project.agreedPrice ? formatCurrency(project.agreedPrice) : null}
+          />
+          <InfoCell
+            label={t('income.depositAmount')}
+            value={project.depositAmount ? formatCurrency(project.depositAmount) : null}
+          />
+          <InfoCell
+            label={t('income.leadSource')}
+            value={project.leadSource ? t(`leadSource.${project.leadSource}`) : null}
+          />
+          <InfoCell label={t('income.depositPaid')} value={project.depositPaidAt ?? null} />
+          <InfoCell label={t('income.balancePaid')} value={project.balancePaidAt ?? null} />
+          <InfoCell label={t('income.delivered')} value={project.deliveredAt ?? null} />
+          <InfoCell
+            label={t('income.actualHours')}
+            value={project.actualHours ? `${project.actualHours} hrs` : null}
+          />
+        </div>
+        {effectiveRate !== null && (
+          <div className="mt-4 bg-primary text-white p-6 rounded-xl inline-flex items-center gap-4">
+            <Icon name="trending_up" className="text-3xl" />
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-white/70">
+                {t('pnl.effectiveRate')}
+              </p>
+              <p className="font-mono text-3xl font-bold">
+                {formatCurrency(effectiveRate)}/hr
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
 
       <div>
         <h2 className="font-headline text-lg font-bold uppercase tracking-wide mb-4">

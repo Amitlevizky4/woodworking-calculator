@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useStore } from '@/stores/useStore';
 import { useShopStore } from '@/stores/useShopStore';
+import { useBusinessStore } from '@/stores/useBusinessStore';
 import { useTranslation } from '@/i18n/useTranslation';
 import { AuthProvider } from '@/auth/AuthProvider';
 import { ProtectedRoute } from '@/auth/ProtectedRoute';
@@ -15,6 +16,8 @@ import { Calculator } from '@/pages/Calculator';
 import { MaterialsLibrary } from '@/pages/MaterialsLibrary';
 import { Categories } from '@/pages/Categories';
 import { Templates } from '@/pages/Templates';
+import { Expenses } from '@/pages/Expenses';
+import { Settings } from '@/pages/Settings';
 import { Onboarding } from '@/pages/Onboarding';
 import { AcceptInvitation } from '@/pages/AcceptInvitation';
 import { ShopManagement } from '@/pages/ShopManagement';
@@ -27,6 +30,7 @@ function AppRoutes() {
   useEffect(() => {
     if (activeShopId) {
       useStore.getState().fetchAll();
+      useBusinessStore.getState().fetchAll();
     }
   }, [activeShopId]);
 
@@ -51,6 +55,8 @@ function AppRoutes() {
             <Route path="/materials" element={<MaterialsLibrary />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/templates" element={<Templates />} />
+            <Route path="/expenses" element={<Expenses />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="/shop/manage" element={<ShopManagement />} />
             <Route path="/admin" element={<AdminPanel />} />
           </Route>
