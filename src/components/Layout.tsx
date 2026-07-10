@@ -14,15 +14,17 @@ interface NavItem {
 const NAV_ITEMS: readonly NavItem[] = [
   { labelKey: 'nav.dashboard', icon: 'dashboard', to: '/' },
   { labelKey: 'nav.projects', icon: 'square_foot', to: '/projects' },
+  { labelKey: 'nav.expenses', icon: 'receipt_long', to: '/expenses' },
   { labelKey: 'nav.materialsLibrary', icon: 'layers', to: '/materials' },
   { labelKey: 'nav.templates', icon: 'description', to: '/templates' },
+  { labelKey: 'nav.settings', icon: 'tune', to: '/settings' },
 ] as const;
 
 const MOBILE_NAV_ITEMS: readonly NavItem[] = [
   { labelKey: 'nav.dashboard', icon: 'dashboard', to: '/' },
   { labelKey: 'nav.projects', icon: 'square_foot', to: '/projects' },
+  { labelKey: 'nav.expenses', icon: 'receipt_long', to: '/expenses' },
   { labelKey: 'nav.materialsLibrary', icon: 'layers', to: '/materials' },
-  { labelKey: 'nav.templates', icon: 'settings', to: '/categories' },
 ] as const;
 
 function SidebarUser() {

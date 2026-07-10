@@ -4,6 +4,8 @@ interface TranslationSet {
     projects: string;
     materialsLibrary: string;
     templates: string;
+    expenses: string;
+    settings: string;
   };
   common: {
     save: string;
@@ -61,6 +63,95 @@ interface TranslationSet {
     addComponent: string;
     buyerClient: string;
     projectType: string;
+    targetHourlyRate: string;
+    meetsTarget: string;
+    belowTarget: string;
+  };
+  expenses: {
+    title: string;
+    addExpense: string;
+    editExpense: string;
+    date: string;
+    amount: string;
+    category: string;
+    supplier: string;
+    description: string;
+    linkedProject: string;
+    noProject: string;
+    recurringRules: string;
+    addRecurring: string;
+    dayOfMonth: string;
+    active: string;
+    inactive: string;
+    pendingRecurring: string;
+    generateNow: string;
+    exportCsv: string;
+    month: string;
+    allMonths: string;
+    allCategories: string;
+    noExpenses: string;
+    total: string;
+  };
+  expenseCategory: {
+    workshop_rent: string;
+    materials: string;
+    consumables: string;
+    tools: string;
+    insurance: string;
+    marketing: string;
+    transport: string;
+    fees: string;
+    other: string;
+  };
+  leadSource: {
+    instagram: string;
+    facebook_group: string;
+    marketplace: string;
+    word_of_mouth: string;
+    designer: string;
+    friends_family: string;
+    other: string;
+  };
+  income: {
+    payments: string;
+    quotedPrice: string;
+    agreedPrice: string;
+    depositAmount: string;
+    depositPaid: string;
+    balancePaid: string;
+    delivered: string;
+    actualHours: string;
+    leadSource: string;
+    notSet: string;
+  };
+  pnl: {
+    title: string;
+    revenue: string;
+    expenses: string;
+    fixed: string;
+    variable: string;
+    netProfit: string;
+    profitTarget: string;
+    ceilingTitle: string;
+    ceilingSubtitle: string;
+    ceilingWarning: string;
+    ceilingExceeded: string;
+    trend: string;
+    effectiveRate: string;
+    profitByType: string;
+    count: string;
+    avgPrice: string;
+    avgRate: string;
+    totalProfit: string;
+  };
+  settings: {
+    title: string;
+    subtitle: string;
+    monthlyProfitTarget: string;
+    vatExemptCeiling: string;
+    targetHourlyRate: string;
+    weeklyHoursBudget: string;
+    saved: string;
   };
   materials: {
     materialName: string;
@@ -153,6 +244,8 @@ export const translations: Translations = {
       projects: 'Projects',
       materialsLibrary: 'Materials Library',
       templates: 'Templates',
+      expenses: 'Expenses',
+      settings: 'Settings',
     },
     common: {
       save: 'Save',
@@ -210,6 +303,95 @@ export const translations: Translations = {
       addComponent: 'Add Component',
       buyerClient: 'Buyer / Client',
       projectType: 'Project Type',
+      targetHourlyRate: 'Target Hourly Rate',
+      meetsTarget: 'Meets target rate',
+      belowTarget: 'Below target rate',
+    },
+    expenses: {
+      title: 'Expenses',
+      addExpense: 'Add Expense',
+      editExpense: 'Edit Expense',
+      date: 'Date',
+      amount: 'Amount',
+      category: 'Category',
+      supplier: 'Supplier',
+      description: 'Description',
+      linkedProject: 'Linked Project',
+      noProject: 'No project',
+      recurringRules: 'Recurring Expenses',
+      addRecurring: 'Add Recurring',
+      dayOfMonth: 'Day of Month',
+      active: 'Active',
+      inactive: 'Inactive',
+      pendingRecurring: 'recurring expense(s) due',
+      generateNow: 'Generate now',
+      exportCsv: 'Export CSV',
+      month: 'Month',
+      allMonths: 'All Months',
+      allCategories: 'All Categories',
+      noExpenses: 'No expenses recorded',
+      total: 'Total',
+    },
+    expenseCategory: {
+      workshop_rent: 'Workshop Rent',
+      materials: 'Materials',
+      consumables: 'Consumables',
+      tools: 'Tools',
+      insurance: 'Insurance',
+      marketing: 'Marketing',
+      transport: 'Transport',
+      fees: 'Fees',
+      other: 'Other',
+    },
+    leadSource: {
+      instagram: 'Instagram',
+      facebook_group: 'Facebook Group',
+      marketplace: 'Marketplace',
+      word_of_mouth: 'Word of Mouth',
+      designer: 'Designer Referral',
+      friends_family: 'Friends & Family',
+      other: 'Other',
+    },
+    income: {
+      payments: 'Payments & Delivery',
+      quotedPrice: 'Quoted Price',
+      agreedPrice: 'Agreed Price',
+      depositAmount: 'Deposit',
+      depositPaid: 'Deposit Paid',
+      balancePaid: 'Balance Paid',
+      delivered: 'Delivered',
+      actualHours: 'Actual Hours',
+      leadSource: 'Lead Source',
+      notSet: 'Not set',
+    },
+    pnl: {
+      title: 'Monthly P&L',
+      revenue: 'Revenue Received',
+      expenses: 'Expenses',
+      fixed: 'Fixed',
+      variable: 'Variable',
+      netProfit: 'Net Profit',
+      profitTarget: 'Profit Target',
+      ceilingTitle: 'Osek Patur Ceiling',
+      ceilingSubtitle: 'Trailing 12 months',
+      ceilingWarning: 'Approaching ceiling — plan for Osek Murshe',
+      ceilingExceeded: 'Ceiling exceeded — switch to Osek Murshe',
+      trend: '6-Month Trend',
+      effectiveRate: 'Effective ₪/hr',
+      profitByType: 'Profitability by Type',
+      count: 'Sold',
+      avgPrice: 'Avg Price',
+      avgRate: 'Avg ₪/hr',
+      totalProfit: 'Total Profit',
+    },
+    settings: {
+      title: 'Business Settings',
+      subtitle: 'Targets that drive your dashboard',
+      monthlyProfitTarget: 'Monthly Profit Target',
+      vatExemptCeiling: 'Osek Patur Annual Ceiling',
+      targetHourlyRate: 'Target Hourly Rate',
+      weeklyHoursBudget: 'Weekly Production Hours',
+      saved: 'Settings saved',
     },
     materials: {
       materialName: 'Material Name',
@@ -295,6 +477,8 @@ export const translations: Translations = {
       projects: '\u05E4\u05E8\u05D5\u05D9\u05E7\u05D8\u05D9\u05DD',
       materialsLibrary: '\u05E1\u05E4\u05E8\u05D9\u05D9\u05EA \u05D7\u05D5\u05DE\u05E8\u05D9\u05DD',
       templates: '\u05EA\u05D1\u05E0\u05D9\u05D5\u05EA',
+      expenses: '\u05D4\u05D5\u05E6\u05D0\u05D5\u05EA',
+      settings: '\u05D4\u05D2\u05D3\u05E8\u05D5\u05EA',
     },
     common: {
       save: '\u05E9\u05DE\u05D9\u05E8\u05D4',
@@ -352,6 +536,95 @@ export const translations: Translations = {
       addComponent: '\u05D4\u05D5\u05E1\u05E4\u05EA \u05E8\u05DB\u05D9\u05D1',
       buyerClient: '\u05E7\u05D5\u05E0\u05D4 / \u05DC\u05E7\u05D5\u05D7',
       projectType: '\u05E1\u05D5\u05D2 \u05E4\u05E8\u05D5\u05D9\u05E7\u05D8',
+      targetHourlyRate: '\u05EA\u05E2\u05E8\u05D9\u05E3 \u05E9\u05E2\u05D4 \u05D9\u05E2\u05D3',
+      meetsTarget: '\u05E2\u05D5\u05DE\u05D3 \u05D1\u05EA\u05E2\u05E8\u05D9\u05E3 \u05D4\u05D9\u05E2\u05D3',
+      belowTarget: '\u05DE\u05EA\u05D7\u05EA \u05DC\u05EA\u05E2\u05E8\u05D9\u05E3 \u05D4\u05D9\u05E2\u05D3',
+    },
+    expenses: {
+      title: '\u05D4\u05D5\u05E6\u05D0\u05D5\u05EA',
+      addExpense: '\u05D4\u05D5\u05E1\u05E4\u05EA \u05D4\u05D5\u05E6\u05D0\u05D4',
+      editExpense: '\u05E2\u05E8\u05D9\u05DB\u05EA \u05D4\u05D5\u05E6\u05D0\u05D4',
+      date: '\u05EA\u05D0\u05E8\u05D9\u05DA',
+      amount: '\u05E1\u05DB\u05D5\u05DD',
+      category: '\u05E7\u05D8\u05D2\u05D5\u05E8\u05D9\u05D4',
+      supplier: '\u05E1\u05E4\u05E7',
+      description: '\u05EA\u05D9\u05D0\u05D5\u05E8',
+      linkedProject: '\u05E4\u05E8\u05D5\u05D9\u05E7\u05D8 \u05DE\u05E7\u05D5\u05E9\u05E8',
+      noProject: '\u05DC\u05DC\u05D0 \u05E4\u05E8\u05D5\u05D9\u05E7\u05D8',
+      recurringRules: '\u05D4\u05D5\u05E6\u05D0\u05D5\u05EA \u05E7\u05D1\u05D5\u05E2\u05D5\u05EA',
+      addRecurring: '\u05D4\u05D5\u05E1\u05E4\u05EA \u05D4\u05D5\u05E6\u05D0\u05D4 \u05E7\u05D1\u05D5\u05E2\u05D4',
+      dayOfMonth: '\u05D9\u05D5\u05DD \u05D1\u05D7\u05D5\u05D3\u05E9',
+      active: '\u05E4\u05E2\u05D9\u05DC',
+      inactive: '\u05DC\u05D0 \u05E4\u05E2\u05D9\u05DC',
+      pendingRecurring: '\u05D4\u05D5\u05E6\u05D0\u05D5\u05EA \u05E7\u05D1\u05D5\u05E2\u05D5\u05EA \u05DC\u05D7\u05D9\u05D5\u05D1',
+      generateNow: '\u05E6\u05D5\u05E8 \u05E2\u05DB\u05E9\u05D9\u05D5',
+      exportCsv: '\u05D9\u05D9\u05E6\u05D5\u05D0 CSV',
+      month: '\u05D7\u05D5\u05D3\u05E9',
+      allMonths: '\u05DB\u05DC \u05D4\u05D7\u05D5\u05D3\u05E9\u05D9\u05DD',
+      allCategories: '\u05DB\u05DC \u05D4\u05E7\u05D8\u05D2\u05D5\u05E8\u05D9\u05D5\u05EA',
+      noExpenses: '\u05DC\u05D0 \u05E0\u05E8\u05E9\u05DE\u05D5 \u05D4\u05D5\u05E6\u05D0\u05D5\u05EA',
+      total: '\u05E1\u05DA \u05D4\u05DB\u05DC',
+    },
+    expenseCategory: {
+      workshop_rent: '\u05E9\u05DB\u05D9\u05E8\u05D5\u05EA \u05E1\u05D3\u05E0\u05D4',
+      materials: '\u05D7\u05D5\u05DE\u05E8\u05D9\u05DD',
+      consumables: '\u05DE\u05EA\u05DB\u05DC\u05D9\u05DD',
+      tools: '\u05DB\u05DC\u05D9\u05DD',
+      insurance: '\u05D1\u05D9\u05D8\u05D5\u05D7',
+      marketing: '\u05E9\u05D9\u05D5\u05D5\u05E7',
+      transport: '\u05D4\u05D5\u05D1\u05DC\u05D4',
+      fees: '\u05E2\u05DE\u05DC\u05D5\u05EA',
+      other: '\u05D0\u05D7\u05E8',
+    },
+    leadSource: {
+      instagram: '\u05D0\u05D9\u05E0\u05E1\u05D8\u05D2\u05E8\u05DD',
+      facebook_group: '\u05E7\u05D1\u05D5\u05E6\u05EA \u05E4\u05D9\u05D9\u05E1\u05D1\u05D5\u05E7',
+      marketplace: '\u05DE\u05E8\u05E7\u05D8\u05E4\u05DC\u05D9\u05D9\u05E1',
+      word_of_mouth: '\u05DE\u05E4\u05D4 \u05DC\u05D0\u05D5\u05D6\u05DF',
+      designer: '\u05D4\u05DE\u05DC\u05E6\u05EA \u05DE\u05E2\u05E6\u05D1',
+      friends_family: '\u05D7\u05D1\u05E8\u05D9\u05DD \u05D5\u05DE\u05E9\u05E4\u05D7\u05D4',
+      other: '\u05D0\u05D7\u05E8',
+    },
+    income: {
+      payments: '\u05EA\u05E9\u05DC\u05D5\u05DE\u05D9\u05DD \u05D5\u05DE\u05E1\u05D9\u05E8\u05D4',
+      quotedPrice: '\u05DE\u05D7\u05D9\u05E8 \u05D4\u05E6\u05E2\u05D4',
+      agreedPrice: '\u05DE\u05D7\u05D9\u05E8 \u05E1\u05D5\u05E4\u05D9',
+      depositAmount: '\u05DE\u05E7\u05D3\u05DE\u05D4',
+      depositPaid: '\u05DE\u05E7\u05D3\u05DE\u05D4 \u05E9\u05D5\u05DC\u05DE\u05D4',
+      balancePaid: '\u05D9\u05EA\u05E8\u05D4 \u05E9\u05D5\u05DC\u05DE\u05D4',
+      delivered: '\u05E0\u05DE\u05E1\u05E8',
+      actualHours: '\u05E9\u05E2\u05D5\u05EA \u05D1\u05E4\u05D5\u05E2\u05DC',
+      leadSource: '\u05DE\u05E7\u05D5\u05E8 \u05D4\u05E4\u05E0\u05D9\u05D4',
+      notSet: '\u05DC\u05D0 \u05D4\u05D5\u05D2\u05D3\u05E8',
+    },
+    pnl: {
+      title: '\u05E8\u05D5\u05D5\u05D7 \u05D5\u05D4\u05E4\u05E1\u05D3 \u05D7\u05D5\u05D3\u05E9\u05D9',
+      revenue: '\u05D4\u05DB\u05E0\u05E1\u05D5\u05EA \u05E9\u05D4\u05EA\u05E7\u05D1\u05DC\u05D5',
+      expenses: '\u05D4\u05D5\u05E6\u05D0\u05D5\u05EA',
+      fixed: '\u05E7\u05D1\u05D5\u05E2\u05D5\u05EA',
+      variable: '\u05DE\u05E9\u05EA\u05E0\u05D5\u05EA',
+      netProfit: '\u05E8\u05D5\u05D5\u05D7 \u05E0\u05E7\u05D9',
+      profitTarget: '\u05D9\u05E2\u05D3 \u05E8\u05D5\u05D5\u05D7',
+      ceilingTitle: '\u05EA\u05E7\u05E8\u05EA \u05E2\u05D5\u05E1\u05E7 \u05E4\u05D8\u05D5\u05E8',
+      ceilingSubtitle: '12 \u05D7\u05D5\u05D3\u05E9\u05D9\u05DD \u05D0\u05D7\u05E8\u05D5\u05E0\u05D9\u05DD',
+      ceilingWarning: '\u05DE\u05EA\u05E7\u05E8\u05D1 \u05DC\u05EA\u05E7\u05E8\u05D4 \u2014 \u05D4\u05D9\u05E2\u05E8\u05DA \u05DC\u05DE\u05E2\u05D1\u05E8 \u05DC\u05E2\u05D5\u05E1\u05E7 \u05DE\u05D5\u05E8\u05E9\u05D4',
+      ceilingExceeded: '\u05D7\u05E8\u05D9\u05D2\u05D4 \u05DE\u05D4\u05EA\u05E7\u05E8\u05D4 \u2014 \u05D9\u05E9 \u05DC\u05E2\u05D1\u05D5\u05E8 \u05DC\u05E2\u05D5\u05E1\u05E7 \u05DE\u05D5\u05E8\u05E9\u05D4',
+      trend: '\u05DE\u05D2\u05DE\u05EA 6 \u05D7\u05D5\u05D3\u05E9\u05D9\u05DD',
+      effectiveRate: '\u20AA \u05DC\u05E9\u05E2\u05D4 \u05D1\u05E4\u05D5\u05E2\u05DC',
+      profitByType: '\u05E8\u05D5\u05D5\u05D7\u05D9\u05D5\u05EA \u05DC\u05E4\u05D9 \u05E1\u05D5\u05D2',
+      count: '\u05E0\u05DE\u05DB\u05E8\u05D5',
+      avgPrice: '\u05DE\u05D7\u05D9\u05E8 \u05DE\u05DE\u05D5\u05E6\u05E2',
+      avgRate: '\u20AA/\u05E9\u05E2\u05D4 \u05DE\u05DE\u05D5\u05E6\u05E2',
+      totalProfit: '\u05E8\u05D5\u05D5\u05D7 \u05DB\u05D5\u05DC\u05DC',
+    },
+    settings: {
+      title: '\u05D4\u05D2\u05D3\u05E8\u05D5\u05EA \u05E2\u05E1\u05E7',
+      subtitle: '\u05D9\u05E2\u05D3\u05D9\u05DD \u05E9\u05DE\u05D6\u05D9\u05E0\u05D9\u05DD \u05D0\u05EA \u05DC\u05D5\u05D7 \u05D4\u05D1\u05E7\u05E8\u05D4',
+      monthlyProfitTarget: '\u05D9\u05E2\u05D3 \u05E8\u05D5\u05D5\u05D7 \u05D7\u05D5\u05D3\u05E9\u05D9',
+      vatExemptCeiling: '\u05EA\u05E7\u05E8\u05EA \u05E2\u05D5\u05E1\u05E7 \u05E4\u05D8\u05D5\u05E8 \u05E9\u05E0\u05EA\u05D9\u05EA',
+      targetHourlyRate: '\u05EA\u05E2\u05E8\u05D9\u05E3 \u05E9\u05E2\u05D4 \u05D9\u05E2\u05D3',
+      weeklyHoursBudget: '\u05E9\u05E2\u05D5\u05EA \u05D9\u05D9\u05E6\u05D5\u05E8 \u05E9\u05D1\u05D5\u05E2\u05D9\u05D5\u05EA',
+      saved: '\u05D4\u05D4\u05D2\u05D3\u05E8\u05D5\u05EA \u05E0\u05E9\u05DE\u05E8\u05D5',
     },
     materials: {
       materialName: '\u05E9\u05DD \u05D7\u05D5\u05DE\u05E8',

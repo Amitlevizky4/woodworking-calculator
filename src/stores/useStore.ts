@@ -99,6 +99,14 @@ function mapDbProject(
     markupAppliedTo: row.markup_applied_to as Project['markupAppliedTo'],
     discountPercent: row.discount_percent as number,
     photoUrl: (row.photo_url as string) ?? undefined,
+    quotedPrice: (row.quoted_price as number) ?? undefined,
+    agreedPrice: (row.agreed_price as number) ?? undefined,
+    depositAmount: (row.deposit_amount as number) ?? undefined,
+    depositPaidAt: (row.deposit_paid_at as string) ?? undefined,
+    balancePaidAt: (row.balance_paid_at as string) ?? undefined,
+    deliveredAt: (row.delivered_at as string) ?? undefined,
+    actualHours: (row.actual_hours as number) ?? undefined,
+    leadSource: (row.lead_source as Project['leadSource']) ?? undefined,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
     materials: projectMaterials
@@ -284,6 +292,14 @@ export const useStore = create<AppState>()((set, get) => ({
           markup_applied_to: project.markupAppliedTo,
           discount_percent: project.discountPercent,
           photo_url: project.photoUrl ?? null,
+          quoted_price: project.quotedPrice ?? null,
+          agreed_price: project.agreedPrice ?? null,
+          deposit_amount: project.depositAmount ?? null,
+          deposit_paid_at: project.depositPaidAt ?? null,
+          balance_paid_at: project.balancePaidAt ?? null,
+          delivered_at: project.deliveredAt ?? null,
+          actual_hours: project.actualHours ?? null,
+          lead_source: project.leadSource ?? null,
         });
 
       if (projectError) throw projectError;
@@ -342,6 +358,14 @@ export const useStore = create<AppState>()((set, get) => ({
           markup_applied_to: project.markupAppliedTo,
           discount_percent: project.discountPercent,
           photo_url: project.photoUrl ?? null,
+          quoted_price: project.quotedPrice ?? null,
+          agreed_price: project.agreedPrice ?? null,
+          deposit_amount: project.depositAmount ?? null,
+          deposit_paid_at: project.depositPaidAt ?? null,
+          balance_paid_at: project.balancePaidAt ?? null,
+          delivered_at: project.deliveredAt ?? null,
+          actual_hours: project.actualHours ?? null,
+          lead_source: project.leadSource ?? null,
         })
         .eq('id', project.id);
 
