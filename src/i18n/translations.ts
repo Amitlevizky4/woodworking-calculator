@@ -221,6 +221,12 @@ interface TranslationSet {
     termsText: string;
     print: string;
   };
+  capacity: {
+    title: string;
+    earliestStart: string;
+    backlog: string;
+    availableNow: string;
+  };
   units: {
     meter: string;
     sheet: string;
@@ -515,6 +521,12 @@ export const translations: Translations = {
         'A 50% deposit confirms your order. The balance is due on delivery. Lead times are estimates and may vary with material availability.',
       print: 'Print / Save PDF',
     },
+    capacity: {
+      title: 'Capacity',
+      earliestStart: 'Earliest realistic start',
+      backlog: 'Committed backlog',
+      availableNow: 'Available now',
+    },
     units: {
       meter: 'Meter',
       sheet: 'Sheet',
@@ -801,6 +813,12 @@ export const translations: Translations = {
       termsText:
         '\u05DE\u05E7\u05D3\u05DE\u05D4 \u05D1\u05D2\u05D5\u05D1\u05D4 50% \u05DE\u05D0\u05E9\u05E8\u05EA \u05D0\u05EA \u05D4\u05D4\u05D6\u05DE\u05E0\u05D4. \u05D4\u05D9\u05EA\u05E8\u05D4 \u05EA\u05E9\u05D5\u05DC\u05DD \u05D1\u05DE\u05E1\u05D9\u05E8\u05D4. \u05D6\u05DE\u05E0\u05D9 \u05D4\u05D0\u05E1\u05E4\u05E7\u05D4 \u05DE\u05E9\u05D5\u05E2\u05E8\u05D9\u05DD \u05D5\u05E2\u05E9\u05D5\u05D9\u05D9\u05DD \u05DC\u05D4\u05E9\u05EA\u05E0\u05D5\u05EA \u05D1\u05D4\u05EA\u05D0\u05DD \u05DC\u05D6\u05DE\u05D9\u05E0\u05D5\u05EA \u05D4\u05D7\u05D5\u05DE\u05E8\u05D9\u05DD.',
       print: '\u05D4\u05D3\u05E4\u05E1\u05D4 / \u05E9\u05DE\u05D9\u05E8\u05EA PDF',
+    },
+    capacity: {
+      title: '\u05E7\u05D9\u05D1\u05D5\u05DC\u05EA',
+      earliestStart: '\u05DE\u05D5\u05E2\u05D3 \u05D4\u05EA\u05D7\u05DC\u05D4 \u05E8\u05D9\u05D0\u05DC\u05D9',
+      backlog: '\u05E2\u05D5\u05DE\u05E1 \u05DE\u05D7\u05D5\u05D9\u05D1',
+      availableNow: '\u05D6\u05DE\u05D9\u05DF \u05E2\u05DB\u05E9\u05D9\u05D5',
     },
     units: {
       meter: '\u05DE\u05D8\u05E8',

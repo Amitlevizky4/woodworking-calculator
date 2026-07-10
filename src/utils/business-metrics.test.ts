@@ -1,8 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import type { Expense, Project, RecurringExpense, TimeLog } from '@/types';
 import {
+  addDays,
   addMonths,
   aggregateProfitByGroup,
+  calculateBacklogHours,
+  calculateCapacityHint,
   calculateCeilingStatus,
   calculateChannelRoi,
   calculateEffectiveHourlyRate,
@@ -384,5 +387,46 @@ describe('aggregateProfitByGroup', () => {
       { key: 'x', agreedPrice: 1000, materialsCost: 200, linkedExpenses: 0, hours: 0 },
     ]);
     expect(rows[0].avgRate).toBeNull();
+  });
+});
+
+describe('capacity hint', () => {
+  it('adds days across month boundaries in UTC', () => {
+    expect(addDays('2026-07-10', 14)).toBe('2026-07-24');
+    expect(addDays('2026-07-25', 7)).toBe('2026-08-01');
+    expect(addDays('2026-12-28', 7)).toBe('2027-01-04');
+  });
+
+  const logs: TimeLog[] = [
+    { id: 't1', projectId: 'active', date: '2026-07-01', hours: 6, createdAt: '' },
+  ];
+
+  it('sums remaining hours only for committed, non-on-hold projects', () => {
+    const projects = [
+      makeProject({ id: 'active', status: 'in_production', laborHours: 20 }), // 20-6 logged = 14
+      makeProject({ id: 'ready', status: 'ready', laborHours: 10 }), // 10
+      makeProject({ id: 'lead', status: 'lead', laborHours: 40 }), // excluded (not committed)
+      makeProject({ id: 'done', status: 'closed', laborHours: 40 }), // excluded (delivered)
+      makeProject({ id: 'held', status: 'in_production', laborHours: 40, onHold: true }), // excluded (on hold)
+    ];
+    expect(calculateBacklogHours(projects, logs)).toBe(24);
+  });
+
+  it('computes weeks out and earliest start date from the weekly budget', () => {
+    const projects = [
+      makeProject({ id: 'active', status: 'in_production', laborHours: 20 }),
+      makeProject({ id: 'ready', status: 'ready', laborHours: 10 }),
+    ];
+    // backlog = 14 + 10 = 24 hours; 25 hrs/week -> ceil(24/25) = 1 week
+    const hint = calculateCapacityHint(projects, logs, 25, '2026-07-10');
+    expect(hint.backlogHours).toBe(24);
+    expect(hint.weeksOut).toBe(1);
+    expect(hint.earliestStart).toBe('2026-07-17');
+  });
+
+  it('returns today when there is no backlog', () => {
+    const hint = calculateCapacityHint([], [], 25, '2026-07-10');
+    expect(hint.weeksOut).toBe(0);
+    expect(hint.earliestStart).toBe('2026-07-10');
   });
 });
