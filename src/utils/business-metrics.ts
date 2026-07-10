@@ -4,6 +4,7 @@ import type {
   LeadSource,
   Project,
   RecurringExpense,
+  Status,
   TimeLog,
 } from '@/types';
 
@@ -352,6 +353,62 @@ export interface ProfitGroupRow {
 
 /** Aggregate per-project profitability into rows grouped by `key`. Callers
  *  precompute materialsCost/linkedExpenses/hours so this stays pure. */
+// ============================================
+// Capacity hint — earliest realistic start date for a new order, from the
+// committed backlog against the weekly production-hours budget.
+// ============================================
+
+// Stages that represent committed, not-yet-delivered work.
+export const BACKLOG_STAGES: readonly Status[] = [
+  'deposit_paid',
+  'in_production',
+  'ready',
+];
+
+export function calculateBacklogHours(
+  projects: Project[],
+  timeLogs: TimeLog[],
+): number {
+  return projects.reduce((sum, project) => {
+    if (project.onHold) return sum;
+    if (!BACKLOG_STAGES.includes(project.status)) return sum;
+    const remaining = Math.max(
+      0,
+      project.laborHours - sumTimeLogHours(timeLogs, project.id),
+    );
+    return sum + remaining;
+  }, 0);
+}
+
+/** Adds `days` to a 'YYYY-MM-DD' date, returning a 'YYYY-MM-DD' string.
+ *  Uses UTC so the result is independent of the local timezone. */
+export function addDays(dateStr: string, days: number): string {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(Date.UTC(year, month - 1, day + days)).toISOString().slice(0, 10);
+}
+
+export interface CapacityHint {
+  backlogHours: number;
+  weeksOut: number;
+  earliestStart: string;
+}
+
+export function calculateCapacityHint(
+  projects: Project[],
+  timeLogs: TimeLog[],
+  weeklyHours: number,
+  today: string,
+): CapacityHint {
+  const backlogHours = calculateBacklogHours(projects, timeLogs);
+  const weeksOut =
+    weeklyHours > 0 ? Math.ceil(backlogHours / weeklyHours) : 0;
+  return {
+    backlogHours,
+    weeksOut,
+    earliestStart: addDays(today, weeksOut * 7),
+  };
+}
+
 export function aggregateProfitByGroup(
   items: ProfitGroupInput[],
 ): ProfitGroupRow[] {

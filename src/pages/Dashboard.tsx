@@ -20,6 +20,7 @@ import {
   formatCurrency,
 } from '@/utils/cost-calculator';
 import {
+  calculateCapacityHint,
   calculateCeilingStatus,
   calculateEffectiveHourlyRate,
   calculateMonthlyPnL,
@@ -108,6 +109,45 @@ function buildMonthlyChartData(projects: Project[], allMaterials: ReturnType<typ
 
 function currentMonthKey(): string {
   return new Date().toISOString().slice(0, 7);
+}
+
+function CapacityCard({ projects }: { projects: Project[] }) {
+  const { t } = useTranslation();
+  const timeLogs = useStore((s) => s.timeLogs);
+  const weeklyHours = useBusinessStore((s) => s.settings.weeklyHoursBudget);
+
+  const hint = useMemo(
+    () =>
+      calculateCapacityHint(
+        projects,
+        timeLogs,
+        weeklyHours,
+        new Date().toISOString().slice(0, 10),
+      ),
+    [projects, timeLogs, weeklyHours],
+  );
+
+  const available = hint.weeksOut === 0;
+
+  return (
+    <div className="bg-surface-container-high p-6 rounded-lg flex items-center gap-4">
+      <Icon name="event_available" className="text-primary text-3xl" />
+      <div className="flex-1">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-secondary">
+          {t('capacity.earliestStart')}
+        </p>
+        <p className="font-mono text-2xl font-bold mt-1">
+          {available ? t('capacity.availableNow') : hint.earliestStart}
+        </p>
+      </div>
+      <div className="text-end">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-secondary">
+          {t('capacity.backlog')}
+        </p>
+        <p className="font-mono text-lg font-bold mt-1">{hint.backlogHours} hrs</p>
+      </div>
+    </div>
+  );
 }
 
 function ProfitTargetBar({ netProfit, target }: { netProfit: number; target: number }) {
@@ -758,6 +798,8 @@ export function Dashboard() {
       </div>
 
       <MoneySection projects={projects} expenses={expenses} allMaterials={materials} />
+
+      <CapacityCard projects={projects} />
 
       <StatsGrid projects={projects} allMaterials={materials} />
 
