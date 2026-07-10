@@ -114,7 +114,8 @@ export function seedData(): SeedData {
       type: 'table',
       description: 'Custom walnut dining table for 6 people',
       date: '2026-02-15',
-      status: 'completed',
+      status: 'closed',
+      onHold: false,
       buyerName: 'David Cohen',
       materials: [
         { materialId: plywoodId, variantId: plywoodStandardVariantId, quantity: 2 },
@@ -141,7 +142,8 @@ export function seedData(): SeedData {
       type: 'shelf',
       description: 'Set of 4 floating oak shelves with hidden brackets',
       date: '2026-03-20',
-      status: 'in-progress',
+      status: 'in_production',
+      onHold: false,
       materials: [
         { materialId: oakBoardId, quantity: 3 },
         { materialId: sandpaperId, variantId: sandpaper120VariantId, quantity: 5 },

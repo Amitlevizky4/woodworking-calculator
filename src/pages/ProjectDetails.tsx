@@ -1,5 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 import { useStore } from '@/stores/useStore';
 import { useBusinessStore } from '@/stores/useBusinessStore';
 import { useTranslation } from '@/i18n/useTranslation';
@@ -10,24 +11,14 @@ import {
   calculateFinalPrice,
   formatCurrency,
 } from '@/utils/cost-calculator';
-import { calculateEffectiveHourlyRate } from '@/utils/business-metrics';
+import {
+  calculateEffectiveHourlyRate,
+  effectiveHoursForProject,
+  sumTimeLogHours,
+} from '@/utils/business-metrics';
 import { packSheets } from '@/utils/bin-packing';
 import { SheetVisualization } from '@/components/SheetVisualization';
-import type { Status } from '@/types';
-
-const STATUS_BADGE_CLASSES: Record<Status, string> = {
-  planning: 'bg-surface-variant text-secondary',
-  'in-progress': 'bg-primary/10 text-primary',
-  completed: 'bg-tertiary/10 text-tertiary',
-  'on-hold': 'bg-secondary-container text-on-secondary-container',
-};
-
-const STATUS_LABELS: Record<Status, string> = {
-  planning: 'Planning',
-  'in-progress': 'In Progress',
-  completed: 'Completed',
-  'on-hold': 'On Hold',
-};
+import { STATUS_BADGE_CLASSES, STATUS_TKEY } from '@/utils/pipeline';
 
 function CostCard({
   label,
@@ -69,6 +60,112 @@ function InfoCell({ label, value }: { label: string; value: string | null }) {
       <p className={`font-mono text-lg font-bold mt-1 ${value ? '' : 'text-secondary'}`}>
         {value ?? t('income.notSet')}
       </p>
+    </div>
+  );
+}
+
+function TimeLogSection({ projectId }: { projectId: string }) {
+  const { t } = useTranslation();
+  const timeLogs = useStore((s) => s.timeLogs);
+  const addTimeLog = useStore((s) => s.addTimeLog);
+  const deleteTimeLog = useStore((s) => s.deleteTimeLog);
+
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  const [hours, setHours] = useState('');
+  const [note, setNote] = useState('');
+
+  const logs = useMemo(
+    () =>
+      timeLogs
+        .filter((l) => l.projectId === projectId)
+        .sort((a, b) => b.date.localeCompare(a.date)),
+    [timeLogs, projectId],
+  );
+  const total = sumTimeLogHours(timeLogs, projectId);
+
+  const inputClass =
+    'bg-surface-container-highest border-b-2 border-outline focus:border-primary outline-none px-3 py-2 rounded-t text-sm';
+
+  const handleAdd = () => {
+    const parsed = parseFloat(hours);
+    if (!parsed || parsed <= 0) return;
+    addTimeLog({
+      id: uuidv4(),
+      projectId,
+      date,
+      hours: parsed,
+      note: note || undefined,
+      createdAt: new Date().toISOString(),
+    });
+    setHours('');
+    setNote('');
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="font-headline text-lg font-bold uppercase tracking-wide">
+          {t('timeLog.title')}
+        </h2>
+        <span className="text-sm text-secondary">
+          {t('timeLog.totalLogged')}:{' '}
+          <span className="font-mono font-bold text-on-surface">{total} hrs</span>
+        </span>
+      </div>
+
+      <div className="bg-surface-container-low rounded-xl p-4 space-y-3">
+        <div className="flex flex-wrap items-end gap-3 no-print">
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className={inputClass}
+          />
+          <input
+            type="number"
+            value={hours}
+            onChange={(e) => setHours(e.target.value)}
+            placeholder={t('timeLog.hours')}
+            min={0}
+            step="0.5"
+            className={`${inputClass} w-24 font-mono`}
+          />
+          <input
+            type="text"
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            placeholder={t('timeLog.note')}
+            className={`${inputClass} flex-1 min-w-[140px]`}
+          />
+          <button
+            onClick={handleAdd}
+            className="flex items-center gap-1 bg-primary text-on-primary px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+          >
+            <Icon name="add" className="text-lg" />
+            {t('timeLog.addEntry')}
+          </button>
+        </div>
+
+        {logs.length === 0 ? (
+          <p className="text-secondary text-sm py-2">{t('timeLog.empty')}</p>
+        ) : (
+          <div className="divide-y divide-outline-variant/20">
+            {logs.map((log) => (
+              <div key={log.id} className="flex items-center gap-4 py-2 text-sm">
+                <span className="font-mono text-secondary w-28">{log.date}</span>
+                <span className="font-mono font-bold w-16">{log.hours}h</span>
+                <span className="flex-1 text-secondary">{log.note ?? ''}</span>
+                <button
+                  onClick={() => deleteTimeLog(log.id)}
+                  className="text-secondary hover:text-error transition-colors no-print"
+                >
+                  <Icon name="delete" className="text-base" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -215,6 +312,7 @@ export function ProjectDetails() {
   const navigate = useNavigate();
   const projects = useStore((state) => state.projects);
   const allMaterials = useStore((state) => state.materials);
+  const timeLogs = useStore((state) => state.timeLogs);
   const expenses = useBusinessStore((state) => state.expenses);
 
   const project = useMemo(
@@ -239,9 +337,9 @@ export function ProjectDetails() {
       agreedPrice: project.agreedPrice ?? 0,
       materialsCost,
       linkedExpenses: linkedExpensesTotal,
-      actualHours: project.actualHours ?? 0,
+      actualHours: effectiveHoursForProject(project, timeLogs),
     });
-  }, [project, allMaterials, linkedExpensesTotal]);
+  }, [project, allMaterials, linkedExpensesTotal, timeLogs]);
 
   const costBreakdown = useMemo(() => {
     if (!project) return null;
@@ -349,8 +447,13 @@ export function ProjectDetails() {
               <span
                 className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${STATUS_BADGE_CLASSES[project.status]}`}
               >
-                {STATUS_LABELS[project.status]}
+                {t(STATUS_TKEY[project.status])}
               </span>
+              {project.onHold && (
+                <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-error/10 text-error">
+                  {t('pipeline.onHold')}
+                </span>
+              )}
               <span className="text-secondary text-sm font-mono">
                 {project.date}
               </span>
@@ -363,6 +466,13 @@ export function ProjectDetails() {
           </div>
 
           <div className="flex gap-2 no-print">
+            <button
+              onClick={() => navigate(`/projects/${project.id}/quote`)}
+              className="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg text-sm font-medium hover:bg-surface-container transition-colors"
+            >
+              <Icon name="request_quote" className="text-base" />
+              {t('pipeline.quote')}
+            </button>
             <button
               onClick={() => navigate(`/calculator/${project.id}`)}
               className="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg text-sm font-medium hover:bg-surface-container transition-colors"
@@ -462,6 +572,8 @@ export function ProjectDetails() {
           </div>
         )}
       </div>
+
+      <TimeLogSection projectId={project.id} />
 
       <div>
         <h2 className="font-headline text-lg font-bold uppercase tracking-wide mb-4">

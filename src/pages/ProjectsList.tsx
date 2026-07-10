@@ -9,23 +9,11 @@ import {
   calculateFinalPrice,
   formatCurrency,
 } from '@/utils/cost-calculator';
-import type { Project, Status, Material } from '@/types';
+import { STATUS_BADGE_CLASSES, STATUS_TKEY } from '@/utils/pipeline';
+import { PIPELINE_STAGES } from '@/types';
+import type { Project, Material } from '@/types';
 
-const STATUS_BADGE_CLASSES: Record<Status, string> = {
-  planning: 'bg-surface-variant text-secondary',
-  'in-progress': 'bg-primary/10 text-primary',
-  completed: 'bg-tertiary/10 text-tertiary',
-  'on-hold': 'bg-secondary-container text-on-secondary-container',
-};
-
-const STATUS_LABELS: Record<Status, string> = {
-  planning: 'Planning',
-  'in-progress': 'In Progress',
-  completed: 'Completed',
-  'on-hold': 'On Hold',
-};
-
-const ALL_STATUSES: Status[] = ['planning', 'in-progress', 'completed', 'on-hold'];
+const FINALIZED_STATUSES: Project['status'][] = ['delivered', 'closed'];
 
 function getProjectFinalPrice(project: Project, allMaterials: Material[]): number {
   const materialsCost = calculateMaterialsCost(project.materials, allMaterials);
@@ -41,7 +29,7 @@ function getProjectFinalPrice(project: Project, allMaterials: Material[]): numbe
 }
 
 function getEstimatedDays(project: Project): string {
-  if (project.status === 'completed') return 'FINALIZED';
+  if (FINALIZED_STATUSES.includes(project.status)) return 'FINALIZED';
   const totalHours = project.laborHours;
   const days = Math.ceil(totalHours / 8);
   return `EST: ${days} Days`;
@@ -94,8 +82,8 @@ function FilterBar({
         className="w-full md:w-48 px-4 py-3 bg-surface-container-highest border-b-2 border-outline focus:border-primary outline-none text-sm rounded-t appearance-none cursor-pointer"
       >
         <option value="">{t('projects.allStatus')}</option>
-        {ALL_STATUSES.map((status) => (
-          <option key={status} value={status}>{STATUS_LABELS[status]}</option>
+        {PIPELINE_STAGES.map((status) => (
+          <option key={status} value={status}>{t(STATUS_TKEY[status])}</option>
         ))}
       </select>
     </div>
@@ -108,6 +96,7 @@ function ProjectRow({ project, allMaterials, onNavigate, onDelete }: {
   onNavigate: (path: string) => void;
   onDelete: (id: string) => void;
 }) {
+  const { t } = useTranslation();
   const finalPrice = getProjectFinalPrice(project, allMaterials);
 
   return (
@@ -139,8 +128,13 @@ function ProjectRow({ project, allMaterials, onNavigate, onDelete }: {
       </td>
       <td className="py-4 px-4">
         <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${STATUS_BADGE_CLASSES[project.status]}`}>
-          {STATUS_LABELS[project.status]}
+          {t(STATUS_TKEY[project.status])}
         </span>
+        {project.onHold && (
+          <span className="inline-block ms-1 px-2 py-0.5 rounded-full text-xs font-medium bg-error/10 text-error">
+            {t('pipeline.onHold')}
+          </span>
+        )}
       </td>
       <td className="py-4 px-4">
         <p className="text-sm">{new Date(project.date).toLocaleDateString()}</p>
@@ -195,8 +189,8 @@ function WorkshopSummary({ projects, allMaterials }: {
   allMaterials: Material[];
 }) {
   const summary = useMemo(() => {
-    const inProgressProjects = projects.filter((p) => p.status === 'in-progress');
-    const completedProjects = projects.filter((p) => p.status === 'completed');
+    const inProgressProjects = projects.filter((p) => p.status === 'in_production');
+    const completedProjects = projects.filter((p) => FINALIZED_STATUSES.includes(p.status));
 
     const activeValuation = inProgressProjects
       .map((p) => getProjectFinalPrice(p, allMaterials))

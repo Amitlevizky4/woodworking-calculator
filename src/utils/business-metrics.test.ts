@@ -1,16 +1,22 @@
 import { describe, it, expect } from 'vitest';
-import type { Expense, Project, RecurringExpense } from '@/types';
+import type { Expense, Project, RecurringExpense, TimeLog } from '@/types';
 import {
   addMonths,
+  aggregateProfitByGroup,
   calculateCeilingStatus,
+  calculateChannelRoi,
   calculateEffectiveHourlyRate,
+  calculateLeadSourceRoi,
   calculateMonthlyPnL,
   calculateTrailing12Revenue,
+  effectiveHoursForProject,
   evaluateTargetHourlyRate,
   missingRecurringPeriods,
   monthKeyOf,
   projectRevenueInMonth,
+  quarterKeyOf,
   recurringExpenseDate,
+  sumTimeLogHours,
   trailingMonths,
 } from '@/utils/business-metrics';
 
@@ -20,7 +26,8 @@ function makeProject(overrides: Partial<Project> = {}): Project {
     name: 'Test Project',
     type: 'table',
     date: '2026-02-15',
-    status: 'completed',
+    status: 'closed',
+    onHold: false,
     materials: [],
     woodParts: [],
     laborHours: 20,
@@ -272,5 +279,110 @@ describe('recurring expenses', () => {
     const rule = makeRule({ startMonth: '2026-03-01' });
     const existing = new Set(['2026-03', '2026-04']);
     expect(missingRecurringPeriods(rule, existing, '2026-04')).toEqual([]);
+  });
+});
+
+describe('quarterKeyOf', () => {
+  it('maps months to calendar quarters', () => {
+    expect(quarterKeyOf('2026-01-15')).toBe('2026-Q1');
+    expect(quarterKeyOf('2026-03-31')).toBe('2026-Q1');
+    expect(quarterKeyOf('2026-04-01')).toBe('2026-Q2');
+    expect(quarterKeyOf('2026-12-01')).toBe('2026-Q4');
+  });
+});
+
+describe('time logs', () => {
+  const logs: TimeLog[] = [
+    { id: 't1', projectId: 'p1', date: '2026-02-03', hours: 8, createdAt: '' },
+    { id: 't2', projectId: 'p1', date: '2026-02-07', hours: 10, createdAt: '' },
+    { id: 't3', projectId: 'p2', date: '2026-02-07', hours: 4, createdAt: '' },
+  ];
+
+  it('sums hours for a single project', () => {
+    expect(sumTimeLogHours(logs, 'p1')).toBe(18);
+    expect(sumTimeLogHours(logs, 'p2')).toBe(4);
+    expect(sumTimeLogHours(logs, 'nope')).toBe(0);
+  });
+
+  it('prefers logged hours over the manual actual_hours field', () => {
+    const project = makeProject({ id: 'p1', actualHours: 99 });
+    expect(effectiveHoursForProject(project, logs)).toBe(18);
+  });
+
+  it('falls back to manual actual_hours when no logs exist', () => {
+    const project = makeProject({ id: 'nolog', actualHours: 12 });
+    expect(effectiveHoursForProject(project, logs)).toBe(12);
+  });
+});
+
+describe('calculateLeadSourceRoi', () => {
+  it('groups project count and committed revenue by lead source', () => {
+    const projects = [
+      makeProject({ id: 'a', leadSource: 'instagram', agreedPrice: 4500, date: '2026-02-01' }),
+      makeProject({ id: 'b', leadSource: 'instagram', agreedPrice: 2000, date: '2026-03-01' }),
+      makeProject({ id: 'c', leadSource: 'designer', agreedPrice: 1600, date: '2026-02-15' }),
+      makeProject({ id: 'd', leadSource: undefined, agreedPrice: 999, date: '2026-02-15' }),
+    ];
+    const rows = calculateLeadSourceRoi(projects);
+    expect(rows).toEqual([
+      { leadSource: 'instagram', count: 2, revenue: 6500 },
+      { leadSource: 'designer', count: 1, revenue: 1600 },
+    ]);
+  });
+
+  it('restricts to a quarter when given', () => {
+    const projects = [
+      makeProject({ id: 'a', leadSource: 'instagram', agreedPrice: 4500, date: '2026-02-01' }),
+      makeProject({ id: 'b', leadSource: 'instagram', agreedPrice: 2000, date: '2026-05-01' }),
+    ];
+    expect(calculateLeadSourceRoi(projects, '2026-Q1')).toEqual([
+      { leadSource: 'instagram', count: 1, revenue: 4500 },
+    ]);
+  });
+});
+
+describe('calculateChannelRoi', () => {
+  it('pairs marketing spend per channel with revenue from the matching lead source', () => {
+    const projects = [
+      makeProject({ id: 'a', leadSource: 'instagram', agreedPrice: 4500, date: '2026-02-01' }),
+    ];
+    const expenses: Expense[] = [
+      makeExpense({ id: 'm1', category: 'marketing', channel: 'instagram', amount: 150, date: '2026-02-08' }),
+      makeExpense({ id: 'm2', category: 'marketing', channel: 'facebook_group', amount: 50, date: '2026-02-09' }),
+      makeExpense({ id: 'x', category: 'materials', amount: 999, date: '2026-02-10' }),
+    ];
+    const rows = calculateChannelRoi(projects, expenses);
+    expect(rows).toContainEqual({ channel: 'instagram', spend: 150, revenue: 4500 });
+    expect(rows).toContainEqual({ channel: 'facebook_group', spend: 50, revenue: 0 });
+    // materials expense must not create a channel row
+    expect(rows.find((r) => r.channel === undefined)).toBeUndefined();
+    expect(rows).toHaveLength(2);
+  });
+});
+
+describe('aggregateProfitByGroup', () => {
+  it('aggregates count, averages, effective rate, and total profit per key', () => {
+    const rows = aggregateProfitByGroup([
+      { key: 'table', agreedPrice: 4500, materialsCost: 600, linkedExpenses: 300, hours: 24 },
+      { key: 'table', agreedPrice: 3500, materialsCost: 500, linkedExpenses: 0, hours: 20 },
+      { key: 'shelf', agreedPrice: 1600, materialsCost: 400, linkedExpenses: 0, hours: 8 },
+    ]);
+
+    const table = rows.find((r) => r.key === 'table')!;
+    expect(table.count).toBe(2);
+    expect(table.avgPrice).toBe(4000);
+    expect(table.totalProfit).toBe(3600 + 3000);
+    // rates: (3600/24)=150, (3000/20)=150 -> avg 150
+    expect(table.avgRate).toBe(150);
+
+    // sorted by total profit desc
+    expect(rows[0].key).toBe('table');
+  });
+
+  it('reports a null average rate when no item has hours', () => {
+    const rows = aggregateProfitByGroup([
+      { key: 'x', agreedPrice: 1000, materialsCost: 200, linkedExpenses: 0, hours: 0 },
+    ]);
+    expect(rows[0].avgRate).toBeNull();
   });
 });

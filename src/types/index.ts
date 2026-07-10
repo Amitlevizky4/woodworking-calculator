@@ -1,5 +1,21 @@
 export type Unit = 'meter' | 'sheet' | 'liter' | 'piece' | 'kg' | 'm2';
-export type Status = 'planning' | 'in-progress' | 'completed' | 'on-hold';
+export type Status =
+  | 'lead'
+  | 'quoted'
+  | 'deposit_paid'
+  | 'in_production'
+  | 'ready'
+  | 'delivered'
+  | 'closed';
+export const PIPELINE_STAGES: Status[] = [
+  'lead',
+  'quoted',
+  'deposit_paid',
+  'in_production',
+  'ready',
+  'delivered',
+  'closed',
+];
 export type MarkupAppliedTo = 'materials' | 'materials+labor';
 
 export type ExpenseCategory =
@@ -67,6 +83,8 @@ export interface Project {
   description?: string;
   date: string;
   status: Status;
+  onHold: boolean;
+  productTypeId?: string;
   buyerName?: string;
   platform?: string;
   materials: ProjectMaterial[];
@@ -95,6 +113,7 @@ export interface Template
     Project,
     | 'date'
     | 'status'
+    | 'onHold'
     | 'buyerName'
     | 'platform'
     | 'photoUrl'
@@ -152,11 +171,27 @@ export interface Expense {
   supplier?: string;
   description?: string;
   projectId?: string;
+  channel?: string;
   receiptUrl?: string;
   recurringId?: string;
   periodMonth?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ProductType {
+  id: string;
+  name: string;
+  color: string;
+}
+
+export interface TimeLog {
+  id: string;
+  projectId: string;
+  date: string;
+  hours: number;
+  note?: string;
+  createdAt: string;
 }
 
 export interface RecurringExpense {

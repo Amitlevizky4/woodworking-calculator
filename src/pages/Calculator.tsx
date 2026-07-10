@@ -12,7 +12,9 @@ import {
   formatCurrency,
 } from '@/utils/cost-calculator';
 import { evaluateTargetHourlyRate } from '@/utils/business-metrics';
+import { STATUS_TKEY } from '@/utils/pipeline';
 import { packSheets } from '@/utils/bin-packing';
+import { PIPELINE_STAGES } from '@/types';
 import type {
   ProjectMaterial,
   WoodPart,
@@ -33,13 +35,6 @@ const LEAD_SOURCES: LeadSource[] = [
   'friends_family',
   'other',
 ];
-const STATUSES: Status[] = ['planning', 'in-progress', 'completed', 'on-hold'];
-const STATUS_KEYS: Record<Status, string> = {
-  planning: 'status.planning',
-  'in-progress': 'status.inProgress',
-  completed: 'status.completed',
-  'on-hold': 'status.onHold',
-};
 
 const PIECE_COLORS = [
   'var(--color-primary)',
@@ -333,6 +328,7 @@ export function Calculator() {
   const addProject = useStore((s) => s.addProject);
   const updateProject = useStore((s) => s.updateProject);
   const addTemplate = useStore((s) => s.addTemplate);
+  const productTypes = useStore((s) => s.productTypes);
   const settings = useBusinessStore((s) => s.settings);
 
   const existingProject = id ? projects.find((p) => p.id === id) : undefined;
@@ -344,7 +340,11 @@ export function Calculator() {
   const [date, setDate] = useState(
     existingProject?.date ?? new Date().toISOString().split('T')[0],
   );
-  const [status, setStatus] = useState<Status>(existingProject?.status ?? 'planning');
+  const [status, setStatus] = useState<Status>(existingProject?.status ?? 'lead');
+  const [onHold, setOnHold] = useState(existingProject?.onHold ?? false);
+  const [productTypeId, setProductTypeId] = useState(
+    existingProject?.productTypeId ?? '',
+  );
   const [selectedMaterials, setSelectedMaterials] = useState<ProjectMaterial[]>(
     existingProject?.materials ?? [],
   );
@@ -527,6 +527,8 @@ export function Calculator() {
       description: description || undefined,
       date,
       status,
+      onHold,
+      productTypeId: productTypeId || undefined,
       buyerName: buyerName || undefined,
       materials: selectedMaterials,
       woodParts,
@@ -560,6 +562,8 @@ export function Calculator() {
     description,
     date,
     status,
+    onHold,
+    productTypeId,
     buyerName,
     selectedMaterials,
     woodParts,
@@ -589,6 +593,7 @@ export function Calculator() {
       templateName: name,
       templateDescription: description,
       type: projectType,
+      productTypeId: productTypeId || undefined,
       materials: selectedMaterials,
       woodParts,
       laborHours,
@@ -604,6 +609,7 @@ export function Calculator() {
     name,
     description,
     projectType,
+    productTypeId,
     selectedMaterials,
     woodParts,
     laborHours,
@@ -672,6 +678,24 @@ export function Calculator() {
 
           <div className="mb-4">
             <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
+              {t('productTypes2.title')}
+            </label>
+            <select
+              value={productTypeId}
+              onChange={(e) => setProductTypeId(e.target.value)}
+              className={INPUT_CLASS}
+            >
+              <option value="">{t('productTypes2.none')}</option>
+              {productTypes.map((pt) => (
+                <option key={pt.id} value={pt.id}>
+                  {pt.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="mb-4">
+            <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
               Description
             </label>
             <textarea
@@ -703,12 +727,21 @@ export function Calculator() {
                 onChange={(e) => setStatus(e.target.value as Status)}
                 className={INPUT_CLASS}
               >
-                {STATUSES.map((s) => (
+                {PIPELINE_STAGES.map((s) => (
                   <option key={s} value={s}>
-                    {t(STATUS_KEYS[s])}
+                    {t(STATUS_TKEY[s])}
                   </option>
                 ))}
               </select>
+              <label className="flex items-center gap-2 cursor-pointer mt-3">
+                <input
+                  type="checkbox"
+                  checked={onHold}
+                  onChange={(e) => setOnHold(e.target.checked)}
+                  className="accent-primary w-4 h-4"
+                />
+                <span className="text-sm text-on-surface">{t('pipeline.onHold')}</span>
+              </label>
             </div>
           </div>
         </section>
