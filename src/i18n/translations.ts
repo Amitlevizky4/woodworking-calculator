@@ -160,6 +160,7 @@ interface TranslationSet {
     basePrice: string;
     newMaterial: string;
     variants: string;
+    variantLabel: string;
     addToProject: string;
   };
   status: {
@@ -459,6 +460,7 @@ export const translations: Translations = {
       basePrice: 'Base Price',
       newMaterial: 'New Material',
       variants: 'Variants',
+      variantLabel: 'Label',
       addToProject: 'Add to Project',
     },
     status: {
@@ -752,6 +754,7 @@ export const translations: Translations = {
       basePrice: '\u05DE\u05D7\u05D9\u05E8 \u05D1\u05E1\u05D9\u05E1',
       newMaterial: '\u05D7\u05D5\u05DE\u05E8 \u05D7\u05D3\u05E9',
       variants: '\u05D2\u05E8\u05E1\u05D0\u05D5\u05EA',
+      variantLabel: '\u05EA\u05D5\u05D5\u05D9\u05EA',
       addToProject: '\u05D4\u05D5\u05E1\u05E4\u05D4 \u05DC\u05E4\u05E8\u05D5\u05D9\u05E7\u05D8',
     },
     status: {

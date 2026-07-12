@@ -392,7 +392,7 @@ function MaterialModal({
   };
 
   const inputClass =
-    'w-full bg-surface-container-highest border-b-2 border-outline focus:border-primary focus:ring-0 px-4 py-3 outline-none transition-colors';
+    'w-full bg-surface-container-highest border-b-2 border-outline focus:border-primary focus:ring-0 px-4 py-3 outline-none transition-colors text-on-surface';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
@@ -510,8 +510,19 @@ function MaterialModal({
                 Add Variant
               </button>
             </div>
+            {form.variants.length > 0 && (
+              <div className="flex gap-2 mb-1 px-1">
+                <span className="flex-1 text-[10px] font-bold uppercase tracking-widest text-secondary">
+                  {t('materials.variantLabel')}
+                </span>
+                <span className="w-28 text-[10px] font-bold uppercase tracking-widest text-secondary">
+                  {t('materials.basePrice')}
+                </span>
+                <span className="w-8" />
+              </div>
+            )}
             {form.variants.map((variant, index) => (
-              <div key={variant.id} className="flex gap-2 mb-2">
+              <div key={variant.id} className="flex gap-2 mb-2 items-center">
                 <input
                   type="text"
                   value={variant.label}
@@ -519,7 +530,7 @@ function MaterialModal({
                     handleVariantChange(index, 'label', e.target.value)
                   }
                   className={`flex-1 ${inputClass}`}
-                  placeholder="Label"
+                  placeholder="e.g. 2x4"
                 />
                 <input
                   type="number"
@@ -528,13 +539,13 @@ function MaterialModal({
                     handleVariantChange(index, 'price', e.target.value)
                   }
                   className={`w-28 ${inputClass}`}
-                  placeholder="Price"
+                  placeholder="0.00"
                   min={0}
                   step="0.01"
                 />
                 <button
                   onClick={() => handleRemoveVariant(index)}
-                  className="text-secondary hover:text-red-600 transition-colors px-2"
+                  className="text-secondary hover:text-red-600 transition-colors w-8 flex justify-center"
                 >
                   <Icon name="close" className="text-base" />
                 </button>

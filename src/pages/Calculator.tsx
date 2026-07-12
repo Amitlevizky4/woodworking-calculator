@@ -25,6 +25,15 @@ import type {
 } from '@/types';
 import type { SheetLayout } from '@/utils/bin-packing';
 
+const UNIT_ABBR: Record<string, string> = {
+  meter: 'm',
+  sheet: 'sheet',
+  liter: 'L',
+  piece: 'pc',
+  kg: 'kg',
+  m2: 'm²',
+};
+
 const PROJECT_TYPES = ['furniture', 'cabinet', 'shelf', 'table', 'custom'] as const;
 const LEAD_SOURCES: LeadSource[] = [
   'instagram',
@@ -452,8 +461,15 @@ export function Calculator() {
 
   const handleAddMaterial = useCallback((material: Material) => {
     setSelectedMaterials((prev) => {
-      const exists = prev.some((pm) => pm.materialId === material.id);
-      if (exists) return prev;
+      const existing = prev.find((pm) => pm.materialId === material.id);
+      if (existing) {
+        // Already in the list — bump its quantity instead of ignoring.
+        return prev.map((pm) =>
+          pm.materialId === material.id
+            ? { ...pm, quantity: pm.quantity + 1 }
+            : pm,
+        );
+      }
       return [
         ...prev,
         {
@@ -838,19 +854,50 @@ export function Calculator() {
                           )}
                         </td>
                         <td className="py-3 pe-4">
-                          <input
-                            type="number"
-                            value={pm.quantity}
-                            onChange={(e) =>
-                              handleMaterialQuantityChange(
-                                pm.materialId,
-                                parseFloat(e.target.value) || 0,
-                              )
-                            }
-                            min={0}
-                            step="any"
-                            className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none w-20 font-mono text-sm text-on-surface focus:border-primary"
-                          />
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleMaterialQuantityChange(
+                                  pm.materialId,
+                                  pm.quantity - 1,
+                                )
+                              }
+                              className="w-6 h-6 flex items-center justify-center rounded bg-surface-container-highest hover:bg-surface-container text-secondary shrink-0"
+                              aria-label="Decrease quantity"
+                            >
+                              <Icon name="remove" className="text-sm" />
+                            </button>
+                            <input
+                              type="number"
+                              value={pm.quantity}
+                              onChange={(e) =>
+                                handleMaterialQuantityChange(
+                                  pm.materialId,
+                                  parseFloat(e.target.value) || 0,
+                                )
+                              }
+                              min={0}
+                              step="any"
+                              className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none w-16 font-mono text-sm text-on-surface focus:border-primary text-center"
+                            />
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleMaterialQuantityChange(
+                                  pm.materialId,
+                                  pm.quantity + 1,
+                                )
+                              }
+                              className="w-6 h-6 flex items-center justify-center rounded bg-surface-container-highest hover:bg-surface-container text-secondary shrink-0"
+                              aria-label="Increase quantity"
+                            >
+                              <Icon name="add" className="text-sm" />
+                            </button>
+                            <span className="text-xs text-secondary ms-1">
+                              {UNIT_ABBR[material.unit] ?? material.unit}
+                            </span>
+                          </div>
                         </td>
                         <td className="py-3 pe-4 font-mono text-sm text-secondary">
                           {formatCurrency(unitCost)}
