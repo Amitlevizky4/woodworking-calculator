@@ -63,6 +63,7 @@ export interface Category {
 }
 
 export interface ProjectMaterial {
+  id: string;
   materialId: string;
   variantId?: string;
   quantity: number;
