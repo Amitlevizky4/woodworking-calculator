@@ -1,4 +1,56 @@
-import type { Material, MarkupAppliedTo, ProjectMaterial } from '@/types';
+import type { Material, MarkupAppliedTo, ProjectMaterial, Unit } from '@/types';
+
+export const UNIT_ABBR: Record<Unit, string> = {
+  meter: 'm',
+  sheet: 'sheet',
+  liter: 'L',
+  piece: 'pc',
+  kg: 'kg',
+  m2: 'm²',
+};
+
+export interface MaterialUsageRow {
+  materialId: string;
+  name: string;
+  unit: Unit;
+  totalQuantity: number;
+  totalCost: number;
+}
+
+/** Aggregates project material line items by material, summing quantity and
+ *  cost across separate rows of the same material (e.g. total meters used). */
+export function summarizeMaterialUsage(
+  projectMaterials: ProjectMaterial[],
+  allMaterials: Material[],
+): MaterialUsageRow[] {
+  const byMaterial = new Map<string, MaterialUsageRow>();
+
+  for (const pm of projectMaterials) {
+    const material = allMaterials.find((m) => m.id === pm.materialId);
+    if (!material) continue;
+
+    let unitCost = material.basePrice;
+    if (pm.variantId && material.variants) {
+      const variant = material.variants.find((v) => v.id === pm.variantId);
+      if (variant) unitCost = variant.price;
+    }
+
+    const existing =
+      byMaterial.get(pm.materialId) ??
+      {
+        materialId: pm.materialId,
+        name: material.name,
+        unit: material.unit,
+        totalQuantity: 0,
+        totalCost: 0,
+      };
+    existing.totalQuantity += pm.quantity;
+    existing.totalCost += unitCost * pm.quantity;
+    byMaterial.set(pm.materialId, existing);
+  }
+
+  return Array.from(byMaterial.values());
+}
 
 interface CostBreakdown {
   materialsCost: number;

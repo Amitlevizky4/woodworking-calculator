@@ -10,6 +10,8 @@ import {
   calculateLaborCost,
   calculateFinalPrice,
   formatCurrency,
+  summarizeMaterialUsage,
+  UNIT_ABBR,
 } from '@/utils/cost-calculator';
 import {
   calculateEffectiveHourlyRate,
@@ -19,36 +21,6 @@ import {
 import { packSheets } from '@/utils/bin-packing';
 import { SheetVisualization } from '@/components/SheetVisualization';
 import { STATUS_BADGE_CLASSES, STATUS_TKEY } from '@/utils/pipeline';
-
-function CostCard({
-  label,
-  value,
-  isHighlighted,
-}: {
-  label: string;
-  value: string;
-  isHighlighted?: boolean;
-}) {
-  if (isHighlighted) {
-    return (
-      <div className="bg-primary text-white p-6 rounded-xl">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-white/70">
-          {label}
-        </p>
-        <p className="font-mono text-3xl font-bold mt-2">{value}</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="bg-surface-container-low p-6 rounded-xl border-b-2 border-outline-variant">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-secondary">
-        {label}
-      </p>
-      <p className="font-mono text-2xl font-bold mt-2">{value}</p>
-    </div>
-  );
-}
 
 function InfoCell({ label, value }: { label: string; value: string | null }) {
   const { t } = useTranslation();
@@ -379,6 +351,14 @@ export function ProjectDetails() {
     });
   }, [project, allMaterials]);
 
+  const materialSummary = useMemo(
+    () => (project ? summarizeMaterialUsage(project.materials, allMaterials) : []),
+    [project, allMaterials],
+  );
+  const hasDuplicateMaterials = project
+    ? materialSummary.length < project.materials.length
+    : false;
+
   const woodPartsData = useMemo(() => {
     if (!project) return [];
     return project.woodParts.map((part) => ({
@@ -418,6 +398,45 @@ export function ProjectDetails() {
   const handlePrint = () => {
     window.print();
   };
+
+  const paymentCells = [
+    project.quotedPrice && {
+      label: t('income.quotedPrice'),
+      value: formatCurrency(project.quotedPrice),
+    },
+    project.agreedPrice && {
+      label: t('income.agreedPrice'),
+      value: formatCurrency(project.agreedPrice),
+    },
+    project.depositAmount && {
+      label: t('income.depositAmount'),
+      value: formatCurrency(project.depositAmount),
+    },
+    project.leadSource && {
+      label: t('income.leadSource'),
+      value: t(`leadSource.${project.leadSource}`),
+    },
+    project.depositPaidAt && {
+      label: t('income.depositPaid'),
+      value: project.depositPaidAt,
+    },
+    project.balancePaidAt && {
+      label: t('income.balancePaid'),
+      value: project.balancePaidAt,
+    },
+    project.deliveredAt && {
+      label: t('income.delivered'),
+      value: project.deliveredAt,
+    },
+    project.actualHours && {
+      label: t('income.actualHours'),
+      value: `${project.actualHours} hrs`,
+    },
+  ].filter(Boolean) as { label: string; value: string }[];
+
+  // Effective rate is only meaningful once an agreed price exists.
+  const showEffectiveRate = Boolean(project.agreedPrice) && effectiveRate !== null;
+  const showPaymentsSection = paymentCells.length > 0 || showEffectiveRate;
 
   return (
     <div className="p-8 max-w-4xl mx-auto space-y-8">
@@ -503,75 +522,90 @@ export function ProjectDetails() {
           <h2 className="font-headline text-lg font-bold uppercase tracking-wide mb-4">
             Cost Breakdown
           </h2>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-            <CostCard
-              label={t('calculator.materials')}
-              value={formatCurrency(costBreakdown.materialsCost)}
-            />
-            <CostCard
-              label={t('calculator.laborCost')}
-              value={formatCurrency(costBreakdown.laborCost)}
-            />
-            <CostCard
-              label={t('calculator.markup')}
-              value={formatCurrency(costBreakdown.markupAmount)}
-            />
-            <CostCard
-              label={t('calculator.discount')}
-              value={formatCurrency(costBreakdown.discountAmount)}
-            />
-            <CostCard
-              label={t('calculator.finalPrice')}
-              value={formatCurrency(costBreakdown.finalPrice)}
-              isHighlighted
-            />
+          <div className="bg-surface-container-low rounded-xl overflow-hidden">
+            <table className="w-full">
+              <tbody>
+                <tr className="border-b border-outline-variant/30">
+                  <td className="px-6 py-4 text-secondary text-sm">
+                    {t('calculator.materials')}
+                  </td>
+                  <td className="px-6 py-4 text-end font-mono">
+                    {formatCurrency(costBreakdown.materialsCost)}
+                  </td>
+                </tr>
+                <tr className="border-b border-outline-variant/30">
+                  <td className="px-6 py-4 text-secondary text-sm">
+                    {t('calculator.laborCost')}
+                  </td>
+                  <td className="px-6 py-4 text-end font-mono">
+                    {formatCurrency(costBreakdown.laborCost)}
+                  </td>
+                </tr>
+                {costBreakdown.markupAmount > 0 && (
+                  <tr className="border-b border-outline-variant/30">
+                    <td className="px-6 py-4 text-secondary text-sm">
+                      {t('calculator.markup')}
+                    </td>
+                    <td className="px-6 py-4 text-end font-mono text-tertiary">
+                      +{formatCurrency(costBreakdown.markupAmount)}
+                    </td>
+                  </tr>
+                )}
+                {costBreakdown.discountAmount > 0 && (
+                  <tr className="border-b border-outline-variant/30">
+                    <td className="px-6 py-4 text-secondary text-sm">
+                      {t('calculator.discount')}
+                    </td>
+                    <td className="px-6 py-4 text-end font-mono text-error">
+                      −{formatCurrency(costBreakdown.discountAmount)}
+                    </td>
+                  </tr>
+                )}
+                <tr className="bg-surface-container">
+                  <td className="px-6 py-4 font-bold">
+                    {t('calculator.finalPrice')}
+                  </td>
+                  <td className="px-6 py-4 text-end font-mono font-bold text-lg text-primary">
+                    {formatCurrency(costBreakdown.finalPrice)}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       )}
 
-      <div>
-        <h2 className="font-headline text-lg font-bold uppercase tracking-wide mb-4">
-          {t('income.payments')}
-        </h2>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <InfoCell
-            label={t('income.quotedPrice')}
-            value={project.quotedPrice ? formatCurrency(project.quotedPrice) : null}
-          />
-          <InfoCell
-            label={t('income.agreedPrice')}
-            value={project.agreedPrice ? formatCurrency(project.agreedPrice) : null}
-          />
-          <InfoCell
-            label={t('income.depositAmount')}
-            value={project.depositAmount ? formatCurrency(project.depositAmount) : null}
-          />
-          <InfoCell
-            label={t('income.leadSource')}
-            value={project.leadSource ? t(`leadSource.${project.leadSource}`) : null}
-          />
-          <InfoCell label={t('income.depositPaid')} value={project.depositPaidAt ?? null} />
-          <InfoCell label={t('income.balancePaid')} value={project.balancePaidAt ?? null} />
-          <InfoCell label={t('income.delivered')} value={project.deliveredAt ?? null} />
-          <InfoCell
-            label={t('income.actualHours')}
-            value={project.actualHours ? `${project.actualHours} hrs` : null}
-          />
-        </div>
-        {effectiveRate !== null && (
-          <div className="mt-4 bg-primary text-white p-6 rounded-xl inline-flex items-center gap-4">
-            <Icon name="trending_up" className="text-3xl" />
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-white/70">
-                {t('pnl.effectiveRate')}
-              </p>
-              <p className="font-mono text-3xl font-bold">
-                {formatCurrency(effectiveRate)}/hr
-              </p>
+      {showPaymentsSection && (
+        <div>
+          <h2 className="font-headline text-lg font-bold uppercase tracking-wide mb-4">
+            {t('income.payments')}
+          </h2>
+          {paymentCells.length > 0 && (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {paymentCells.map((cell) => (
+                <InfoCell key={cell.label} label={cell.label} value={cell.value} />
+              ))}
             </div>
-          </div>
-        )}
-      </div>
+          )}
+          {showEffectiveRate && effectiveRate !== null && (
+            <div
+              className={`bg-primary text-white p-6 rounded-xl inline-flex items-center gap-4 ${
+                paymentCells.length > 0 ? 'mt-4' : ''
+              }`}
+            >
+              <Icon name="trending_up" className="text-3xl" />
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-white/70">
+                  {t('pnl.effectiveRate')}
+                </p>
+                <p className="font-mono text-3xl font-bold">
+                  {formatCurrency(effectiveRate)}/hr
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <TimeLogSection projectId={project.id} />
 
@@ -580,6 +614,27 @@ export function ProjectDetails() {
           {t('calculator.materialsList')}
         </h2>
         <MaterialsTable projectMaterials={resolvedMaterials} />
+        {hasDuplicateMaterials && (
+          <div className="mt-4 bg-surface-container-low rounded-xl p-4">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-secondary mb-2">
+              {t('calculator.materialTotals')}
+            </p>
+            <div className="space-y-1">
+              {materialSummary.map((row) => (
+                <div
+                  key={row.materialId}
+                  className="flex items-center justify-between text-sm"
+                >
+                  <span>{row.name}</span>
+                  <span className="font-mono text-secondary">
+                    {row.totalQuantity} {UNIT_ABBR[row.unit]} ·{' '}
+                    {formatCurrency(row.totalCost)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <div>
