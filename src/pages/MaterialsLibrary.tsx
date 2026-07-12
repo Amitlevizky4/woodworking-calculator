@@ -128,16 +128,16 @@ function MaterialTable({
       <table className="w-full">
         <thead>
           <tr className="border-b border-outline-variant/30">
-            <th className="text-left text-[10px] font-bold uppercase tracking-widest text-secondary px-6 py-4">
+            <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary px-6 py-4">
               {t('materials.materialName')}
             </th>
-            <th className="text-left text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
+            <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
               {t('materials.category')}
             </th>
-            <th className="text-left text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
+            <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
               {t('materials.unit')}
             </th>
-            <th className="text-left text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
+            <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
               {t('materials.basePrice')}
             </th>
             <th className="w-10" />
@@ -568,7 +568,7 @@ function MaterialModal({
               type="file"
               accept="image/*"
               onChange={handlePhotoUpload}
-              className="text-sm text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-surface-container-high file:text-on-surface hover:file:bg-surface-container"
+              className="text-sm text-secondary file:me-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-surface-container-high file:text-on-surface hover:file:bg-surface-container"
             />
           </div>
         </div>

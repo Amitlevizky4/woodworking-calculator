@@ -67,7 +67,7 @@ function Sidebar() {
   const activeShop = shops.find((s) => s.id === activeShopId);
 
   return (
-    <aside className="hidden md:flex md:flex-col md:fixed md:inset-y-0 md:left-0 md:w-64 bg-[#eeeeeb] border-r border-outline-variant z-30">
+    <aside className="hidden md:flex md:flex-col md:fixed md:inset-y-0 md:start-0 md:w-64 bg-[#eeeeeb] border-e border-outline-variant z-30">
       <div className="p-6">
         <h1 className="font-headline text-primary font-bold text-lg">
           {activeShop?.name || 'The Precision Workshop'}
@@ -96,7 +96,7 @@ function Sidebar() {
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                 isActive
-                  ? 'bg-[#f9f9f6] text-[#a43700] font-bold border-r-4 border-[#a43700]'
+                  ? 'bg-[#f9f9f6] text-[#a43700] font-bold border-e-4 border-[#a43700]'
                   : 'text-on-surface opacity-70 hover:bg-[#f4f4f1]'
               }`
             }
@@ -112,7 +112,7 @@ function Sidebar() {
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                 isActive
-                  ? 'bg-[#f9f9f6] text-[#a43700] font-bold border-r-4 border-[#a43700]'
+                  ? 'bg-[#f9f9f6] text-[#a43700] font-bold border-e-4 border-[#a43700]'
                   : 'text-on-surface opacity-70 hover:bg-[#f4f4f1]'
               }`
             }
@@ -128,7 +128,7 @@ function Sidebar() {
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                 isActive
-                  ? 'bg-[#f9f9f6] text-[#a43700] font-bold border-r-4 border-[#a43700]'
+                  ? 'bg-[#f9f9f6] text-[#a43700] font-bold border-e-4 border-[#a43700]'
                   : 'text-on-surface opacity-70 hover:bg-[#f4f4f1]'
               }`
             }
@@ -216,7 +216,7 @@ export function Layout() {
   return (
     <div className="min-h-screen bg-surface font-body text-on-surface">
       <Sidebar />
-      <div className="md:ml-64">
+      <div className="md:ms-64">
         <TopBar />
         <main className="p-4 md:p-6 pb-20 md:pb-6">
           <Outlet />

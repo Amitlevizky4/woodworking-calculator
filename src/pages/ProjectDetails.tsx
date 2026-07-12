@@ -160,19 +160,19 @@ function MaterialsTable({
       <table className="w-full">
         <thead>
           <tr className="border-b border-outline-variant/30">
-            <th className="text-left text-[10px] font-bold uppercase tracking-widest text-secondary px-6 py-4">
+            <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary px-6 py-4">
               Material
             </th>
-            <th className="text-left text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
+            <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
               Variant
             </th>
-            <th className="text-right text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
+            <th className="text-end text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
               Qty
             </th>
-            <th className="text-right text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
+            <th className="text-end text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
               Unit Price
             </th>
-            <th className="text-right text-[10px] font-bold uppercase tracking-widest text-secondary px-6 py-4">
+            <th className="text-end text-[10px] font-bold uppercase tracking-widest text-secondary px-6 py-4">
               Total
             </th>
           </tr>
@@ -187,13 +187,13 @@ function MaterialsTable({
               <td className="px-4 py-3 text-secondary text-sm">
                 {pm.variantLabel ?? '--'}
               </td>
-              <td className="px-4 py-3 text-right font-mono">
+              <td className="px-4 py-3 text-end font-mono">
                 {pm.quantity}
               </td>
-              <td className="px-4 py-3 text-right font-mono">
+              <td className="px-4 py-3 text-end font-mono">
                 {formatCurrency(pm.unitPrice)}
               </td>
-              <td className="px-6 py-3 text-right font-mono font-bold">
+              <td className="px-6 py-3 text-end font-mono font-bold">
                 {formatCurrency(pm.total)}
               </td>
             </tr>
@@ -227,19 +227,19 @@ function WoodPartsTable({
       <table className="w-full">
         <thead>
           <tr className="border-b border-outline-variant/30">
-            <th className="text-left text-[10px] font-bold uppercase tracking-widest text-secondary px-6 py-4">
+            <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary px-6 py-4">
               Part Name
             </th>
-            <th className="text-right text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
+            <th className="text-end text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
               Length (mm)
             </th>
-            <th className="text-right text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
+            <th className="text-end text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
               Width (mm)
             </th>
-            <th className="text-right text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
+            <th className="text-end text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
               Qty
             </th>
-            <th className="text-right text-[10px] font-bold uppercase tracking-widest text-secondary px-6 py-4">
+            <th className="text-end text-[10px] font-bold uppercase tracking-widest text-secondary px-6 py-4">
               Area (mm\u00B2)
             </th>
           </tr>
@@ -251,16 +251,16 @@ function WoodPartsTable({
               className="border-b border-outline-variant/20"
             >
               <td className="px-6 py-3 font-medium">{part.name}</td>
-              <td className="px-4 py-3 text-right font-mono">
+              <td className="px-4 py-3 text-end font-mono">
                 {part.lengthMm.toLocaleString()}
               </td>
-              <td className="px-4 py-3 text-right font-mono">
+              <td className="px-4 py-3 text-end font-mono">
                 {part.widthMm.toLocaleString()}
               </td>
-              <td className="px-4 py-3 text-right font-mono">
+              <td className="px-4 py-3 text-end font-mono">
                 {part.quantity}
               </td>
-              <td className="px-6 py-3 text-right font-mono font-bold">
+              <td className="px-6 py-3 text-end font-mono font-bold">
                 {part.area.toLocaleString()}
               </td>
             </tr>

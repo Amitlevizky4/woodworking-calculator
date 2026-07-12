@@ -602,16 +602,16 @@ function RecentProjectsTable({ projects, allMaterials }: {
       <table className="w-full">
         <thead>
           <tr>
-            <th className="text-left text-[10px] font-bold uppercase tracking-widest text-secondary pb-4">
+            <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary pb-4">
               {t('projects.projectName')}
             </th>
-            <th className="text-left text-[10px] font-bold uppercase tracking-widest text-secondary pb-4">
+            <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary pb-4">
               {t('projects.status')}
             </th>
-            <th className="text-left text-[10px] font-bold uppercase tracking-widest text-secondary pb-4">
+            <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary pb-4">
               {t('projects.totalCost')}
             </th>
-            <th className="text-left text-[10px] font-bold uppercase tracking-widest text-secondary pb-4">
+            <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary pb-4">
               {t('projects.action')}
             </th>
           </tr>
@@ -690,7 +690,7 @@ function PerformancePanel({ projects, allMaterials }: {
   }, [projects, allMaterials]);
 
   return (
-    <div className="glass-panel border-l-4 border-primary p-6">
+    <div className="glass-panel border-s-4 border-primary p-6">
       <h2 className="font-headline text-lg font-bold uppercase tracking-wide mb-6">
         {t('dashboard.performanceHighlights')}
       </h2>
