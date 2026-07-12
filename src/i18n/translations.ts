@@ -66,6 +66,7 @@ interface TranslationSet {
     targetHourlyRate: string;
     meetsTarget: string;
     belowTarget: string;
+    materialTotals: string;
   };
   expenses: {
     title: string;
@@ -366,6 +367,7 @@ export const translations: Translations = {
       targetHourlyRate: 'Target Hourly Rate',
       meetsTarget: 'Meets target rate',
       belowTarget: 'Below target rate',
+      materialTotals: 'Material Totals',
     },
     expenses: {
       title: 'Expenses',
@@ -660,6 +662,7 @@ export const translations: Translations = {
       targetHourlyRate: '\u05EA\u05E2\u05E8\u05D9\u05E3 \u05E9\u05E2\u05D4 \u05D9\u05E2\u05D3',
       meetsTarget: '\u05E2\u05D5\u05DE\u05D3 \u05D1\u05EA\u05E2\u05E8\u05D9\u05E3 \u05D4\u05D9\u05E2\u05D3',
       belowTarget: '\u05DE\u05EA\u05D7\u05EA \u05DC\u05EA\u05E2\u05E8\u05D9\u05E3 \u05D4\u05D9\u05E2\u05D3',
+      materialTotals: '\u05E1\u05D9\u05DB\u05D5\u05DD \u05D7\u05D5\u05DE\u05E8\u05D9\u05DD',
     },
     expenses: {
       title: '\u05D4\u05D5\u05E6\u05D0\u05D5\u05EA',

@@ -10,6 +10,8 @@ import {
   calculateLaborCost,
   calculateFinalPrice,
   formatCurrency,
+  summarizeMaterialUsage,
+  UNIT_ABBR,
 } from '@/utils/cost-calculator';
 import { evaluateTargetHourlyRate } from '@/utils/business-metrics';
 import { STATUS_TKEY } from '@/utils/pipeline';
@@ -24,15 +26,6 @@ import type {
   LeadSource,
 } from '@/types';
 import type { SheetLayout } from '@/utils/bin-packing';
-
-const UNIT_ABBR: Record<string, string> = {
-  meter: 'm',
-  sheet: 'sheet',
-  liter: 'L',
-  piece: 'pc',
-  kg: 'kg',
-  m2: 'm²',
-};
 
 const PROJECT_TYPES = ['furniture', 'cabinet', 'shelf', 'table', 'custom'] as const;
 const LEAD_SOURCES: LeadSource[] = [
@@ -398,6 +391,13 @@ export function Calculator() {
     () => calculateMaterialsCost(selectedMaterials, allMaterials),
     [selectedMaterials, allMaterials],
   );
+
+  const materialSummary = useMemo(
+    () => summarizeMaterialUsage(selectedMaterials, allMaterials),
+    [selectedMaterials, allMaterials],
+  );
+  // Only worth showing once a material spans more than one line item.
+  const hasDuplicateMaterials = materialSummary.length < selectedMaterials.length;
 
   const laborCost = useMemo(
     () => calculateLaborCost(laborHours, hourlyRate),
@@ -909,6 +909,28 @@ export function Calculator() {
                   })}
                 </tbody>
               </table>
+            </div>
+          )}
+
+          {hasDuplicateMaterials && (
+            <div className="mt-6 border-t border-outline-variant pt-4">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-secondary mb-2">
+                {t('calculator.materialTotals')}
+              </p>
+              <div className="space-y-1">
+                {materialSummary.map((row) => (
+                  <div
+                    key={row.materialId}
+                    className="flex items-center justify-between text-sm"
+                  >
+                    <span className="text-on-surface">{row.name}</span>
+                    <span className="font-mono text-secondary">
+                      {row.totalQuantity} {UNIT_ABBR[row.unit]} ·{' '}
+                      {formatCurrency(row.totalCost)}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </section>

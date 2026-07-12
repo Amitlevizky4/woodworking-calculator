@@ -10,6 +10,8 @@ import {
   calculateLaborCost,
   calculateFinalPrice,
   formatCurrency,
+  summarizeMaterialUsage,
+  UNIT_ABBR,
 } from '@/utils/cost-calculator';
 import {
   calculateEffectiveHourlyRate,
@@ -379,6 +381,14 @@ export function ProjectDetails() {
     });
   }, [project, allMaterials]);
 
+  const materialSummary = useMemo(
+    () => (project ? summarizeMaterialUsage(project.materials, allMaterials) : []),
+    [project, allMaterials],
+  );
+  const hasDuplicateMaterials = project
+    ? materialSummary.length < project.materials.length
+    : false;
+
   const woodPartsData = useMemo(() => {
     if (!project) return [];
     return project.woodParts.map((part) => ({
@@ -580,6 +590,27 @@ export function ProjectDetails() {
           {t('calculator.materialsList')}
         </h2>
         <MaterialsTable projectMaterials={resolvedMaterials} />
+        {hasDuplicateMaterials && (
+          <div className="mt-4 bg-surface-container-low rounded-xl p-4">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-secondary mb-2">
+              {t('calculator.materialTotals')}
+            </p>
+            <div className="space-y-1">
+              {materialSummary.map((row) => (
+                <div
+                  key={row.materialId}
+                  className="flex items-center justify-between text-sm"
+                >
+                  <span>{row.name}</span>
+                  <span className="font-mono text-secondary">
+                    {row.totalQuantity} {UNIT_ABBR[row.unit]} ·{' '}
+                    {formatCurrency(row.totalCost)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <div>
