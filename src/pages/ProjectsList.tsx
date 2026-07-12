@@ -57,13 +57,13 @@ function FilterBar({
   return (
     <div className="bg-surface-container-low p-6 rounded-xl flex flex-col md:flex-row gap-4 items-stretch md:items-center">
       <div className="flex-1 relative">
-        <Icon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-xl" />
+        <Icon name="search" className="absolute start-3 top-1/2 -translate-y-1/2 text-secondary text-xl" />
         <input
           type="text"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search by project name or material..."
-          className="w-full pl-10 pr-4 py-3 bg-surface-container-highest border-b-2 border-outline focus:border-primary outline-none text-sm transition-colors rounded-t"
+          className="w-full ps-10 pe-4 py-3 bg-surface-container-highest border-b-2 border-outline focus:border-primary outline-none text-sm transition-colors rounded-t"
         />
       </div>
       <select
@@ -117,7 +117,7 @@ function ProjectRow({ project, allMaterials, onNavigate, onDelete }: {
       <td className="py-4 px-4">
         <button
           onClick={() => onNavigate(`/projects/${project.id}`)}
-          className="text-left hover:text-primary transition-colors"
+          className="text-start hover:text-primary transition-colors"
         >
           <p className="font-bold text-lg">{project.name}</p>
         </button>
@@ -309,25 +309,25 @@ export function ProjectsList() {
           <table className="w-full min-w-[900px]">
             <thead>
               <tr>
-                <th className="text-left text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
+                <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
                   Preview
                 </th>
-                <th className="text-left text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
+                <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
                   Project Identity
                 </th>
-                <th className="text-left text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
+                <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
                   {t('projects.status')}
                 </th>
-                <th className="text-left text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
+                <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
                   Timeline
                 </th>
-                <th className="text-left text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
+                <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
                   Metrics
                 </th>
-                <th className="text-left text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
+                <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
                   Valuation
                 </th>
-                <th className="text-left text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
+                <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
                   Actions
                 </th>
               </tr>

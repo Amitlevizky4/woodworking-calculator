@@ -93,7 +93,7 @@ export function ShopSelector() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full mt-1 left-0 w-64 bg-surface-container-lowest shadow-lg border border-outline-variant/20 rounded-lg z-50 overflow-hidden">
+        <div className="absolute top-full mt-1 start-0 w-64 bg-surface-container-lowest shadow-lg border border-outline-variant/20 rounded-lg z-50 overflow-hidden">
           <div className="py-1">
             {shops.map((shop) => {
               const isActive = shop.id === activeShopId;
@@ -103,7 +103,7 @@ export function ShopSelector() {
                 <button
                   key={shop.id}
                   onClick={() => handleSelectShop(shop.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors ${
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-start text-sm transition-colors ${
                     isActive
                       ? 'bg-primary/5 text-primary font-bold'
                       : 'text-on-surface hover:bg-surface-container-low'
@@ -123,7 +123,7 @@ export function ShopSelector() {
           <div className="border-t border-outline-variant/20">
             <button
               onClick={handleCreateNew}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm text-tertiary hover:bg-surface-container-low transition-colors"
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-start text-sm text-tertiary hover:bg-surface-container-low transition-colors"
             >
               <Icon name="add_circle" className="text-lg" />
               <span className="font-medium">{t('shopSelector.createNew')}</span>

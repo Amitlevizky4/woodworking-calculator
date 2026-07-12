@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * RTL: keep monospace/numeric content (prices, dates, IDs, quantities) in
+ * left-to-right order so the shekel sign, digits, and separators don't get
+ * visually reordered inside a Hebrew (rtl) layout. `isolate` prevents the
+ * number from disturbing the surrounding bidi run.
+ */
+[dir='rtl'] .font-mono {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* Inline numbers embedded in Hebrew sentences (e.g. "יום בחודש 1") stay LTR. */
+[dir='rtl'] .num-ltr {
+  direction: ltr;
+  unicode-bidi: isolate;
+  display: inline-block;
+}
+
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   vertical-align: middle;

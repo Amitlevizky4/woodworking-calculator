@@ -150,14 +150,14 @@ function MembersSection() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-outline-variant/20">
-                <th className="text-left px-4 py-3 text-xs font-bold text-secondary uppercase tracking-wider">
+                <th className="text-start px-4 py-3 text-xs font-bold text-secondary uppercase tracking-wider">
                   {t('shopManagement.user')}
                 </th>
-                <th className="text-left px-4 py-3 text-xs font-bold text-secondary uppercase tracking-wider">
+                <th className="text-start px-4 py-3 text-xs font-bold text-secondary uppercase tracking-wider">
                   {t('shopManagement.role')}
                 </th>
                 {isManager && (
-                  <th className="text-right px-4 py-3 text-xs font-bold text-secondary uppercase tracking-wider">
+                  <th className="text-end px-4 py-3 text-xs font-bold text-secondary uppercase tracking-wider">
                     {t('shopManagement.actions')}
                   </th>
                 )}
@@ -191,7 +191,7 @@ function MembersSection() {
                     </span>
                   </td>
                   {isManager && (
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-3 text-end">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleToggleRole(member.id, member.role)}

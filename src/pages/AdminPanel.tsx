@@ -102,16 +102,16 @@ function AllShopsSection() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-outline-variant/20">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-secondary uppercase tracking-wider">
+                  <th className="text-start px-4 py-3 text-xs font-bold text-secondary uppercase tracking-wider">
                     {t('admin.shopName')}
                   </th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-secondary uppercase tracking-wider">
+                  <th className="text-start px-4 py-3 text-xs font-bold text-secondary uppercase tracking-wider">
                     {t('shopManagement.members')}
                   </th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-secondary uppercase tracking-wider">
+                  <th className="text-start px-4 py-3 text-xs font-bold text-secondary uppercase tracking-wider">
                     {t('admin.created')}
                   </th>
-                  <th className="text-right px-4 py-3 text-xs font-bold text-secondary uppercase tracking-wider">
+                  <th className="text-end px-4 py-3 text-xs font-bold text-secondary uppercase tracking-wider">
                     {t('shopManagement.actions')}
                   </th>
                 </tr>
@@ -139,7 +139,7 @@ function AllShopsSection() {
                     <td className="px-4 py-3 text-secondary">
                       {formatDate(shop.created_at)}
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-3 text-end">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleViewShop(shop.id)}
