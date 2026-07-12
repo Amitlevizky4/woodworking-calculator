@@ -118,10 +118,10 @@ export function seedData(): SeedData {
       onHold: false,
       buyerName: 'David Cohen',
       materials: [
-        { materialId: plywoodId, variantId: plywoodStandardVariantId, quantity: 2 },
-        { materialId: pineBoardId, variantId: pine2x4VariantId, quantity: 4 },
-        { materialId: woodStainId, quantity: 1 },
-        { materialId: woodScrewsId, variantId: screws30mmVariantId, quantity: 50 },
+        { id: uuidv4(), materialId:plywoodId, variantId: plywoodStandardVariantId, quantity: 2 },
+        { id: uuidv4(), materialId:pineBoardId, variantId: pine2x4VariantId, quantity: 4 },
+        { id: uuidv4(), materialId:woodStainId, quantity: 1 },
+        { id: uuidv4(), materialId:woodScrewsId, variantId: screws30mmVariantId, quantity: 50 },
       ],
       woodParts: [
         { id: uuidv4(), name: 'Top', lengthMm: 1800, widthMm: 900, quantity: 1 },
@@ -145,9 +145,9 @@ export function seedData(): SeedData {
       status: 'in_production',
       onHold: false,
       materials: [
-        { materialId: oakBoardId, quantity: 3 },
-        { materialId: sandpaperId, variantId: sandpaper120VariantId, quantity: 5 },
-        { materialId: woodStainId, quantity: 0.5 },
+        { id: uuidv4(), materialId:oakBoardId, quantity: 3 },
+        { id: uuidv4(), materialId:sandpaperId, variantId: sandpaper120VariantId, quantity: 5 },
+        { id: uuidv4(), materialId:woodStainId, quantity: 0.5 },
       ],
       woodParts: [
         { id: uuidv4(), name: 'Shelf', lengthMm: 800, widthMm: 300, quantity: 4 },
@@ -171,9 +171,9 @@ export function seedData(): SeedData {
       templateDescription: 'Simple shelf unit with 3 shelves and 2 side panels',
       type: 'shelf',
       materials: [
-        { materialId: pineBoardId, variantId: pine2x4VariantId, quantity: 6 },
-        { materialId: woodScrewsId, variantId: screws30mmVariantId, quantity: 40 },
-        { materialId: sandpaperId, variantId: sandpaper120VariantId, quantity: 3 },
+        { id: uuidv4(), materialId:pineBoardId, variantId: pine2x4VariantId, quantity: 6 },
+        { id: uuidv4(), materialId:woodScrewsId, variantId: screws30mmVariantId, quantity: 40 },
+        { id: uuidv4(), materialId:sandpaperId, variantId: sandpaper120VariantId, quantity: 3 },
       ],
       woodParts: [
         { id: uuidv4(), name: 'Shelf', lengthMm: 600, widthMm: 250, quantity: 3 },

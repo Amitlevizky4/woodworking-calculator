@@ -126,6 +126,7 @@ function mapDbProject(
       .filter((pm) => pm.project_id === row.id)
       .map(
         (pm): ProjectMaterial => ({
+          id: pm.id as string,
           materialId: pm.material_id as string,
           variantId: (pm.variant_id as string) ?? undefined,
           quantity: pm.quantity as number,
@@ -169,6 +170,7 @@ function mapDbTemplate(
       .filter((tm) => tm.template_id === row.id)
       .map(
         (tm): ProjectMaterial => ({
+          id: tm.id as string,
           materialId: tm.material_id as string,
           variantId: (tm.variant_id as string) ?? undefined,
           quantity: tm.quantity as number,
@@ -358,6 +360,7 @@ export const useStore = create<AppState>()((set, get) => ({
           .from('project_materials')
           .insert(
             project.materials.map((m) => ({
+              id: m.id,
               project_id: project.id,
               material_id: m.materialId,
               variant_id: m.variantId ?? null,
@@ -437,6 +440,7 @@ export const useStore = create<AppState>()((set, get) => ({
           .from('project_materials')
           .insert(
             project.materials.map((m) => ({
+              id: m.id,
               project_id: project.id,
               material_id: m.materialId,
               variant_id: m.variantId ?? null,
@@ -667,6 +671,7 @@ export const useStore = create<AppState>()((set, get) => ({
           .from('template_materials')
           .insert(
             template.materials.map((m) => ({
+              id: m.id,
               template_id: template.id,
               material_id: m.materialId,
               variant_id: m.variantId ?? null,
@@ -734,6 +739,7 @@ export const useStore = create<AppState>()((set, get) => ({
           .from('template_materials')
           .insert(
             template.materials.map((m) => ({
+              id: m.id,
               template_id: template.id,
               material_id: m.materialId,
               variant_id: m.variantId ?? null,

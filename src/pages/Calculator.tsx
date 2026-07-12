@@ -460,36 +460,28 @@ export function Calculator() {
   );
 
   const handleAddMaterial = useCallback((material: Material) => {
-    setSelectedMaterials((prev) => {
-      const existing = prev.find((pm) => pm.materialId === material.id);
-      if (existing) {
-        // Already in the list — bump its quantity instead of ignoring.
-        return prev.map((pm) =>
-          pm.materialId === material.id
-            ? { ...pm, quantity: pm.quantity + 1 }
-            : pm,
-        );
-      }
-      return [
-        ...prev,
-        {
-          materialId: material.id,
-          variantId: material.variants?.[0]?.id,
-          quantity: 1,
-        },
-      ];
-    });
+    // Each add is its own line item, so two boards of the same size show as two
+    // separate rows rather than being merged into one summed quantity.
+    setSelectedMaterials((prev) => [
+      ...prev,
+      {
+        id: uuidv4(),
+        materialId: material.id,
+        variantId: material.variants?.[0]?.id,
+        quantity: 1,
+      },
+    ]);
   }, []);
 
-  const handleRemoveMaterial = useCallback((materialId: string) => {
-    setSelectedMaterials((prev) => prev.filter((pm) => pm.materialId !== materialId));
+  const handleRemoveMaterial = useCallback((rowId: string) => {
+    setSelectedMaterials((prev) => prev.filter((pm) => pm.id !== rowId));
   }, []);
 
   const handleMaterialQuantityChange = useCallback(
-    (materialId: string, quantity: number) => {
+    (rowId: string, quantity: number) => {
       setSelectedMaterials((prev) =>
         prev.map((pm) =>
-          pm.materialId === materialId ? { ...pm, quantity: Math.max(0, quantity) } : pm,
+          pm.id === rowId ? { ...pm, quantity: Math.max(0, quantity) } : pm,
         ),
       );
     },
@@ -497,11 +489,9 @@ export function Calculator() {
   );
 
   const handleMaterialVariantChange = useCallback(
-    (materialId: string, variantId: string) => {
+    (rowId: string, variantId: string) => {
       setSelectedMaterials((prev) =>
-        prev.map((pm) =>
-          pm.materialId === materialId ? { ...pm, variantId } : pm,
-        ),
+        prev.map((pm) => (pm.id === rowId ? { ...pm, variantId } : pm)),
       );
     },
     [],
@@ -826,7 +816,7 @@ export function Calculator() {
 
                     return (
                       <tr
-                        key={pm.materialId}
+                        key={pm.id}
                         className="border-b border-outline-variant/50"
                       >
                         <td className="py-3 pe-4">
@@ -839,7 +829,7 @@ export function Calculator() {
                             <select
                               value={pm.variantId ?? ''}
                               onChange={(e) =>
-                                handleMaterialVariantChange(pm.materialId, e.target.value)
+                                handleMaterialVariantChange(pm.id, e.target.value)
                               }
                               className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none text-sm text-on-surface focus:border-primary"
                             >
@@ -859,7 +849,7 @@ export function Calculator() {
                               type="button"
                               onClick={() =>
                                 handleMaterialQuantityChange(
-                                  pm.materialId,
+                                  pm.id,
                                   pm.quantity - 1,
                                 )
                               }
@@ -873,7 +863,7 @@ export function Calculator() {
                               value={pm.quantity}
                               onChange={(e) =>
                                 handleMaterialQuantityChange(
-                                  pm.materialId,
+                                  pm.id,
                                   parseFloat(e.target.value) || 0,
                                 )
                               }
@@ -885,7 +875,7 @@ export function Calculator() {
                               type="button"
                               onClick={() =>
                                 handleMaterialQuantityChange(
-                                  pm.materialId,
+                                  pm.id,
                                   pm.quantity + 1,
                                 )
                               }
@@ -908,7 +898,7 @@ export function Calculator() {
                         <td className="py-3">
                           <button
                             type="button"
-                            onClick={() => handleRemoveMaterial(pm.materialId)}
+                            onClick={() => handleRemoveMaterial(pm.id)}
                             className="text-error hover:text-error/80 transition-colors"
                           >
                             <Icon name="close" className="text-lg" />
