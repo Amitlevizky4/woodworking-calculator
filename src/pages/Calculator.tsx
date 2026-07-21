@@ -48,23 +48,41 @@ const PIECE_COLORS = [
 const INPUT_CLASS =
   'w-full bg-surface-container-highest border-b-2 border-outline focus:border-primary focus:ring-0 px-4 py-3 outline-none rounded-t-md text-on-surface';
 
-interface PartialSheetDims {
-  pieceL: string;
-  pieceW: string;
-  sheetL: string;
-  sheetW: string;
+interface PartialSheetPiece {
+  id: string;
+  length: string;
+  width: string;
+  count: string;
 }
 
-// Fraction of a sheet covered by the used piece, rounded to the 2 decimals
-// the DB stores for quantities. Null until all four dimensions are entered.
-function sheetFraction(dims: PartialSheetDims): number | null {
-  const pieceL = parseFloat(dims.pieceL);
-  const pieceW = parseFloat(dims.pieceW);
-  const sheetL = parseFloat(dims.sheetL);
-  const sheetW = parseFloat(dims.sheetW);
-  if (!pieceL || !pieceW || !sheetL || !sheetW) return null;
-  const fraction = (pieceL * pieceW) / (sheetL * sheetW);
-  return Math.max(0.01, Math.round(fraction * 100) / 100);
+interface PartialSheetState {
+  sheetL: string;
+  sheetW: string;
+  pieces: PartialSheetPiece[];
+}
+
+// Fraction of a sheet covered by all fully-entered pieces (length x width x
+// count each), rounded to the 2 decimals the DB stores for quantities. Null
+// until the sheet dimensions and at least one piece are valid.
+function sheetFraction(state: PartialSheetState): number | null {
+  const sheetL = parseFloat(state.sheetL);
+  const sheetW = parseFloat(state.sheetW);
+  if (!sheetL || !sheetW) return null;
+
+  const usedArea = state.pieces.reduce((sum, piece) => {
+    const length = parseFloat(piece.length);
+    const width = parseFloat(piece.width);
+    const count = parseFloat(piece.count);
+    if (!length || !width || !count) return sum;
+    return sum + length * width * count;
+  }, 0);
+
+  if (usedArea <= 0) return null;
+  return Math.max(0.01, Math.round((usedArea / (sheetL * sheetW)) * 100) / 100);
+}
+
+function emptyPartialSheetPiece(): PartialSheetPiece {
+  return { id: uuidv4(), length: '', width: '', count: '1' };
 }
 
 function SectionHeader({ icon, label }: { icon: string; label: string }) {
@@ -376,10 +394,7 @@ export function Calculator() {
   // client pays only for the part actually used. Keyed by row id; presence
   // means the helper is open. Dimensions are in cm (standard sheet: 244x122).
   const [partialSheetRows, setPartialSheetRows] = useState<
-    Record<
-      string,
-      { pieceL: string; pieceW: string; sheetL: string; sheetW: string }
-    >
+    Record<string, PartialSheetState>
   >({});
   const [woodParts, setWoodParts] = useState<WoodPart[]>(
     existingProject?.woodParts ?? [],
@@ -540,15 +555,19 @@ export function Calculator() {
       }
       return {
         ...prev,
-        [rowId]: { pieceL: '', pieceW: '', sheetL: '244', sheetW: '122' },
+        [rowId]: {
+          sheetL: '244',
+          sheetW: '122',
+          pieces: [emptyPartialSheetPiece()],
+        },
       };
     });
   }, []);
 
   const handlePartialSheetChange = useCallback(
-    (rowId: string, dims: PartialSheetDims) => {
-      setPartialSheetRows((prev) => ({ ...prev, [rowId]: dims }));
-      const fraction = sheetFraction(dims);
+    (rowId: string, state: PartialSheetState) => {
+      setPartialSheetRows((prev) => ({ ...prev, [rowId]: state }));
+      const fraction = sheetFraction(state);
       if (fraction !== null) {
         handleMaterialQuantityChange(rowId, fraction);
       }
@@ -994,85 +1013,156 @@ export function Calculator() {
                       {partialDims && (
                         <tr className="border-b border-outline-variant/50 bg-surface-container-highest/40">
                           <td colSpan={6} className="py-3 px-4">
-                            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                              <span className="text-[10px] font-bold uppercase tracking-widest text-secondary">
-                                {t('calculator.pieceSize')}
-                              </span>
-                              <div className="flex items-center gap-1">
-                                <input
-                                  type="number"
-                                  dir="ltr"
-                                  value={partialDims.pieceL}
-                                  onChange={(e) =>
-                                    handlePartialSheetChange(pm.id, {
-                                      ...partialDims,
-                                      pieceL: e.target.value,
-                                    })
-                                  }
-                                  min={0}
-                                  step="any"
-                                  placeholder={t('calculator.length')}
-                                  className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none w-20 font-mono text-sm text-on-surface focus:border-primary text-center"
-                                />
-                                <span className="text-secondary">×</span>
-                                <input
-                                  type="number"
-                                  dir="ltr"
-                                  value={partialDims.pieceW}
-                                  onChange={(e) =>
-                                    handlePartialSheetChange(pm.id, {
-                                      ...partialDims,
-                                      pieceW: e.target.value,
-                                    })
-                                  }
-                                  min={0}
-                                  step="any"
-                                  placeholder={t('calculator.width')}
-                                  className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none w-20 font-mono text-sm text-on-surface focus:border-primary text-center"
-                                />
-                              </div>
-                              <span className="text-[10px] font-bold uppercase tracking-widest text-secondary">
-                                {t('calculator.sheetSize')}
-                              </span>
-                              <div className="flex items-center gap-1">
-                                <input
-                                  type="number"
-                                  dir="ltr"
-                                  value={partialDims.sheetL}
-                                  onChange={(e) =>
-                                    handlePartialSheetChange(pm.id, {
-                                      ...partialDims,
-                                      sheetL: e.target.value,
-                                    })
-                                  }
-                                  min={0}
-                                  step="any"
-                                  placeholder={t('calculator.length')}
-                                  className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none w-20 font-mono text-sm text-on-surface focus:border-primary text-center"
-                                />
-                                <span className="text-secondary">×</span>
-                                <input
-                                  type="number"
-                                  dir="ltr"
-                                  value={partialDims.sheetW}
-                                  onChange={(e) =>
-                                    handlePartialSheetChange(pm.id, {
-                                      ...partialDims,
-                                      sheetW: e.target.value,
-                                    })
-                                  }
-                                  min={0}
-                                  step="any"
-                                  placeholder={t('calculator.width')}
-                                  className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none w-20 font-mono text-sm text-on-surface focus:border-primary text-center"
-                                />
-                              </div>
-                              {partialFraction !== null && (
-                                <span className="font-mono font-medium text-primary">
-                                  ≈ {Math.round(partialFraction * 100)}%{' '}
-                                  {t('calculator.ofSheet')}
+                            <div className="space-y-2">
+                              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-secondary">
+                                  {t('calculator.sheetSize')}
                                 </span>
-                              )}
+                                <div className="flex items-center gap-1">
+                                  <input
+                                    type="number"
+                                    dir="ltr"
+                                    value={partialDims.sheetL}
+                                    onChange={(e) =>
+                                      handlePartialSheetChange(pm.id, {
+                                        ...partialDims,
+                                        sheetL: e.target.value,
+                                      })
+                                    }
+                                    min={0}
+                                    step="any"
+                                    placeholder={t('calculator.length')}
+                                    className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none w-20 font-mono text-sm text-on-surface focus:border-primary text-center"
+                                  />
+                                  <span className="text-secondary">×</span>
+                                  <input
+                                    type="number"
+                                    dir="ltr"
+                                    value={partialDims.sheetW}
+                                    onChange={(e) =>
+                                      handlePartialSheetChange(pm.id, {
+                                        ...partialDims,
+                                        sheetW: e.target.value,
+                                      })
+                                    }
+                                    min={0}
+                                    step="any"
+                                    placeholder={t('calculator.width')}
+                                    className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none w-20 font-mono text-sm text-on-surface focus:border-primary text-center"
+                                  />
+                                </div>
+                                {partialFraction !== null && (
+                                  <span className="font-mono font-medium text-primary">
+                                    ≈ {Math.round(partialFraction * 100)}%{' '}
+                                    {t('calculator.ofSheet')}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-secondary">
+                                  {t('calculator.pieceSize')}
+                                </span>
+                              </div>
+                              {partialDims.pieces.map((piece) => (
+                                <div
+                                  key={piece.id}
+                                  className="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm"
+                                >
+                                  <input
+                                    type="number"
+                                    dir="ltr"
+                                    value={piece.length}
+                                    onChange={(e) =>
+                                      handlePartialSheetChange(pm.id, {
+                                        ...partialDims,
+                                        pieces: partialDims.pieces.map((p) =>
+                                          p.id === piece.id
+                                            ? { ...p, length: e.target.value }
+                                            : p,
+                                        ),
+                                      })
+                                    }
+                                    min={0}
+                                    step="any"
+                                    placeholder={t('calculator.length')}
+                                    className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none w-20 font-mono text-sm text-on-surface focus:border-primary text-center"
+                                  />
+                                  <span className="text-secondary">×</span>
+                                  <input
+                                    type="number"
+                                    dir="ltr"
+                                    value={piece.width}
+                                    onChange={(e) =>
+                                      handlePartialSheetChange(pm.id, {
+                                        ...partialDims,
+                                        pieces: partialDims.pieces.map((p) =>
+                                          p.id === piece.id
+                                            ? { ...p, width: e.target.value }
+                                            : p,
+                                        ),
+                                      })
+                                    }
+                                    min={0}
+                                    step="any"
+                                    placeholder={t('calculator.width')}
+                                    className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none w-20 font-mono text-sm text-on-surface focus:border-primary text-center"
+                                  />
+                                  <span className="text-xs text-secondary ms-2">
+                                    {t('common.qty')}
+                                  </span>
+                                  <input
+                                    type="number"
+                                    dir="ltr"
+                                    value={piece.count}
+                                    onChange={(e) =>
+                                      handlePartialSheetChange(pm.id, {
+                                        ...partialDims,
+                                        pieces: partialDims.pieces.map((p) =>
+                                          p.id === piece.id
+                                            ? { ...p, count: e.target.value }
+                                            : p,
+                                        ),
+                                      })
+                                    }
+                                    min={1}
+                                    step="1"
+                                    className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none w-14 font-mono text-sm text-on-surface focus:border-primary text-center"
+                                  />
+                                  {partialDims.pieces.length > 1 && (
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        handlePartialSheetChange(pm.id, {
+                                          ...partialDims,
+                                          pieces: partialDims.pieces.filter(
+                                            (p) => p.id !== piece.id,
+                                          ),
+                                        })
+                                      }
+                                      className="text-secondary hover:text-error transition-colors w-6 h-6 flex items-center justify-center"
+                                      aria-label={t('calculator.removePiece')}
+                                    >
+                                      <Icon name="close" className="text-sm" />
+                                    </button>
+                                  )}
+                                </div>
+                              ))}
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handlePartialSheetChange(pm.id, {
+                                    ...partialDims,
+                                    pieces: [
+                                      ...partialDims.pieces,
+                                      emptyPartialSheetPiece(),
+                                    ],
+                                  })
+                                }
+                                className="text-primary text-sm font-medium flex items-center gap-1"
+                              >
+                                <Icon name="add" className="text-base" />
+                                {t('calculator.addPiece')}
+                              </button>
                             </div>
                           </td>
                         </tr>
