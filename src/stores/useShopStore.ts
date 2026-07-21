@@ -62,7 +62,12 @@ export const useShopStore = create<ShopState>()((set, get) => ({
 
   fetchShops: async () => {
     try {
-      set({ loading: true });
+      // Flip the global loading gate only on the very first load — flipping
+      // it during background refreshes unmounts the whole page (ShopRequired
+      // swaps in a spinner) and wipes any in-progress form state.
+      if (get().shops.length === 0) {
+        set({ loading: true });
+      }
       const userId = await getUserId();
 
       const { data, error } = await supabase
