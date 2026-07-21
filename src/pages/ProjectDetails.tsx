@@ -81,7 +81,7 @@ function TimeLogSection({ projectId }: { projectId: string }) {
         </h2>
         <span className="text-sm text-secondary">
           {t('timeLog.totalLogged')}:{' '}
-          <span className="font-mono font-bold text-on-surface">{total} hrs</span>
+          <span className="font-mono font-bold text-on-surface">{total} {t('common.hrs')}</span>
         </span>
       </div>
 
@@ -161,19 +161,19 @@ function MaterialsTable({
         <thead>
           <tr className="border-b border-outline-variant/30">
             <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary px-6 py-4">
-              Material
+              {t('projectDetails.material')}
             </th>
             <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
-              Variant
+              {t('projectDetails.variant')}
             </th>
             <th className="text-end text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
-              Qty
+              {t('common.qty')}
             </th>
             <th className="text-end text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
-              Unit Price
+              {t('projectDetails.unitPrice')}
             </th>
             <th className="text-end text-[10px] font-bold uppercase tracking-widest text-secondary px-6 py-4">
-              Total
+              {t('common.total')}
             </th>
           </tr>
         </thead>
@@ -201,7 +201,7 @@ function MaterialsTable({
           {projectMaterials.length === 0 && (
             <tr>
               <td colSpan={5} className="px-6 py-8 text-center text-secondary">
-                No materials added
+                {t('projectDetails.noMaterials')}
               </td>
             </tr>
           )}
@@ -222,25 +222,27 @@ function WoodPartsTable({
     area: number;
   }>;
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="bg-surface-container-low rounded-xl overflow-hidden">
       <table className="w-full">
         <thead>
           <tr className="border-b border-outline-variant/30">
             <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary px-6 py-4">
-              Part Name
+              {t('projectDetails.partName')}
             </th>
             <th className="text-end text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
-              Length (mm)
+              {t('projectDetails.lengthMm')}
             </th>
             <th className="text-end text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
-              Width (mm)
+              {t('projectDetails.widthMm')}
             </th>
             <th className="text-end text-[10px] font-bold uppercase tracking-widest text-secondary px-4 py-4">
-              Qty
+              {t('common.qty')}
             </th>
             <th className="text-end text-[10px] font-bold uppercase tracking-widest text-secondary px-6 py-4">
-              Area (mm\u00B2)
+              {t('projectDetails.areaMm2')}
             </th>
           </tr>
         </thead>
@@ -268,7 +270,7 @@ function WoodPartsTable({
           {woodParts.length === 0 && (
             <tr>
               <td colSpan={5} className="px-6 py-8 text-center text-secondary">
-                No wood parts defined
+                {t('projectDetails.noWoodParts')}
               </td>
             </tr>
           )}
@@ -342,14 +344,14 @@ export function ProjectDetails() {
           : null;
       const unitPrice = variant ? variant.price : (material?.basePrice ?? 0);
       return {
-        name: material?.name ?? 'Unknown Material',
-        variantLabel: variant?.label ?? null,
+        name: material?.name ?? t('projectDetails.unknownMaterial'),
+        variantLabel: variant?.label ?? material?.basePriceLabel ?? null,
         quantity: pm.quantity,
         unitPrice,
         total: unitPrice * pm.quantity,
       };
     });
-  }, [project, allMaterials]);
+  }, [project, allMaterials, t]);
 
   const materialSummary = useMemo(
     () => (project ? summarizeMaterialUsage(project.materials, allMaterials) : []),
@@ -384,12 +386,12 @@ export function ProjectDetails() {
     return (
       <div className="p-8 max-w-4xl mx-auto text-center">
         <Icon name="error" className="text-5xl text-secondary mb-4" />
-        <p className="text-secondary text-lg">Project not found</p>
+        <p className="text-secondary text-lg">{t('common.projectNotFound')}</p>
         <button
           onClick={() => navigate('/projects')}
           className="mt-4 text-primary font-medium hover:underline"
         >
-          Back to Projects
+          {t('common.backToProjects')}
         </button>
       </div>
     );
@@ -397,6 +399,11 @@ export function ProjectDetails() {
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const typeLabel = (type: string) => {
+    const v = t(`projectTypes.${type}`);
+    return v === `projectTypes.${type}` ? type : v;
   };
 
   const paymentCells = [
@@ -430,7 +437,7 @@ export function ProjectDetails() {
     },
     project.actualHours && {
       label: t('income.actualHours'),
-      value: `${project.actualHours} hrs`,
+      value: `${project.actualHours} ${t('common.hrs')}`,
     },
   ].filter(Boolean) as { label: string; value: string }[];
 
@@ -451,7 +458,7 @@ export function ProjectDetails() {
             </h1>
             <div className="flex items-center gap-3 mt-2 flex-wrap">
               <span className="text-secondary text-sm capitalize">
-                {project.type}
+                {typeLabel(project.type)}
               </span>
               {project.description && (
                 <>
@@ -478,7 +485,7 @@ export function ProjectDetails() {
               </span>
               {project.buyerName && (
                 <span className="text-secondary text-sm">
-                  Buyer: {project.buyerName}
+                  {t('projectDetails.buyer')} {project.buyerName}
                 </span>
               )}
             </div>
@@ -504,14 +511,14 @@ export function ProjectDetails() {
               className="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg text-sm font-medium hover:bg-surface-container transition-colors"
             >
               <Icon name="print" className="text-base" />
-              Print
+              {t('projectDetails.print')}
             </button>
             <button
               onClick={handlePrint}
               className="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg text-sm font-medium hover:bg-surface-container transition-colors"
             >
               <Icon name="picture_as_pdf" className="text-base" />
-              Export PDF
+              {t('projectDetails.exportPdf')}
             </button>
           </div>
         </div>
@@ -520,7 +527,7 @@ export function ProjectDetails() {
       {costBreakdown && (
         <div>
           <h2 className="font-headline text-lg font-bold uppercase tracking-wide mb-4">
-            Cost Breakdown
+            {t('projectDetails.costBreakdown')}
           </h2>
           <div className="bg-surface-container-low rounded-xl overflow-hidden">
             <table className="w-full">
@@ -639,7 +646,7 @@ export function ProjectDetails() {
 
       <div>
         <h2 className="font-headline text-lg font-bold uppercase tracking-wide mb-4">
-          Wood Parts
+          {t('projectDetails.woodParts')}
         </h2>
         <WoodPartsTable woodParts={woodPartsData} />
       </div>
@@ -653,7 +660,7 @@ export function ProjectDetails() {
           <div className="grid grid-cols-3 gap-4 mb-6">
             <div className="bg-surface-container-low p-4 rounded-xl">
               <p className="text-[10px] font-bold uppercase tracking-widest text-secondary">
-                Total Pieces
+                {t('projectDetails.totalPieces')}
               </p>
               <p className="font-mono text-xl font-bold mt-1">
                 {totalPieces}
@@ -661,7 +668,7 @@ export function ProjectDetails() {
             </div>
             <div className="bg-surface-container-low p-4 rounded-xl">
               <p className="text-[10px] font-bold uppercase tracking-widest text-secondary">
-                Sheets Required
+                {t('projectDetails.sheetsRequired')}
               </p>
               <p className="font-mono text-xl font-bold mt-1">
                 {sheetPackingResult.totalSheets}
@@ -669,7 +676,7 @@ export function ProjectDetails() {
             </div>
             <div className="bg-surface-container-low p-4 rounded-xl">
               <p className="text-[10px] font-bold uppercase tracking-widest text-secondary">
-                Waste
+                {t('projectDetails.waste')}
               </p>
               <p className="font-mono text-xl font-bold mt-1">
                 {sheetPackingResult.wastePercent}%

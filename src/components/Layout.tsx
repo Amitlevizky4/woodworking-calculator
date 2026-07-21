@@ -31,10 +31,11 @@ const MOBILE_NAV_ITEMS: readonly NavItem[] = [
 ] as const;
 
 function SidebarUser() {
+  const { t } = useTranslation();
   const { user, signOut } = useAuth();
   if (!user) return null;
 
-  const name = user.user_metadata?.full_name || user.email || 'User';
+  const name = user.user_metadata?.full_name || user.email || t('layout.userFallback');
   const avatar = user.user_metadata?.avatar_url;
 
   return (
@@ -52,7 +53,7 @@ function SidebarUser() {
       <button
         onClick={signOut}
         className="text-secondary hover:text-error transition-colors"
-        title="Sign out"
+        title={t('layout.signOut')}
       >
         <Icon name="logout" className="text-lg" />
       </button>
@@ -70,7 +71,7 @@ function Sidebar() {
     <aside className="hidden md:flex md:flex-col md:fixed md:inset-y-0 md:start-0 md:w-64 bg-[#eeeeeb] border-e border-outline-variant z-30">
       <div className="p-6">
         <h1 className="font-headline text-primary font-bold text-lg">
-          {activeShop?.name || 'The Precision Workshop'}
+          {activeShop?.name || t('auth.precisionWorkshop')}
         </h1>
         <span
           className={`inline-block mt-1 px-2 py-0.5 text-xs font-bold rounded-full ${
@@ -161,7 +162,7 @@ function TopBar() {
     <header className="sticky top-0 z-20 bg-surface/80 backdrop-blur-md border-b border-outline-variant">
       <div className="flex items-center justify-between px-4 md:px-6 h-14">
         <h2 className="font-headline text-on-surface font-bold text-sm uppercase tracking-wider">
-          THE PRECISION WORKSHOP
+          {t('auth.precisionWorkshop')}
         </h2>
 
         <div className="flex items-center gap-3">

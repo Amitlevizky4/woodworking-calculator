@@ -50,6 +50,7 @@ export interface Material {
   categoryId: string;
   unit: Unit;
   basePrice: number;
+  basePriceLabel?: string;
   variants?: MaterialVariant[];
   description?: string;
   photoUrl?: string;

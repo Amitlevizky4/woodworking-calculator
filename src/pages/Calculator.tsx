@@ -89,7 +89,7 @@ function MaterialPicker({
       </div>
       {filtered.length === 0 ? (
         <div className="p-4 text-center text-secondary text-sm">
-          No materials found
+          {t('materials.noMaterialsFound')}
         </div>
       ) : (
         filtered.map((material) => (
@@ -114,6 +114,8 @@ function MaterialPicker({
 }
 
 function SheetVisualization({ sheets }: { sheets: SheetLayout[] }) {
+  const { t } = useTranslation();
+
   if (sheets.length === 0) return null;
 
   return (
@@ -121,7 +123,7 @@ function SheetVisualization({ sheets }: { sheets: SheetLayout[] }) {
       {sheets.map((sheet) => (
         <div key={sheet.id} className="space-y-2">
           <p className="text-xs font-bold uppercase text-secondary tracking-wide">
-            Sheet {sheet.id}
+            {t('units.sheet')} {sheet.id}
           </p>
           <div className="aspect-[2/1] bg-surface-container border-2 border-outline-variant rounded-lg overflow-hidden">
             <svg
@@ -490,8 +492,12 @@ export function Calculator() {
 
   const handleMaterialVariantChange = useCallback(
     (rowId: string, variantId: string) => {
+      // '' is the base-price option; keep it undefined so it isn't persisted
+      // as an invalid variant reference.
       setSelectedMaterials((prev) =>
-        prev.map((pm) => (pm.id === rowId ? { ...pm, variantId } : pm)),
+        prev.map((pm) =>
+          pm.id === rowId ? { ...pm, variantId: variantId || undefined } : pm,
+        ),
       );
     },
     [],
@@ -610,7 +616,7 @@ export function Calculator() {
       createdAt: now,
       updatedAt: now,
     });
-    alert('Template saved!');
+    alert(t('calculator.templateSaved'));
   }, [
     name,
     description,
@@ -624,6 +630,7 @@ export function Calculator() {
     markupAppliedTo,
     discountPercent,
     addTemplate,
+    t,
   ]);
 
   const handlePrint = useCallback(() => {
@@ -702,7 +709,7 @@ export function Calculator() {
 
           <div className="mb-4">
             <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
-              Description
+              {t('materials.description')}
             </label>
             <textarea
               value={description}
@@ -715,7 +722,7 @@ export function Calculator() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-[10px] font-bold uppercase text-secondary block mb-1">
-                Date
+                {t('calculator.date')}
               </label>
               <input
                 type="date"
@@ -782,7 +789,7 @@ export function Calculator() {
 
           {selectedMaterials.length === 0 ? (
             <div className="text-center py-8 text-secondary text-sm">
-              No materials added. Click &quot;Add from Library&quot; to begin.
+              {t('calculator.emptyMaterials')}
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -790,19 +797,19 @@ export function Calculator() {
                 <thead>
                   <tr className="border-b border-outline-variant">
                     <th className="text-[10px] font-bold uppercase text-secondary text-start pb-2 pe-4">
-                      Material / Grade
+                      {t('calculator.materialGrade')}
                     </th>
                     <th className="text-[10px] font-bold uppercase text-secondary text-start pb-2 pe-4">
-                      Variant / Size
+                      {t('calculator.variantSize')}
                     </th>
                     <th className="text-[10px] font-bold uppercase text-secondary text-start pb-2 pe-4">
-                      Qty
+                      {t('common.qty')}
                     </th>
                     <th className="text-[10px] font-bold uppercase text-secondary text-start pb-2 pe-4">
-                      Unit Cost
+                      {t('calculator.unitCost')}
                     </th>
                     <th className="text-[10px] font-bold uppercase text-secondary text-start pb-2 pe-4">
-                      Total
+                      {t('common.total')}
                     </th>
                     <th className="pb-2" />
                   </tr>
@@ -833,6 +840,10 @@ export function Calculator() {
                               }
                               className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none text-sm text-on-surface focus:border-primary"
                             >
+                              <option value="">
+                                {material.basePriceLabel ||
+                                  t('materials.baseOption')}
+                              </option>
                               {material.variants.map((v) => (
                                 <option key={v.id} value={v.id}>
                                   {v.label}
@@ -854,7 +865,7 @@ export function Calculator() {
                                 )
                               }
                               className="w-6 h-6 flex items-center justify-center rounded bg-surface-container-highest hover:bg-surface-container text-secondary shrink-0"
-                              aria-label="Decrease quantity"
+                              aria-label={t('calculator.decreaseQty')}
                             >
                               <Icon name="remove" className="text-sm" />
                             </button>
@@ -880,7 +891,7 @@ export function Calculator() {
                                 )
                               }
                               className="w-6 h-6 flex items-center justify-center rounded bg-surface-container-highest hover:bg-surface-container text-secondary shrink-0"
-                              aria-label="Increase quantity"
+                              aria-label={t('calculator.increaseQty')}
                             >
                               <Icon name="add" className="text-sm" />
                             </button>
@@ -942,7 +953,7 @@ export function Calculator() {
           <div className="grid grid-cols-3 gap-4 mb-6">
             <div className="bg-surface-container-low rounded-xl p-4 text-center">
               <p className="text-[10px] font-bold uppercase text-secondary mb-1">
-                Total Parts
+                {t('calculator.totalParts')}
               </p>
               <p className="font-mono text-2xl font-bold text-on-surface">
                 {totalPartsCount}
@@ -950,7 +961,7 @@ export function Calculator() {
             </div>
             <div className="bg-surface-container-low rounded-xl p-4 text-center">
               <p className="text-[10px] font-bold uppercase text-secondary mb-1">
-                Waste Yield
+                {t('calculator.wasteYield')}
               </p>
               <p className="font-mono text-2xl font-bold text-on-surface">
                 {packingResult ? `${packingResult.wastePercent}%` : '--'}
@@ -958,7 +969,7 @@ export function Calculator() {
             </div>
             <div className="bg-surface-container-low rounded-xl p-4 text-center">
               <p className="text-[10px] font-bold uppercase text-secondary mb-1">
-                Sheets Needed
+                {t('calculator.sheetsNeeded')}
               </p>
               <p className="font-mono text-2xl font-bold text-on-surface">
                 {packingResult ? packingResult.totalSheets : '--'}
@@ -973,7 +984,7 @@ export function Calculator() {
             className="mb-6 flex items-center gap-2 bg-tertiary-container text-on-tertiary-container px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             <Icon name="auto_fix_high" className="text-lg" />
-            Optimize Cut List
+            {t('calculator.optimizeCutList')}
           </button>
 
           {woodParts.length > 0 && (
@@ -982,16 +993,16 @@ export function Calculator() {
                 <thead>
                   <tr className="border-b border-outline-variant">
                     <th className="text-[10px] font-bold uppercase text-secondary text-start pb-2 pe-4">
-                      Part Name
+                      {t('projectDetails.partName')}
                     </th>
                     <th className="text-[10px] font-bold uppercase text-secondary text-start pb-2 pe-4">
-                      Length (mm)
+                      {t('projectDetails.lengthMm')}
                     </th>
                     <th className="text-[10px] font-bold uppercase text-secondary text-start pb-2 pe-4">
-                      Width (mm)
+                      {t('projectDetails.widthMm')}
                     </th>
                     <th className="text-[10px] font-bold uppercase text-secondary text-start pb-2 pe-4">
-                      Qty
+                      {t('common.qty')}
                     </th>
                     <th className="pb-2" />
                   </tr>
@@ -1009,7 +1020,7 @@ export function Calculator() {
                           onChange={(e) =>
                             handleWoodPartChange(part.id, 'name', e.target.value)
                           }
-                          placeholder="Part name"
+                          placeholder={t('calculator.partNamePlaceholder')}
                           className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none text-sm text-on-surface focus:border-primary w-full"
                         />
                       </td>
@@ -1109,7 +1120,7 @@ export function Calculator() {
                     className={`${INPUT_CLASS} pe-14 font-mono`}
                   />
                   <span className="absolute end-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
-                    hrs
+                    {t('common.hrs')}
                   </span>
                 </div>
               </div>
@@ -1126,7 +1137,7 @@ export function Calculator() {
                     className={`${INPUT_CLASS} pe-14 font-mono`}
                   />
                   <span className="absolute end-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
-                    &#8362;/hr
+                    {t('calculator.perHour')}
                   </span>
                 </div>
               </div>
@@ -1145,7 +1156,7 @@ export function Calculator() {
                     className={`${INPUT_CLASS} pe-14 font-mono`}
                   />
                   <span className="absolute end-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
-                    &#8362;/hr
+                    {t('calculator.perHour')}
                   </span>
                 </div>
               </div>
@@ -1171,7 +1182,7 @@ export function Calculator() {
                     className={`${INPUT_CLASS} pe-20 font-mono`}
                   />
                   <span className="absolute end-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
-                    x factor
+                    {t('calculator.factorSuffix')}
                   </span>
                 </div>
               </div>
@@ -1186,7 +1197,7 @@ export function Calculator() {
                     onChange={() => setMarkupAppliedTo('materials')}
                     className="accent-primary"
                   />
-                  <span className="text-sm text-on-surface">Materials only</span>
+                  <span className="text-sm text-on-surface">{t('calculator.materialsOnly')}</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -1197,7 +1208,7 @@ export function Calculator() {
                     onChange={() => setMarkupAppliedTo('materials+labor')}
                     className="accent-primary"
                   />
-                  <span className="text-sm text-on-surface">Materials + Labor</span>
+                  <span className="text-sm text-on-surface">{t('calculator.materialsPlusLabor')}</span>
                 </label>
               </div>
 
@@ -1217,7 +1228,7 @@ export function Calculator() {
                     className={`${INPUT_CLASS} pe-16 font-mono`}
                   />
                   <span className="absolute end-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
-                    % pct
+                    % {t('calculator.percentSuffix')}
                   </span>
                 </div>
               </div>

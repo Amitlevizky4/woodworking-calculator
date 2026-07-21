@@ -43,19 +43,19 @@ function TemplateCard({
         <div className="grid grid-cols-3 gap-4 mt-4">
           <div>
             <p className="text-[10px] font-bold uppercase tracking-widest text-outline">
-              Materials
+              {t('calculator.materials')}
             </p>
             <p className="font-mono font-bold mt-1">{materialCount}</p>
           </div>
           <div>
             <p className="text-[10px] font-bold uppercase tracking-widest text-outline">
-              Labor
+              {t('common.labor')}
             </p>
             <p className="font-mono font-bold mt-1">{laborHours}h</p>
           </div>
           <div>
             <p className="text-[10px] font-bold uppercase tracking-widest text-outline">
-              Est. Cost
+              {t('templates.estCost')}
             </p>
             <p className="font-mono font-bold mt-1 text-primary">
               {formatCurrency(estimatedCost)}
@@ -70,7 +70,7 @@ function TemplateCard({
           className="flex-1 flex items-center justify-center gap-2 bg-primary text-white py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
         >
           <Icon name="content_copy" className="text-base" />
-          Use Template
+          {t('templates.useTemplate')}
         </button>
         <button
           onClick={onEdit}
@@ -135,14 +135,14 @@ export function Templates() {
     <div className="p-8 max-w-7xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="font-headline text-2xl font-bold text-on-surface">
-          Templates Library
+          {t('templates.title')}
         </h1>
         <button
           onClick={handleNewTemplate}
           className="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
         >
           <Icon name="add" className="text-base" />
-          New Template
+          {t('templates.newTemplate')}
         </button>
       </div>
 
@@ -162,7 +162,7 @@ export function Templates() {
       ) : (
         <div className="p-12 bg-surface-container rounded-xl text-center text-secondary">
           <Icon name="description" className="text-4xl mb-3" />
-          <p>No templates yet. Create your first template.</p>
+          <p>{t('templates.empty')}</p>
         </div>
       )}
     </div>
