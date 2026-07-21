@@ -56,19 +56,20 @@ export function Settings() {
             </label>
             <div className="relative">
               {field.prefix && (
-                <span className="absolute start-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
                   {field.prefix}
                 </span>
               )}
               <input
+                dir="ltr"
                 type="number"
                 value={form[field.key] || ''}
                 onChange={(e) => handleChange(field.key, e.target.value)}
                 min={0}
-                className={`${INPUT_CLASS} ${field.prefix ? 'ps-8' : ''} ${field.suffix ? 'pe-14' : ''}`}
+                className={`${INPUT_CLASS} ${field.prefix ? 'pl-8' : ''} ${field.suffix ? 'pr-14' : ''}`}
               />
               {field.suffix && (
-                <span className="absolute end-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
                   {field.suffix}
                 </span>
               )}
