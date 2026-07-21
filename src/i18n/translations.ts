@@ -108,6 +108,8 @@ interface TranslationSet {
     ofSheet: string;
     length: string;
     width: string;
+    addPiece: string;
+    removePiece: string;
   };
   expenses: {
     title: string;
@@ -545,6 +547,8 @@ export const translations: Translations = {
       ofSheet: 'of a sheet',
       length: 'Length',
       width: 'Width',
+      addPiece: 'Add piece',
+      removePiece: 'Remove piece',
     },
     expenses: {
       title: 'Expenses',
@@ -976,6 +980,8 @@ export const translations: Translations = {
       ofSheet: '\u05DE\u05D4\u05E4\u05DC\u05D8\u05D4',
       length: '\u05D0\u05D5\u05E8\u05DA',
       width: '\u05E8\u05D5\u05D7\u05D1',
+      addPiece: '\u05D4\u05D5\u05E1\u05E4\u05EA \u05D7\u05DC\u05E7',
+      removePiece: '\u05D4\u05E1\u05E8\u05EA \u05D7\u05DC\u05E7',
     },
     expenses: {
       title: '\u05D4\u05D5\u05E6\u05D0\u05D5\u05EA',
