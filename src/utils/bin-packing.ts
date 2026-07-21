@@ -42,12 +42,26 @@ function expandParts(parts: WoodPart[]): ExpandedPiece[] {
   const expanded: ExpandedPiece[] = [];
 
   for (const part of parts) {
+    // The sheet's grain runs along its long (X) axis, so the dimension the
+    // part wants "with the grain" is placed along X. Falls back to the
+    // rotated orientation only when the preferred one cannot fit a sheet.
+    let width =
+      part.grainDirection === 'width' ? part.widthMm : part.lengthMm;
+    let height =
+      part.grainDirection === 'width' ? part.lengthMm : part.widthMm;
+
+    const fitsPreferred = width <= SHEET_WIDTH && height <= SHEET_HEIGHT;
+    const fitsRotated = height <= SHEET_WIDTH && width <= SHEET_HEIGHT;
+    if (!fitsPreferred && fitsRotated) {
+      [width, height] = [height, width];
+    }
+
     for (let i = 0; i < part.quantity; i++) {
       expanded.push({
         partName: part.name,
         partId: part.id,
-        width: part.lengthMm,
-        height: part.widthMm,
+        width,
+        height,
       });
     }
   }

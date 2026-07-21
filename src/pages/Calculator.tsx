@@ -578,7 +578,14 @@ export function Calculator() {
   const handleAddWoodPart = useCallback(() => {
     setWoodParts((prev) => [
       ...prev,
-      { id: uuidv4(), name: '', lengthMm: 0, widthMm: 0, quantity: 1 },
+      {
+        id: uuidv4(),
+        name: '',
+        lengthMm: 0,
+        widthMm: 0,
+        quantity: 1,
+        grainDirection: 'length',
+      },
     ]);
     setIsOptimized(false);
   }, []);
@@ -1256,6 +1263,9 @@ export function Calculator() {
                     <th className="text-[10px] font-bold uppercase text-secondary text-start pb-2 pe-4">
                       {t('common.qty')}
                     </th>
+                    <th className="text-[10px] font-bold uppercase text-secondary text-start pb-2 pe-4">
+                      {t('calculator.grain')}
+                    </th>
                     <th className="pb-2" />
                   </tr>
                 </thead>
@@ -1320,6 +1330,27 @@ export function Calculator() {
                           min={0}
                           className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none w-20 font-mono text-sm text-on-surface focus:border-primary"
                         />
+                      </td>
+                      <td className="py-3 pe-4">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleWoodPartChange(
+                              part.id,
+                              'grainDirection',
+                              (part.grainDirection ?? 'length') === 'length'
+                                ? 'width'
+                                : 'length',
+                            )
+                          }
+                          className="flex items-center gap-1 px-2 py-1 rounded bg-surface-container-highest hover:bg-surface-container text-sm text-on-surface transition-colors"
+                          title={t('calculator.grainDirection')}
+                        >
+                          <Icon name="texture" className="text-base text-secondary" />
+                          {(part.grainDirection ?? 'length') === 'length'
+                            ? t('calculator.length')
+                            : t('calculator.width')}
+                        </button>
                       </td>
                       <td className="py-3">
                         <button

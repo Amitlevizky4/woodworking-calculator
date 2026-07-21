@@ -142,6 +142,8 @@ function mapDbProject(
           lengthMm: wp.length_mm as number,
           widthMm: wp.width_mm as number,
           quantity: wp.quantity as number,
+          grainDirection:
+            (wp.grain_direction as WoodPart['grainDirection']) ?? 'length',
         }),
       ),
   };
@@ -186,6 +188,8 @@ function mapDbTemplate(
           lengthMm: tw.length_mm as number,
           widthMm: tw.width_mm as number,
           quantity: tw.quantity as number,
+          grainDirection:
+            (tw.grain_direction as WoodPart['grainDirection']) ?? 'length',
         }),
       ),
   };
@@ -382,6 +386,7 @@ export const useStore = create<AppState>()((set, get) => ({
               length_mm: wp.lengthMm,
               width_mm: wp.widthMm,
               quantity: wp.quantity,
+              grain_direction: wp.grainDirection ?? 'length',
             })),
           );
         if (partsError) throw partsError;
@@ -462,6 +467,7 @@ export const useStore = create<AppState>()((set, get) => ({
               length_mm: wp.lengthMm,
               width_mm: wp.widthMm,
               quantity: wp.quantity,
+              grain_direction: wp.grainDirection ?? 'length',
             })),
           );
         if (partsError) throw partsError;
@@ -695,6 +701,7 @@ export const useStore = create<AppState>()((set, get) => ({
               length_mm: wp.lengthMm,
               width_mm: wp.widthMm,
               quantity: wp.quantity,
+              grain_direction: wp.grainDirection ?? 'length',
             })),
           );
         if (partsError) throw partsError;
@@ -763,6 +770,7 @@ export const useStore = create<AppState>()((set, get) => ({
               length_mm: wp.lengthMm,
               width_mm: wp.widthMm,
               quantity: wp.quantity,
+              grain_direction: wp.grainDirection ?? 'length',
             })),
           );
         if (partsError) throw partsError;
