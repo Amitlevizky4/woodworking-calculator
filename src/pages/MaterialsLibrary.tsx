@@ -483,42 +483,6 @@ function MaterialModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs font-bold uppercase tracking-widest text-secondary block mb-2">
-                {t('materials.basePrice')}
-              </label>
-              <input
-                type="number"
-                value={form.basePrice}
-                onChange={(e) =>
-                  setForm((prev) => ({ ...prev, basePrice: e.target.value }))
-                }
-                className={inputClass}
-                placeholder="0.00"
-                min={0}
-                step="0.01"
-              />
-            </div>
-            <div>
-              <label className="text-xs font-bold uppercase tracking-widest text-secondary block mb-2">
-                {t('materials.basePriceLabelField')}
-              </label>
-              <input
-                type="text"
-                value={form.basePriceLabel}
-                onChange={(e) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    basePriceLabel: e.target.value,
-                  }))
-                }
-                className={inputClass}
-                placeholder={t('materials.basePriceLabelPlaceholder')}
-              />
-            </div>
-          </div>
-
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-xs font-bold uppercase tracking-widest text-secondary">
@@ -532,17 +496,48 @@ function MaterialModal({
                 {t('materials.addVariant')}
               </button>
             </div>
-            {form.variants.length > 0 && (
-              <div className="flex gap-2 mb-1 px-1">
-                <span className="flex-1 text-[10px] font-bold uppercase tracking-widest text-secondary">
-                  {t('materials.variantLabel')}
-                </span>
-                <span className="w-28 text-[10px] font-bold uppercase tracking-widest text-secondary">
-                  {t('materials.basePrice')}
-                </span>
-                <span className="w-8" />
-              </div>
-            )}
+            <div className="flex gap-2 mb-1 px-1">
+              <span className="min-w-0 flex-1 text-[10px] font-bold uppercase tracking-widest text-secondary">
+                {t('materials.variantLabel')}
+              </span>
+              <span className="w-28 shrink-0 text-[10px] font-bold uppercase tracking-widest text-secondary">
+                {t('materials.price')}
+              </span>
+              <span className="w-8 shrink-0" />
+            </div>
+            {/* The base price is the first, non-removable row — same shape as
+                the variant rows below it. */}
+            <div className="flex gap-2 mb-2 items-center">
+              <input
+                type="text"
+                value={form.basePriceLabel}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    basePriceLabel: e.target.value,
+                  }))
+                }
+                className={`min-w-0 flex-1 ${inputBase}`}
+                placeholder={t('materials.basePriceLabelPlaceholder')}
+              />
+              <input
+                type="number"
+                value={form.basePrice}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, basePrice: e.target.value }))
+                }
+                className={`w-28 shrink-0 ${inputBase}`}
+                placeholder="0.00"
+                min={0}
+                step="0.01"
+              />
+              <span
+                className="text-secondary w-8 flex justify-center"
+                title={t('materials.baseOption')}
+              >
+                <Icon name="push_pin" className="text-base" />
+              </span>
+            </div>
             {form.variants.map((variant, index) => (
               <div key={variant.id} className="flex gap-2 mb-2 items-center">
                 <input

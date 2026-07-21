@@ -207,6 +207,7 @@ interface TranslationSet {
     variantPlaceholder: string;
     basePriceLabelField: string;
     basePriceLabelPlaceholder: string;
+    price: string;
     baseOption: string;
     photo: string;
     choosePhoto: string;
@@ -637,6 +638,7 @@ export const translations: Translations = {
       variantPlaceholder: 'e.g. 2x4',
       basePriceLabelField: 'Base Price Label',
       basePriceLabelPlaceholder: 'e.g. Standard',
+      price: 'Price',
       baseOption: 'Base',
       photo: 'Photo',
       choosePhoto: 'Choose File',
@@ -1061,6 +1063,7 @@ export const translations: Translations = {
       variantPlaceholder: '\u05DC\u05D3\u05D5\u05D2\u05DE\u05D4: 2x4',
       basePriceLabelField: '\u05EA\u05D5\u05D5\u05D9\u05EA \u05DE\u05D7\u05D9\u05E8 \u05D1\u05E1\u05D9\u05E1',
       basePriceLabelPlaceholder: '\u05DC\u05D3\u05D5\u05D2\u05DE\u05D4: \u05E1\u05D8\u05E0\u05D3\u05E8\u05D8\u05D9',
+      price: '\u05DE\u05D7\u05D9\u05E8',
       baseOption: '\u05D1\u05E1\u05D9\u05E1',
       photo: '\u05EA\u05DE\u05D5\u05E0\u05D4',
       choosePhoto: '\u05D1\u05D7\u05D9\u05E8\u05EA \u05E7\u05D5\u05D1\u05E5',
