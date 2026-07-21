@@ -1,3 +1,4 @@
+import { useTranslation } from '@/i18n/useTranslation';
 import type { SheetLayout } from '@/utils/bin-packing';
 
 const PIECE_COLORS = [
@@ -14,10 +15,12 @@ interface SheetVisualizationProps {
 }
 
 function SheetCard({ sheet, index }: { sheet: SheetLayout; index: number }) {
+  const { t } = useTranslation();
+
   return (
     <div>
       <p className="text-xs font-bold uppercase tracking-widest text-secondary mb-2">
-        Sheet {sheet.id}
+        {t('units.sheet')} {sheet.id}
       </p>
       <svg
         viewBox="0 0 2440 1220"

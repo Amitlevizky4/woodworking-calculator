@@ -27,7 +27,8 @@ export function Quote() {
     [projects, id],
   );
 
-  const shopName = shops.find((s) => s.id === activeShopId)?.name ?? 'Workshop';
+  const shopName =
+    shops.find((s) => s.id === activeShopId)?.name ?? t('quote.workshopFallback');
 
   const price = useMemo(() => {
     if (!project) return 0;
@@ -46,12 +47,12 @@ export function Quote() {
   if (!project) {
     return (
       <div className="p-8 max-w-3xl mx-auto text-center">
-        <p className="text-secondary text-lg">Project not found</p>
+        <p className="text-secondary text-lg">{t('common.projectNotFound')}</p>
         <button
           onClick={() => navigate('/projects')}
           className="mt-4 text-primary font-medium hover:underline"
         >
-          Back to Projects
+          {t('common.backToProjects')}
         </button>
       </div>
     );
@@ -62,7 +63,7 @@ export function Quote() {
 
   const estDelivery = project.deliveredAt
     ? project.deliveredAt
-    : `~${Math.max(1, Math.ceil(project.laborHours / (settings.weeklyHoursBudget || 25)))} weeks`;
+    : `~${Math.max(1, Math.ceil(project.laborHours / (settings.weeklyHoursBudget || 25)))} ${t('quote.weeks')}`;
 
   return (
     <div className="min-h-screen bg-surface p-4 md:p-10">

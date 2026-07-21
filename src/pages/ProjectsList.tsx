@@ -28,11 +28,11 @@ function getProjectFinalPrice(project: Project, allMaterials: Material[]): numbe
   return breakdown.finalPrice;
 }
 
-function getEstimatedDays(project: Project): string {
-  if (FINALIZED_STATUSES.includes(project.status)) return 'FINALIZED';
+function getEstimatedDays(project: Project, t: (key: string) => string): string {
+  if (FINALIZED_STATUSES.includes(project.status)) return t('projectsList.finalized');
   const totalHours = project.laborHours;
   const days = Math.ceil(totalHours / 8);
-  return `EST: ${days} Days`;
+  return `${t('projectsList.estPrefix')} ${days} ${t('projectsList.days')}`;
 }
 
 function FilterBar({
@@ -62,7 +62,7 @@ function FilterBar({
           type="text"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Search by project name or material..."
+          placeholder={t('projectsList.searchPlaceholder')}
           className="w-full ps-10 pe-4 py-3 bg-surface-container-highest border-b-2 border-outline focus:border-primary outline-none text-sm transition-colors rounded-t"
         />
       </div>
@@ -99,6 +99,11 @@ function ProjectRow({ project, allMaterials, onNavigate, onDelete }: {
   const { t } = useTranslation();
   const finalPrice = getProjectFinalPrice(project, allMaterials);
 
+  const typeLabel = (type: string) => {
+    const v = t(`projectTypes.${type}`);
+    return v === `projectTypes.${type}` ? type : v;
+  };
+
   return (
     <tr className="group hover:bg-surface-container-low transition-colors">
       <td className="py-4 px-4">
@@ -122,7 +127,7 @@ function ProjectRow({ project, allMaterials, onNavigate, onDelete }: {
           <p className="font-bold text-lg">{project.name}</p>
         </button>
         <p className="text-secondary text-xs mt-0.5">
-          {project.type}
+          {typeLabel(project.type)}
           {project.description && ` - ${project.description}`}
         </p>
       </td>
@@ -138,17 +143,17 @@ function ProjectRow({ project, allMaterials, onNavigate, onDelete }: {
       </td>
       <td className="py-4 px-4">
         <p className="text-sm">{new Date(project.date).toLocaleDateString()}</p>
-        <p className="text-xs text-secondary mt-0.5">{getEstimatedDays(project)}</p>
+        <p className="text-xs text-secondary mt-0.5">{getEstimatedDays(project, t)}</p>
       </td>
       <td className="py-4 px-4">
         <div className="flex flex-col gap-1">
           <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-container-high rounded text-xs">
             <Icon name="category" className="text-sm" />
-            {project.materials.length} Materials
+            {project.materials.length} {t('calculator.materials')}
           </span>
           <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-container-high rounded text-xs">
             <Icon name="schedule" className="text-sm" />
-            {project.laborHours}h Labor
+            {project.laborHours}h {t('common.labor')}
           </span>
         </div>
       </td>
@@ -160,21 +165,21 @@ function ProjectRow({ project, allMaterials, onNavigate, onDelete }: {
           <button
             onClick={() => onNavigate(`/projects/${project.id}`)}
             className="p-2 rounded hover:bg-surface-container-high transition-colors"
-            aria-label="View project"
+            aria-label={t('projectsList.viewProject')}
           >
             <Icon name="visibility" className="text-xl text-secondary hover:text-on-surface" />
           </button>
           <button
             onClick={() => onNavigate(`/calculator/${project.id}`)}
             className="p-2 rounded hover:bg-surface-container-high transition-colors"
-            aria-label="Edit project"
+            aria-label={t('projectsList.editProject')}
           >
             <Icon name="edit" className="text-xl text-secondary hover:text-on-surface" />
           </button>
           <button
             onClick={() => onDelete(project.id)}
             className="p-2 rounded hover:bg-error/10 transition-colors"
-            aria-label="Delete project"
+            aria-label={t('projectsList.deleteProject')}
           >
             <Icon name="delete" className="text-xl text-secondary hover:text-error" />
           </button>
@@ -188,6 +193,7 @@ function WorkshopSummary({ projects, allMaterials }: {
   projects: Project[];
   allMaterials: Material[];
 }) {
+  const { t } = useTranslation();
   const summary = useMemo(() => {
     const inProgressProjects = projects.filter((p) => p.status === 'in_production');
     const completedProjects = projects.filter((p) => FINALIZED_STATUSES.includes(p.status));
@@ -212,12 +218,12 @@ function WorkshopSummary({ projects, allMaterials }: {
   return (
     <div className="glass-panel lg:w-96 p-6 space-y-6 shrink-0">
       <h2 className="font-headline text-lg font-bold uppercase tracking-wide">
-        Workshop Summary
+        {t('projectsList.workshopSummary')}
       </h2>
       <div className="space-y-5">
         <div>
           <p className="text-[10px] font-bold uppercase tracking-widest text-secondary">
-            Active Valuation
+            {t('projectsList.activeValuation')}
           </p>
           <p className="font-mono text-3xl font-bold mt-1">
             {formatCurrency(summary.activeValuation)}
@@ -225,20 +231,20 @@ function WorkshopSummary({ projects, allMaterials }: {
         </div>
         <div>
           <p className="text-[10px] font-bold uppercase tracking-widest text-secondary">
-            Billable Hours
+            {t('projectsList.billableHours')}
           </p>
           <p className="font-mono text-3xl font-bold mt-1">{summary.billableHours}</p>
         </div>
         <div>
           <p className="text-[10px] font-bold uppercase tracking-widest text-secondary">
-            Efficiency Rate
+            {t('projectsList.efficiencyRate')}
           </p>
           <p className="font-mono text-3xl font-bold mt-1">{summary.efficiencyRate}%</p>
         </div>
         {summary.nextMilestone && (
           <div className="bg-primary text-white p-4 rounded-lg">
             <p className="text-[10px] font-bold uppercase tracking-widest text-white/70">
-              Next Milestone
+              {t('projectsList.nextMilestone')}
             </p>
             <p className="font-bold mt-1">{summary.nextMilestone}</p>
           </div>
@@ -287,7 +293,7 @@ export function ProjectsList() {
 
   const handleDelete = (id: string) => {
     const project = projects.find((p) => p.id === id);
-    if (project && window.confirm(`Delete "${project.name}"? This cannot be undone.`)) {
+    if (project && window.confirm(`${t('projectsList.deleteConfirmPrefix')} "${project.name}"${t('projectsList.deleteConfirmSuffix')}`)) {
       deleteProject(id);
     }
   };
@@ -310,25 +316,25 @@ export function ProjectsList() {
             <thead>
               <tr>
                 <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
-                  Preview
+                  {t('projectsList.preview')}
                 </th>
                 <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
-                  Project Identity
+                  {t('projectsList.projectIdentity')}
                 </th>
                 <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
                   {t('projects.status')}
                 </th>
                 <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
-                  Timeline
+                  {t('projectsList.timeline')}
                 </th>
                 <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
-                  Metrics
+                  {t('projectsList.metrics')}
                 </th>
                 <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
-                  Valuation
+                  {t('projectsList.valuation')}
                 </th>
                 <th className="text-start text-[10px] font-bold uppercase tracking-widest text-secondary pb-4 px-4">
-                  Actions
+                  {t('common.actions')}
                 </th>
               </tr>
             </thead>
@@ -345,7 +351,7 @@ export function ProjectsList() {
               {filteredProjects.length === 0 && (
                 <tr>
                   <td colSpan={7} className="py-16 text-center text-secondary">
-                    No projects match your filters
+                    {t('projectsList.noMatches')}
                   </td>
                 </tr>
               )}

@@ -65,14 +65,14 @@ function CategoryModal({
       <div className="bg-surface rounded-2xl shadow-xl w-full max-w-md m-4">
         <div className="p-6 border-b border-outline-variant">
           <h2 className="font-headline text-xl font-bold">
-            {initialCategory ? 'Edit Category' : 'New Category'}
+            {initialCategory ? t('categories.editCategory') : t('categories.newCategory')}
           </h2>
         </div>
 
         <div className="p-6 space-y-4">
           <div>
             <label className="text-xs font-bold uppercase tracking-widest text-secondary block mb-2">
-              Name
+              {t('common.name')}
             </label>
             <input
               type="text"
@@ -81,13 +81,13 @@ function CategoryModal({
                 setForm((prev) => ({ ...prev, name: e.target.value }))
               }
               className={inputClass}
-              placeholder="e.g. Hardwood"
+              placeholder={t('categories.namePlaceholder')}
             />
           </div>
 
           <div>
             <label className="text-xs font-bold uppercase tracking-widest text-secondary block mb-2">
-              Description
+              {t('materials.description')}
             </label>
             <textarea
               value={form.description}
@@ -99,13 +99,13 @@ function CategoryModal({
               }
               className={`${inputClass} resize-none`}
               rows={3}
-              placeholder="Optional description"
+              placeholder={t('materials.optionalDescription')}
             />
           </div>
 
           <div>
             <label className="text-xs font-bold uppercase tracking-widest text-secondary block mb-2">
-              Color
+              {t('common.color')}
             </label>
             <div className="flex items-center gap-3">
               <input
@@ -168,7 +168,10 @@ function CategoryCard({
           <p className="text-secondary text-sm mt-1">{category.description}</p>
         )}
         <p className="text-xs text-secondary mt-2 font-mono">
-          {materialCount} material{materialCount !== 1 ? 's' : ''}
+          {materialCount}{' '}
+          {materialCount === 1
+            ? t('categories.materialSingular')
+            : t('categories.materialPlural')}
         </p>
       </div>
 
@@ -237,14 +240,14 @@ export function Categories() {
     <div className="p-8 max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="font-headline text-2xl font-bold text-on-surface">
-          Material Categories
+          {t('categories.title')}
         </h1>
         <button
           onClick={handleOpenAdd}
           className="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
         >
           <Icon name="add" className="text-base" />
-          New Category
+          {t('categories.newCategory')}
         </button>
       </div>
 
@@ -261,7 +264,7 @@ export function Categories() {
         {categories.length === 0 && (
           <div className="p-12 bg-surface-container rounded-xl text-center text-secondary">
             <Icon name="category" className="text-4xl mb-3" />
-            <p>No categories yet. Create your first category.</p>
+            <p>{t('categories.empty')}</p>
           </div>
         )}
       </div>

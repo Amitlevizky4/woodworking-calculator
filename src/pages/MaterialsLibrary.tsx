@@ -8,20 +8,12 @@ import type { Material, MaterialVariant, Unit } from '@/types';
 
 const UNIT_OPTIONS: Unit[] = ['meter', 'sheet', 'liter', 'piece', 'kg', 'm2'];
 
-const UNIT_LABELS: Record<Unit, string> = {
-  meter: 'Meter',
-  sheet: 'Sheet',
-  liter: 'Liter',
-  piece: 'Piece',
-  kg: 'Kg',
-  m2: 'm\u00B2',
-};
-
 interface MaterialFormState {
   name: string;
   categoryId: string;
   unit: Unit;
   basePrice: string;
+  basePriceLabel: string;
   description: string;
   variants: Array<{ id: string; label: string; price: string }>;
   photoUrl: string;
@@ -32,6 +24,7 @@ const EMPTY_FORM: MaterialFormState = {
   categoryId: '',
   unit: 'meter',
   basePrice: '',
+  basePriceLabel: '',
   description: '',
   variants: [],
   photoUrl: '',
@@ -44,6 +37,7 @@ function CategoryTabs({
   activeCategoryId: string | null;
   onSelect: (id: string | null) => void;
 }) {
+  const { t } = useTranslation();
   const categories = useStore((state) => state.categories);
 
   return (
@@ -56,7 +50,7 @@ function CategoryTabs({
             : 'text-secondary hover:text-on-surface'
         }`}
       >
-        All Materials
+        {t('materials.allMaterials')}
       </button>
       {categories.map((cat) => (
         <button
@@ -173,7 +167,7 @@ function MaterialTable({
                 <CategoryBadge categoryId={material.categoryId} />
               </td>
               <td className="px-4 py-4 text-sm text-secondary">
-                {UNIT_LABELS[material.unit]}
+                {t(`units.${material.unit}`)}
               </td>
               <td className="px-4 py-4 font-mono font-bold">
                 {formatCurrency(material.basePrice)}
@@ -189,7 +183,7 @@ function MaterialTable({
                 colSpan={5}
                 className="px-6 py-12 text-center text-secondary"
               >
-                No materials found
+                {t('materials.noMaterialsFound')}
               </td>
             </tr>
           )}
@@ -235,12 +229,14 @@ function DetailPanel({
       <div>
         <p className="text-[10px] font-bold uppercase tracking-widest text-secondary mb-1">
           {t('materials.basePrice')}
+          {material.basePriceLabel && ` — ${material.basePriceLabel}`}
         </p>
         <p className="font-mono text-2xl font-bold">
           {formatCurrency(material.basePrice)}
         </p>
         <p className="text-xs text-secondary">
-          per {UNIT_LABELS[material.unit].toLowerCase()}
+          {t('materials.perUnit')}{' '}
+          {t(`units.${material.unit}`).toLowerCase()}
         </p>
       </div>
 
@@ -310,6 +306,7 @@ function MaterialModal({
         categoryId: initialMaterial.categoryId,
         unit: initialMaterial.unit,
         basePrice: String(initialMaterial.basePrice),
+        basePriceLabel: initialMaterial.basePriceLabel ?? '',
         description: initialMaterial.description ?? '',
         variants: (initialMaterial.variants ?? []).map((v) => ({
           id: v.id,
@@ -382,6 +379,7 @@ function MaterialModal({
       categoryId: form.categoryId,
       unit: form.unit,
       basePrice: parseFloat(form.basePrice) || 0,
+      basePriceLabel: form.basePriceLabel.trim() || undefined,
       description: form.description.trim() || undefined,
       variants: variants.length > 0 ? variants : undefined,
       photoUrl: form.photoUrl || undefined,
@@ -391,15 +389,20 @@ function MaterialModal({
     onClose();
   };
 
-  const inputClass =
-    'w-full bg-surface-container-highest border-b-2 border-outline focus:border-primary focus:ring-0 px-4 py-3 outline-none transition-colors text-on-surface';
+  // Kept separate from the width so fixed-width fields (e.g. variant price)
+  // don't get overridden by a conflicting w-full.
+  const inputBase =
+    'bg-surface-container-highest border-b-2 border-outline focus:border-primary focus:ring-0 px-4 py-3 outline-none transition-colors text-on-surface';
+  const inputClass = `w-full ${inputBase}`;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="bg-surface rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto m-4">
         <div className="p-6 border-b border-outline-variant">
           <h2 className="font-headline text-xl font-bold">
-            {initialMaterial ? 'Edit Material' : t('materials.newMaterial')}
+            {initialMaterial
+              ? t('materials.editMaterial')
+              : t('materials.newMaterial')}
           </h2>
         </div>
 
@@ -415,13 +418,13 @@ function MaterialModal({
                 setForm((prev) => ({ ...prev, name: e.target.value }))
               }
               className={inputClass}
-              placeholder="e.g. Oak Board"
+              placeholder={t('materials.namePlaceholder')}
             />
           </div>
 
           <div>
             <label className="text-xs font-bold uppercase tracking-widest text-secondary block mb-2">
-              Description
+              {t('materials.description')}
             </label>
             <input
               type="text"
@@ -430,7 +433,7 @@ function MaterialModal({
                 setForm((prev) => ({ ...prev, description: e.target.value }))
               }
               className={inputClass}
-              placeholder="Optional description"
+              placeholder={t('materials.optionalDescription')}
             />
           </div>
 
@@ -449,7 +452,7 @@ function MaterialModal({
                 }
                 className={inputClass}
               >
-                <option value="">Select...</option>
+                <option value="">{t('materials.selectCategory')}</option>
                 {categories.map((cat) => (
                   <option key={cat.id} value={cat.id}>
                     {cat.name}
@@ -473,28 +476,47 @@ function MaterialModal({
               >
                 {UNIT_OPTIONS.map((unit) => (
                   <option key={unit} value={unit}>
-                    {UNIT_LABELS[unit]}
+                    {t(`units.${unit}`)}
                   </option>
                 ))}
               </select>
             </div>
           </div>
 
-          <div>
-            <label className="text-xs font-bold uppercase tracking-widest text-secondary block mb-2">
-              {t('materials.basePrice')}
-            </label>
-            <input
-              type="number"
-              value={form.basePrice}
-              onChange={(e) =>
-                setForm((prev) => ({ ...prev, basePrice: e.target.value }))
-              }
-              className={inputClass}
-              placeholder="0.00"
-              min={0}
-              step="0.01"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs font-bold uppercase tracking-widest text-secondary block mb-2">
+                {t('materials.basePrice')}
+              </label>
+              <input
+                type="number"
+                value={form.basePrice}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, basePrice: e.target.value }))
+                }
+                className={inputClass}
+                placeholder="0.00"
+                min={0}
+                step="0.01"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-bold uppercase tracking-widest text-secondary block mb-2">
+                {t('materials.basePriceLabelField')}
+              </label>
+              <input
+                type="text"
+                value={form.basePriceLabel}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    basePriceLabel: e.target.value,
+                  }))
+                }
+                className={inputClass}
+                placeholder={t('materials.basePriceLabelPlaceholder')}
+              />
+            </div>
           </div>
 
           <div>
@@ -507,7 +529,7 @@ function MaterialModal({
                 className="text-primary text-sm font-medium flex items-center gap-1"
               >
                 <Icon name="add" className="text-base" />
-                Add Variant
+                {t('materials.addVariant')}
               </button>
             </div>
             {form.variants.length > 0 && (
@@ -529,8 +551,8 @@ function MaterialModal({
                   onChange={(e) =>
                     handleVariantChange(index, 'label', e.target.value)
                   }
-                  className={`flex-1 ${inputClass}`}
-                  placeholder="e.g. 2x4"
+                  className={`min-w-0 flex-1 ${inputBase}`}
+                  placeholder={t('materials.variantPlaceholder')}
                 />
                 <input
                   type="number"
@@ -538,7 +560,7 @@ function MaterialModal({
                   onChange={(e) =>
                     handleVariantChange(index, 'price', e.target.value)
                   }
-                  className={`w-28 ${inputClass}`}
+                  className={`w-28 shrink-0 ${inputBase}`}
                   placeholder="0.00"
                   min={0}
                   step="0.01"
@@ -555,21 +577,27 @@ function MaterialModal({
 
           <div>
             <label className="text-xs font-bold uppercase tracking-widest text-secondary block mb-2">
-              Photo
+              {t('materials.photo')}
             </label>
             {form.photoUrl && (
               <img
                 src={form.photoUrl}
-                alt="Preview"
+                alt={form.name}
                 className="w-full h-32 object-cover rounded-lg mb-2"
               />
             )}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handlePhotoUpload}
-              className="text-sm text-secondary file:me-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-surface-container-high file:text-on-surface hover:file:bg-surface-container"
-            />
+            {/* The native file input renders browser-locale text ("Choose
+                File"), so it's hidden behind a translated button. */}
+            <label className="inline-flex items-center gap-2 py-2 px-4 rounded-lg text-sm font-medium bg-surface-container-high text-on-surface hover:bg-surface-container cursor-pointer transition-colors">
+              <Icon name="upload" className="text-base" />
+              {t('materials.choosePhoto')}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoUpload}
+                className="hidden"
+              />
+            </label>
           </div>
         </div>
 
@@ -690,7 +718,7 @@ export function MaterialsLibrary() {
                   className="text-4xl text-secondary mb-3"
                 />
                 <p className="text-secondary text-sm">
-                  Select a material to view details
+                  {t('materials.selectMaterialPrompt')}
                 </p>
               </div>
             )}

@@ -84,6 +84,7 @@ function mapDbMaterial(row: Record<string, unknown>): Material {
     categoryId: row.category_id as string,
     unit: row.unit as Material['unit'],
     basePrice: row.base_price as number,
+    basePriceLabel: (row.base_price_label as string) ?? undefined,
     description: (row.description as string) ?? undefined,
     photoUrl: (row.photo_url as string) ?? undefined,
     variants: variants && variants.length > 0 ? variants : undefined,
@@ -502,6 +503,7 @@ export const useStore = create<AppState>()((set, get) => ({
           category_id: material.categoryId,
           unit: material.unit,
           base_price: material.basePrice,
+          base_price_label: material.basePriceLabel ?? null,
           description: material.description ?? null,
           photo_url: material.photoUrl ?? null,
         });
@@ -537,6 +539,7 @@ export const useStore = create<AppState>()((set, get) => ({
           category_id: material.categoryId,
           unit: material.unit,
           base_price: material.basePrice,
+          base_price_label: material.basePriceLabel ?? null,
           description: material.description ?? null,
           photo_url: material.photoUrl ?? null,
         })

@@ -31,9 +31,9 @@ import {
 import { STATUS_BADGE_CLASSES, STATUS_TKEY } from '@/utils/pipeline';
 import type { Expense, Project } from '@/types';
 
-const MONTH_NAMES = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+const MONTH_KEYS = [
+  'jan', 'feb', 'mar', 'apr', 'may', 'jun',
+  'jul', 'aug', 'sep', 'oct', 'nov', 'dec',
 ];
 
 function useCurrentTime(): string {
@@ -68,7 +68,11 @@ interface MonthlyData {
   labor: number;
 }
 
-function buildMonthlyChartData(projects: Project[], allMaterials: ReturnType<typeof useStore.getState>['materials']): MonthlyData[] {
+function buildMonthlyChartData(
+  projects: Project[],
+  allMaterials: ReturnType<typeof useStore.getState>['materials'],
+  t: (key: string) => string,
+): MonthlyData[] {
   const monthMap = new Map<string, { materials: number; labor: number }>();
 
   for (const project of projects) {
@@ -100,7 +104,7 @@ function buildMonthlyChartData(projects: Project[], allMaterials: ReturnType<typ
     .map(([key, data]) => {
       const monthIndex = parseInt(key.split('-')[1], 10);
       return {
-        month: MONTH_NAMES[monthIndex],
+        month: t(`months.${MONTH_KEYS[monthIndex]}`),
         materials: Math.round(data.materials),
         labor: Math.round(data.labor),
       };
@@ -144,7 +148,7 @@ function CapacityCard({ projects }: { projects: Project[] }) {
         <p className="text-[10px] font-bold uppercase tracking-widest text-secondary">
           {t('capacity.backlog')}
         </p>
-        <p className="font-mono text-lg font-bold mt-1">{hint.backlogHours} hrs</p>
+        <p className="font-mono text-lg font-bold mt-1">{hint.backlogHours} {t('common.hrs')}</p>
       </div>
     </div>
   );
@@ -422,14 +426,14 @@ function MoneySection({
       trend: trendPnl.map((p): TrendPoint => {
         const monthIndex = parseInt(p.month.split('-')[1], 10) - 1;
         return {
-          month: MONTH_NAMES[monthIndex],
+          month: t(`months.${MONTH_KEYS[monthIndex]}`),
           revenue: Math.round(p.revenue),
           expenses: Math.round(p.totalExpenses),
           net: Math.round(p.netProfit),
         };
       }),
     };
-  }, [projects, expenses]);
+  }, [projects, expenses, t]);
 
   return (
     <div className="space-y-6">
@@ -541,11 +545,11 @@ function MonthlyChart({ data }: { data: MonthlyData[] }) {
       <div className="flex items-center gap-6 mb-4">
         <div className="flex items-center gap-2">
           <span className="inline-block w-3 h-3 rounded-sm bg-primary" />
-          <span className="text-xs text-secondary">Materials</span>
+          <span className="text-xs text-secondary">{t('calculator.materials')}</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="inline-block w-3 h-3 rounded-sm bg-outline" />
-          <span className="text-xs text-secondary">Labor</span>
+          <span className="text-xs text-secondary">{t('common.labor')}</span>
         </div>
       </div>
       <ResponsiveContainer width="100%" height={280}>
@@ -642,7 +646,7 @@ function RecentProjectsTable({ projects, allMaterials }: {
           {recentProjects.length === 0 && (
             <tr>
               <td colSpan={4} className="py-8 text-center text-secondary">
-                No projects yet
+                {t('dashboard.noProjects')}
               </td>
             </tr>
           )}
@@ -689,6 +693,11 @@ function PerformancePanel({ projects, allMaterials }: {
     return { mostExpensive, cheapest, commonType, commonPercent };
   }, [projects, allMaterials]);
 
+  const commonTypeKey = `projectTypes.${highlights.commonType}`;
+  const commonTypeValue = t(commonTypeKey);
+  const commonTypeLabel =
+    commonTypeValue === commonTypeKey ? highlights.commonType : commonTypeValue;
+
   return (
     <div className="glass-panel border-s-4 border-primary p-6">
       <h2 className="font-headline text-lg font-bold uppercase tracking-wide mb-6">
@@ -697,7 +706,7 @@ function PerformancePanel({ projects, allMaterials }: {
       <div className="space-y-5">
         <div>
           <p className="text-[10px] font-bold uppercase tracking-widest text-secondary">
-            Most Expensive Project
+            {t('dashboard.mostExpensive')}
           </p>
           {highlights.mostExpensive ? (
             <p className="font-mono text-lg font-bold mt-1">
@@ -710,7 +719,7 @@ function PerformancePanel({ projects, allMaterials }: {
         </div>
         <div>
           <p className="text-[10px] font-bold uppercase tracking-widest text-secondary">
-            Cheapest Project
+            {t('dashboard.cheapest')}
           </p>
           {highlights.cheapest ? (
             <p className="font-mono text-lg font-bold mt-1">
@@ -723,11 +732,11 @@ function PerformancePanel({ projects, allMaterials }: {
         </div>
         <div>
           <p className="text-[10px] font-bold uppercase tracking-widest text-secondary">
-            Most Common Project Type
+            {t('dashboard.commonType')}
           </p>
           {highlights.commonType ? (
             <p className="font-mono text-lg font-bold mt-1">
-              {highlights.commonType}{' '}
+              {commonTypeLabel}{' '}
               <span className="text-secondary text-sm">({highlights.commonPercent}%)</span>
             </p>
           ) : (
@@ -744,9 +753,9 @@ function QuickActions() {
   const navigate = useNavigate();
 
   const actions = [
-    { label: 'Add Raw Material', icon: 'add_circle', path: '/materials' },
-    { label: 'View Parts Library', icon: 'inventory_2', path: '/materials' },
-    { label: 'Log Bench Time', icon: 'timer', path: '/calculator' },
+    { labelKey: 'dashboard.addRawMaterial', icon: 'add_circle', path: '/materials' },
+    { labelKey: 'dashboard.viewPartsLibrary', icon: 'inventory_2', path: '/materials' },
+    { labelKey: 'dashboard.logBenchTime', icon: 'timer', path: '/calculator' },
   ];
 
   return (
@@ -757,13 +766,13 @@ function QuickActions() {
       <div className="space-y-2">
         {actions.map((action) => (
           <button
-            key={action.label}
+            key={action.labelKey}
             onClick={() => navigate(action.path)}
             className="w-full flex items-center justify-between p-4 bg-surface hover:bg-white transition-colors rounded"
           >
             <div className="flex items-center gap-3">
               <Icon name={action.icon} className="text-primary" />
-              <span className="text-sm font-medium">{action.label}</span>
+              <span className="text-sm font-medium">{t(action.labelKey)}</span>
             </div>
             <Icon name="chevron_right" className="text-secondary" />
           </button>
@@ -781,8 +790,8 @@ export function Dashboard() {
   const currentTime = useCurrentTime();
 
   const chartData = useMemo(
-    () => buildMonthlyChartData(projects, materials),
-    [projects, materials],
+    () => buildMonthlyChartData(projects, materials, t),
+    [projects, materials, t],
   );
 
   return (
@@ -792,7 +801,7 @@ export function Dashboard() {
           {t('dashboard.workshopOverview')}
         </h1>
         <p className="text-secondary mt-1">
-          Precision analytics for your woodworking business
+          {t('dashboard.subtitle')}
         </p>
         <p className="font-mono text-sm text-secondary mt-1">{currentTime}</p>
       </div>

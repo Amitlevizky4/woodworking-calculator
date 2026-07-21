@@ -16,6 +16,15 @@ interface TranslationSet {
     search: string;
     newProject: string;
     quickCalc: string;
+    labor: string;
+    total: string;
+    hrs: string;
+    qty: string;
+    name: string;
+    color: string;
+    actions: string;
+    backToProjects: string;
+    projectNotFound: string;
   };
   dashboard: {
     workshopOverview: string;
@@ -28,6 +37,14 @@ interface TranslationSet {
     recentProjects: string;
     performanceHighlights: string;
     shopFloorTasks: string;
+    subtitle: string;
+    noProjects: string;
+    mostExpensive: string;
+    cheapest: string;
+    commonType: string;
+    addRawMaterial: string;
+    viewPartsLibrary: string;
+    logBenchTime: string;
   };
   projects: {
     projectName: string;
@@ -67,6 +84,24 @@ interface TranslationSet {
     meetsTarget: string;
     belowTarget: string;
     materialTotals: string;
+    templateSaved: string;
+    date: string;
+    emptyMaterials: string;
+    materialGrade: string;
+    variantSize: string;
+    unitCost: string;
+    decreaseQty: string;
+    increaseQty: string;
+    totalParts: string;
+    wasteYield: string;
+    sheetsNeeded: string;
+    optimizeCutList: string;
+    partNamePlaceholder: string;
+    perHour: string;
+    factorSuffix: string;
+    materialsOnly: string;
+    materialsPlusLabor: string;
+    percentSuffix: string;
   };
   expenses: {
     title: string;
@@ -163,6 +198,22 @@ interface TranslationSet {
     variants: string;
     variantLabel: string;
     addToProject: string;
+    editMaterial: string;
+    description: string;
+    optionalDescription: string;
+    namePlaceholder: string;
+    selectCategory: string;
+    addVariant: string;
+    variantPlaceholder: string;
+    basePriceLabelField: string;
+    basePriceLabelPlaceholder: string;
+    baseOption: string;
+    photo: string;
+    choosePhoto: string;
+    perUnit: string;
+    noMaterialsFound: string;
+    allMaterials: string;
+    selectMaterialPrompt: string;
   };
   status: {
     lead: string;
@@ -222,6 +273,8 @@ interface TranslationSet {
     terms: string;
     termsText: string;
     print: string;
+    workshopFallback: string;
+    weeks: string;
   };
   capacity: {
     title: string;
@@ -291,6 +344,82 @@ interface TranslationSet {
     revokeAdmin: string;
     accessDenied: string;
   };
+  layout: {
+    signOut: string;
+    userFallback: string;
+  };
+  categories: {
+    title: string;
+    newCategory: string;
+    editCategory: string;
+    namePlaceholder: string;
+    empty: string;
+    materialSingular: string;
+    materialPlural: string;
+  };
+  templates: {
+    title: string;
+    newTemplate: string;
+    estCost: string;
+    useTemplate: string;
+    empty: string;
+  };
+  projectsList: {
+    finalized: string;
+    estPrefix: string;
+    days: string;
+    searchPlaceholder: string;
+    viewProject: string;
+    editProject: string;
+    deleteProject: string;
+    workshopSummary: string;
+    activeValuation: string;
+    billableHours: string;
+    efficiencyRate: string;
+    nextMilestone: string;
+    deleteConfirmPrefix: string;
+    deleteConfirmSuffix: string;
+    preview: string;
+    projectIdentity: string;
+    timeline: string;
+    metrics: string;
+    valuation: string;
+    noMatches: string;
+  };
+  projectDetails: {
+    print: string;
+    material: string;
+    variant: string;
+    unitPrice: string;
+    noMaterials: string;
+    partName: string;
+    lengthMm: string;
+    widthMm: string;
+    areaMm2: string;
+    noWoodParts: string;
+    unknownMaterial: string;
+    buyer: string;
+    exportPdf: string;
+    costBreakdown: string;
+    woodParts: string;
+    totalPieces: string;
+    sheetsRequired: string;
+    waste: string;
+  };
+  months: {
+    jan: string;
+    feb: string;
+    mar: string;
+    apr: string;
+    may: string;
+    jun: string;
+    jul: string;
+    aug: string;
+    sep: string;
+    oct: string;
+    nov: string;
+    dec: string;
+  };
 }
 
 interface Translations {
@@ -317,6 +446,15 @@ export const translations: Translations = {
       search: 'Search',
       newProject: 'New Project',
       quickCalc: 'Quick Calc',
+      labor: 'Labor',
+      total: 'Total',
+      hrs: 'hrs',
+      qty: 'Qty',
+      name: 'Name',
+      color: 'Color',
+      actions: 'Actions',
+      backToProjects: 'Back to Projects',
+      projectNotFound: 'Project not found',
     },
     dashboard: {
       workshopOverview: 'Workshop Overview',
@@ -329,6 +467,14 @@ export const translations: Translations = {
       recentProjects: 'Recent Projects',
       performanceHighlights: 'Performance Highlights',
       shopFloorTasks: 'Shop Floor Tasks',
+      subtitle: 'Precision analytics for your woodworking business',
+      noProjects: 'No projects yet',
+      mostExpensive: 'Most Expensive Project',
+      cheapest: 'Cheapest Project',
+      commonType: 'Most Common Project Type',
+      addRawMaterial: 'Add Raw Material',
+      viewPartsLibrary: 'View Parts Library',
+      logBenchTime: 'Log Bench Time',
     },
     projects: {
       projectName: 'Project Name',
@@ -368,6 +514,24 @@ export const translations: Translations = {
       meetsTarget: 'Meets target rate',
       belowTarget: 'Below target rate',
       materialTotals: 'Material Totals',
+      templateSaved: 'Template saved!',
+      date: 'Date',
+      emptyMaterials: 'No materials added. Click "Add from Library" to begin.',
+      materialGrade: 'Material / Grade',
+      variantSize: 'Variant / Size',
+      unitCost: 'Unit Cost',
+      decreaseQty: 'Decrease quantity',
+      increaseQty: 'Increase quantity',
+      totalParts: 'Total Parts',
+      wasteYield: 'Waste Yield',
+      sheetsNeeded: 'Sheets Needed',
+      optimizeCutList: 'Optimize Cut List',
+      partNamePlaceholder: 'Part name',
+      perHour: '₪/hr',
+      factorSuffix: 'x factor',
+      materialsOnly: 'Materials only',
+      materialsPlusLabor: 'Materials + Labor',
+      percentSuffix: 'pct',
     },
     expenses: {
       title: 'Expenses',
@@ -464,6 +628,22 @@ export const translations: Translations = {
       variants: 'Variants',
       variantLabel: 'Label',
       addToProject: 'Add to Project',
+      editMaterial: 'Edit Material',
+      description: 'Description',
+      optionalDescription: 'Optional description',
+      namePlaceholder: 'e.g. Oak Board',
+      selectCategory: 'Select...',
+      addVariant: 'Add Variant',
+      variantPlaceholder: 'e.g. 2x4',
+      basePriceLabelField: 'Base Price Label',
+      basePriceLabelPlaceholder: 'e.g. Standard',
+      baseOption: 'Base',
+      photo: 'Photo',
+      choosePhoto: 'Choose File',
+      perUnit: 'per',
+      noMaterialsFound: 'No materials found',
+      allMaterials: 'All Materials',
+      selectMaterialPrompt: 'Select a material to view details',
     },
     status: {
       lead: 'Lead',
@@ -520,6 +700,8 @@ export const translations: Translations = {
       depositDue: '50% Deposit Due',
       balanceDue: 'Balance on Delivery',
       estDelivery: 'Estimated Delivery',
+      workshopFallback: 'Workshop',
+      weeks: 'weeks',
       terms: 'Terms',
       termsText:
         'A 50% deposit confirms your order. The balance is due on delivery. Lead times are estimates and may vary with material availability.',
@@ -593,6 +775,82 @@ export const translations: Translations = {
       revokeAdmin: 'Revoke Admin',
       accessDenied: 'Access denied. Admin privileges required.',
     },
+    layout: {
+      signOut: 'Sign out',
+      userFallback: 'User',
+    },
+    categories: {
+      title: 'Material Categories',
+      newCategory: 'New Category',
+      editCategory: 'Edit Category',
+      namePlaceholder: 'e.g. Hardwood',
+      empty: 'No categories yet. Create your first category.',
+      materialSingular: 'material',
+      materialPlural: 'materials',
+    },
+    templates: {
+      title: 'Templates Library',
+      newTemplate: 'New Template',
+      estCost: 'Est. Cost',
+      useTemplate: 'Use Template',
+      empty: 'No templates yet. Create your first template.',
+    },
+    projectsList: {
+      finalized: 'FINALIZED',
+      estPrefix: 'EST:',
+      days: 'Days',
+      searchPlaceholder: 'Search by project name or material...',
+      viewProject: 'View project',
+      editProject: 'Edit project',
+      deleteProject: 'Delete project',
+      workshopSummary: 'Workshop Summary',
+      activeValuation: 'Active Valuation',
+      billableHours: 'Billable Hours',
+      efficiencyRate: 'Efficiency Rate',
+      nextMilestone: 'Next Milestone',
+      deleteConfirmPrefix: 'Delete',
+      deleteConfirmSuffix: '? This cannot be undone.',
+      preview: 'Preview',
+      projectIdentity: 'Project Identity',
+      timeline: 'Timeline',
+      metrics: 'Metrics',
+      valuation: 'Valuation',
+      noMatches: 'No projects match your filters',
+    },
+    projectDetails: {
+      print: 'Print',
+      material: 'Material',
+      variant: 'Variant',
+      unitPrice: 'Unit Price',
+      noMaterials: 'No materials added',
+      partName: 'Part Name',
+      lengthMm: 'Length (mm)',
+      widthMm: 'Width (mm)',
+      areaMm2: 'Area (mm²)',
+      noWoodParts: 'No wood parts defined',
+      unknownMaterial: 'Unknown Material',
+      buyer: 'Buyer:',
+      exportPdf: 'Export PDF',
+      costBreakdown: 'Cost Breakdown',
+      woodParts: 'Wood Parts',
+      totalPieces: 'Total Pieces',
+      sheetsRequired: 'Sheets Required',
+      waste: 'Waste',
+    },
+    months: {
+      jan: 'Jan',
+      feb: 'Feb',
+      mar: 'Mar',
+      apr: 'Apr',
+      may: 'May',
+      jun: 'Jun',
+      jul: 'Jul',
+      aug: 'Aug',
+      sep: 'Sep',
+      oct: 'Oct',
+      nov: 'Nov',
+      dec: 'Dec',
+    },
   },
   he: {
     nav: {
@@ -612,6 +870,15 @@ export const translations: Translations = {
       search: '\u05D7\u05D9\u05E4\u05D5\u05E9',
       newProject: '\u05E4\u05E8\u05D5\u05D9\u05E7\u05D8 \u05D7\u05D3\u05E9',
       quickCalc: '\u05D7\u05D9\u05E9\u05D5\u05D1 \u05DE\u05D4\u05D9\u05E8',
+      labor: '\u05E2\u05D1\u05D5\u05D3\u05D4',
+      total: '\u05E1\u05D4"\u05DB',
+      hrs: '\u05E9\u05E2\u05D5\u05EA',
+      qty: '\u05DB\u05DE\u05D5\u05EA',
+      name: '\u05E9\u05DD',
+      color: '\u05E6\u05D1\u05E2',
+      actions: '\u05E4\u05E2\u05D5\u05DC\u05D5\u05EA',
+      backToProjects: '\u05D7\u05D6\u05E8\u05D4 \u05DC\u05E4\u05E8\u05D5\u05D9\u05E7\u05D8\u05D9\u05DD',
+      projectNotFound: '\u05D4\u05E4\u05E8\u05D5\u05D9\u05E7\u05D8 \u05DC\u05D0 \u05E0\u05DE\u05E6\u05D0',
     },
     dashboard: {
       workshopOverview: '\u05E1\u05E7\u05D9\u05E8\u05EA \u05E1\u05D3\u05E0\u05D4',
@@ -624,6 +891,14 @@ export const translations: Translations = {
       recentProjects: '\u05E4\u05E8\u05D5\u05D9\u05E7\u05D8\u05D9\u05DD \u05D0\u05D7\u05E8\u05D5\u05E0\u05D9\u05DD',
       performanceHighlights: '\u05E0\u05E7\u05D5\u05D3\u05D5\u05EA \u05D1\u05D9\u05E6\u05D5\u05E2',
       shopFloorTasks: '\u05DE\u05E9\u05D9\u05DE\u05D5\u05EA \u05D1\u05E1\u05D3\u05E0\u05D4',
+      subtitle: '\u05D0\u05E0\u05DC\u05D9\u05D8\u05D9\u05E7\u05D4 \u05DE\u05D3\u05D5\u05D9\u05E7\u05EA \u05DC\u05E2\u05E1\u05E7 \u05D4\u05E0\u05D2\u05E8\u05D5\u05EA \u05E9\u05DC\u05DB\u05DD',
+      noProjects: '\u05D0\u05D9\u05DF \u05E4\u05E8\u05D5\u05D9\u05E7\u05D8\u05D9\u05DD \u05E2\u05D3\u05D9\u05D9\u05DF',
+      mostExpensive: '\u05D4\u05E4\u05E8\u05D5\u05D9\u05E7\u05D8 \u05D4\u05D9\u05E7\u05E8 \u05D1\u05D9\u05D5\u05EA\u05E8',
+      cheapest: '\u05D4\u05E4\u05E8\u05D5\u05D9\u05E7\u05D8 \u05D4\u05D6\u05D5\u05DC \u05D1\u05D9\u05D5\u05EA\u05E8',
+      commonType: '\u05E1\u05D5\u05D2 \u05D4\u05E4\u05E8\u05D5\u05D9\u05E7\u05D8 \u05D4\u05E0\u05E4\u05D5\u05E5 \u05D1\u05D9\u05D5\u05EA\u05E8',
+      addRawMaterial: '\u05D4\u05D5\u05E1\u05E4\u05EA \u05D7\u05D5\u05DE\u05E8 \u05D2\u05DC\u05DD',
+      viewPartsLibrary: '\u05E6\u05E4\u05D9\u05D9\u05D4 \u05D1\u05E1\u05E4\u05E8\u05D9\u05D9\u05EA \u05D4\u05D7\u05D5\u05DE\u05E8\u05D9\u05DD',
+      logBenchTime: '\u05E8\u05D9\u05E9\u05D5\u05DD \u05E9\u05E2\u05D5\u05EA \u05E2\u05D1\u05D5\u05D3\u05D4',
     },
     projects: {
       projectName: '\u05E9\u05DD \u05E4\u05E8\u05D5\u05D9\u05E7\u05D8',
@@ -663,6 +938,24 @@ export const translations: Translations = {
       meetsTarget: '\u05E2\u05D5\u05DE\u05D3 \u05D1\u05EA\u05E2\u05E8\u05D9\u05E3 \u05D4\u05D9\u05E2\u05D3',
       belowTarget: '\u05DE\u05EA\u05D7\u05EA \u05DC\u05EA\u05E2\u05E8\u05D9\u05E3 \u05D4\u05D9\u05E2\u05D3',
       materialTotals: '\u05E1\u05D9\u05DB\u05D5\u05DD \u05D7\u05D5\u05DE\u05E8\u05D9\u05DD',
+      templateSaved: '\u05D4\u05EA\u05D1\u05E0\u05D9\u05EA \u05E0\u05E9\u05DE\u05E8\u05D4!',
+      date: '\u05EA\u05D0\u05E8\u05D9\u05DA',
+      emptyMaterials: '\u05DC\u05D0 \u05E0\u05D5\u05E1\u05E4\u05D5 \u05D7\u05D5\u05DE\u05E8\u05D9\u05DD. \u05DC\u05D7\u05E6\u05D5 \u05E2\u05DC "\u05D4\u05D5\u05E1\u05E4\u05D4 \u05DE\u05D4\u05E1\u05E4\u05E8\u05D9\u05D9\u05D4" \u05DB\u05D3\u05D9 \u05DC\u05D4\u05EA\u05D7\u05D9\u05DC.',
+      materialGrade: '\u05D7\u05D5\u05DE\u05E8 / \u05E1\u05D5\u05D2',
+      variantSize: '\u05D2\u05E8\u05E1\u05D4 / \u05DE\u05D9\u05D3\u05D4',
+      unitCost: '\u05E2\u05DC\u05D5\u05EA \u05D9\u05D7\u05D9\u05D3\u05D4',
+      decreaseQty: '\u05D4\u05E4\u05D7\u05EA\u05EA \u05DB\u05DE\u05D5\u05EA',
+      increaseQty: '\u05D4\u05D2\u05D3\u05DC\u05EA \u05DB\u05DE\u05D5\u05EA',
+      totalParts: '\u05E1\u05D4"\u05DB \u05D7\u05DC\u05E7\u05D9\u05DD',
+      wasteYield: '\u05D0\u05D7\u05D5\u05D6 \u05E4\u05D7\u05EA',
+      sheetsNeeded: '\u05DC\u05D5\u05D7\u05D5\u05EA \u05E0\u05D3\u05E8\u05E9\u05D9\u05DD',
+      optimizeCutList: '\u05D0\u05D5\u05E4\u05D8\u05D9\u05DE\u05D9\u05D6\u05E6\u05D9\u05D9\u05EA \u05D7\u05D9\u05EA\u05D5\u05DA',
+      partNamePlaceholder: '\u05E9\u05DD \u05D7\u05DC\u05E7',
+      perHour: '\u20AA \u05DC\u05E9\u05E2\u05D4',
+      factorSuffix: '\u05DE\u05E7\u05D3\u05DD \u05DB\u05E4\u05DC',
+      materialsOnly: '\u05D7\u05D5\u05DE\u05E8\u05D9\u05DD \u05D1\u05DC\u05D1\u05D3',
+      materialsPlusLabor: '\u05D7\u05D5\u05DE\u05E8\u05D9\u05DD + \u05E2\u05D1\u05D5\u05D3\u05D4',
+      percentSuffix: '\u05D0\u05D7\u05D5\u05D6',
     },
     expenses: {
       title: '\u05D4\u05D5\u05E6\u05D0\u05D5\u05EA',
@@ -759,6 +1052,22 @@ export const translations: Translations = {
       variants: '\u05D2\u05E8\u05E1\u05D0\u05D5\u05EA',
       variantLabel: '\u05EA\u05D5\u05D5\u05D9\u05EA',
       addToProject: '\u05D4\u05D5\u05E1\u05E4\u05D4 \u05DC\u05E4\u05E8\u05D5\u05D9\u05E7\u05D8',
+      editMaterial: '\u05E2\u05E8\u05D9\u05DB\u05EA \u05D7\u05D5\u05DE\u05E8',
+      description: '\u05EA\u05D9\u05D0\u05D5\u05E8',
+      optionalDescription: '\u05EA\u05D9\u05D0\u05D5\u05E8 (\u05DC\u05D0 \u05D7\u05D5\u05D1\u05D4)',
+      namePlaceholder: '\u05DC\u05D3\u05D5\u05D2\u05DE\u05D4: \u05DC\u05D5\u05D7 \u05D0\u05DC\u05D5\u05DF',
+      selectCategory: '\u05D1\u05D7\u05D9\u05E8\u05D4...',
+      addVariant: '\u05D4\u05D5\u05E1\u05E4\u05EA \u05D2\u05E8\u05E1\u05D4',
+      variantPlaceholder: '\u05DC\u05D3\u05D5\u05D2\u05DE\u05D4: 2x4',
+      basePriceLabelField: '\u05EA\u05D5\u05D5\u05D9\u05EA \u05DE\u05D7\u05D9\u05E8 \u05D1\u05E1\u05D9\u05E1',
+      basePriceLabelPlaceholder: '\u05DC\u05D3\u05D5\u05D2\u05DE\u05D4: \u05E1\u05D8\u05E0\u05D3\u05E8\u05D8\u05D9',
+      baseOption: '\u05D1\u05E1\u05D9\u05E1',
+      photo: '\u05EA\u05DE\u05D5\u05E0\u05D4',
+      choosePhoto: '\u05D1\u05D7\u05D9\u05E8\u05EA \u05E7\u05D5\u05D1\u05E5',
+      perUnit: '\u05DC\u05DB\u05DC',
+      noMaterialsFound: '\u05DC\u05D0 \u05E0\u05DE\u05E6\u05D0\u05D5 \u05D7\u05D5\u05DE\u05E8\u05D9\u05DD',
+      allMaterials: '\u05DB\u05DC \u05D4\u05D7\u05D5\u05DE\u05E8\u05D9\u05DD',
+      selectMaterialPrompt: '\u05D1\u05D7\u05E8\u05D5 \u05D7\u05D5\u05DE\u05E8 \u05DC\u05D4\u05E6\u05D2\u05EA \u05E4\u05E8\u05D8\u05D9\u05DD',
     },
     status: {
       lead: '\u05DC\u05D9\u05D3',
@@ -815,6 +1124,8 @@ export const translations: Translations = {
       depositDue: '\u05DE\u05E7\u05D3\u05DE\u05D4 50%',
       balanceDue: '\u05D9\u05EA\u05E8\u05D4 \u05D1\u05DE\u05E1\u05D9\u05E8\u05D4',
       estDelivery: '\u05DE\u05E1\u05D9\u05E8\u05D4 \u05DE\u05E9\u05D5\u05E2\u05E8\u05EA',
+      workshopFallback: '\u05E1\u05D3\u05E0\u05D4',
+      weeks: '\u05E9\u05D1\u05D5\u05E2\u05D5\u05EA',
       terms: '\u05EA\u05E0\u05D0\u05D9\u05DD',
       termsText:
         '\u05DE\u05E7\u05D3\u05DE\u05D4 \u05D1\u05D2\u05D5\u05D1\u05D4 50% \u05DE\u05D0\u05E9\u05E8\u05EA \u05D0\u05EA \u05D4\u05D4\u05D6\u05DE\u05E0\u05D4. \u05D4\u05D9\u05EA\u05E8\u05D4 \u05EA\u05E9\u05D5\u05DC\u05DD \u05D1\u05DE\u05E1\u05D9\u05E8\u05D4. \u05D6\u05DE\u05E0\u05D9 \u05D4\u05D0\u05E1\u05E4\u05E7\u05D4 \u05DE\u05E9\u05D5\u05E2\u05E8\u05D9\u05DD \u05D5\u05E2\u05E9\u05D5\u05D9\u05D9\u05DD \u05DC\u05D4\u05E9\u05EA\u05E0\u05D5\u05EA \u05D1\u05D4\u05EA\u05D0\u05DD \u05DC\u05D6\u05DE\u05D9\u05E0\u05D5\u05EA \u05D4\u05D7\u05D5\u05DE\u05E8\u05D9\u05DD.',
@@ -887,6 +1198,82 @@ export const translations: Translations = {
       grantAdmin: '\u05D4\u05E2\u05E0\u05E7\u05EA \u05D4\u05E8\u05E9\u05D0\u05D5\u05EA \u05DE\u05E0\u05D4\u05DC',
       revokeAdmin: '\u05D1\u05D9\u05D8\u05D5\u05DC \u05D4\u05E8\u05E9\u05D0\u05D5\u05EA \u05DE\u05E0\u05D4\u05DC',
       accessDenied: '\u05D2\u05D9\u05E9\u05D4 \u05E0\u05D3\u05D7\u05EA\u05D4. \u05E0\u05D3\u05E8\u05E9\u05D5\u05EA \u05D4\u05E8\u05E9\u05D0\u05D5\u05EA \u05DE\u05E0\u05D4\u05DC.',
+    },
+    layout: {
+      signOut: '\u05D4\u05EA\u05E0\u05EA\u05E7\u05D5\u05EA',
+      userFallback: '\u05DE\u05E9\u05EA\u05DE\u05E9',
+    },
+    categories: {
+      title: '\u05E7\u05D8\u05D2\u05D5\u05E8\u05D9\u05D5\u05EA \u05D7\u05D5\u05DE\u05E8\u05D9\u05DD',
+      newCategory: '\u05E7\u05D8\u05D2\u05D5\u05E8\u05D9\u05D4 \u05D7\u05D3\u05E9\u05D4',
+      editCategory: '\u05E2\u05E8\u05D9\u05DB\u05EA \u05E7\u05D8\u05D2\u05D5\u05E8\u05D9\u05D4',
+      namePlaceholder: '\u05DC\u05D3\u05D5\u05D2\u05DE\u05D4: \u05E2\u05E5 \u05E7\u05E9\u05D4',
+      empty: '\u05D0\u05D9\u05DF \u05E7\u05D8\u05D2\u05D5\u05E8\u05D9\u05D5\u05EA \u05E2\u05D3\u05D9\u05D9\u05DF. \u05E6\u05E8\u05D5 \u05D0\u05EA \u05D4\u05E7\u05D8\u05D2\u05D5\u05E8\u05D9\u05D4 \u05D4\u05E8\u05D0\u05E9\u05D5\u05E0\u05D4.',
+      materialSingular: '\u05D7\u05D5\u05DE\u05E8',
+      materialPlural: '\u05D7\u05D5\u05DE\u05E8\u05D9\u05DD',
+    },
+    templates: {
+      title: '\u05E1\u05E4\u05E8\u05D9\u05D9\u05EA \u05EA\u05D1\u05E0\u05D9\u05D5\u05EA',
+      newTemplate: '\u05EA\u05D1\u05E0\u05D9\u05EA \u05D7\u05D3\u05E9\u05D4',
+      estCost: '\u05E2\u05DC\u05D5\u05EA \u05DE\u05E9\u05D5\u05E2\u05E8\u05EA',
+      useTemplate: '\u05E9\u05D9\u05DE\u05D5\u05E9 \u05D1\u05EA\u05D1\u05E0\u05D9\u05EA',
+      empty: '\u05D0\u05D9\u05DF \u05EA\u05D1\u05E0\u05D9\u05D5\u05EA \u05E2\u05D3\u05D9\u05D9\u05DF. \u05E6\u05E8\u05D5 \u05D0\u05EA \u05D4\u05EA\u05D1\u05E0\u05D9\u05EA \u05D4\u05E8\u05D0\u05E9\u05D5\u05E0\u05D4.',
+    },
+    projectsList: {
+      finalized: '\u05D4\u05D5\u05E9\u05DC\u05DD',
+      estPrefix: '\u05D4\u05E2\u05E8\u05DB\u05D4:',
+      days: '\u05D9\u05DE\u05D9\u05DD',
+      searchPlaceholder: '\u05D7\u05D9\u05E4\u05D5\u05E9 \u05DC\u05E4\u05D9 \u05E9\u05DD \u05E4\u05E8\u05D5\u05D9\u05E7\u05D8 \u05D0\u05D5 \u05D7\u05D5\u05DE\u05E8...',
+      viewProject: '\u05D4\u05E6\u05D2\u05EA \u05E4\u05E8\u05D5\u05D9\u05E7\u05D8',
+      editProject: '\u05E2\u05E8\u05D9\u05DB\u05EA \u05E4\u05E8\u05D5\u05D9\u05E7\u05D8',
+      deleteProject: '\u05DE\u05D7\u05D9\u05E7\u05EA \u05E4\u05E8\u05D5\u05D9\u05E7\u05D8',
+      workshopSummary: '\u05E1\u05D9\u05DB\u05D5\u05DD \u05E1\u05D3\u05E0\u05D4',
+      activeValuation: '\u05E9\u05D5\u05D5\u05D9 \u05E4\u05E2\u05D9\u05DC',
+      billableHours: '\u05E9\u05E2\u05D5\u05EA \u05DC\u05D7\u05D9\u05D5\u05D1',
+      efficiencyRate: '\u05E9\u05D9\u05E2\u05D5\u05E8 \u05D9\u05E2\u05D9\u05DC\u05D5\u05EA',
+      nextMilestone: '\u05D0\u05D1\u05DF \u05D3\u05E8\u05DA \u05D4\u05D1\u05D0\u05D4',
+      deleteConfirmPrefix: '\u05DC\u05DE\u05D7\u05D5\u05E7 \u05D0\u05EA',
+      deleteConfirmSuffix: '? \u05E4\u05E2\u05D5\u05DC\u05D4 \u05D6\u05D5 \u05D0\u05D9\u05E0\u05D4 \u05D4\u05E4\u05D9\u05DB\u05D4.',
+      preview: '\u05EA\u05E6\u05D5\u05D2\u05D4 \u05DE\u05E7\u05D3\u05D9\u05DE\u05D4',
+      projectIdentity: '\u05E4\u05E8\u05D8\u05D9 \u05E4\u05E8\u05D5\u05D9\u05E7\u05D8',
+      timeline: '\u05E6\u05D9\u05E8 \u05D6\u05DE\u05DF',
+      metrics: '\u05DE\u05D3\u05D3\u05D9\u05DD',
+      valuation: '\u05E9\u05D5\u05D5\u05D9',
+      noMatches: '\u05D0\u05D9\u05DF \u05E4\u05E8\u05D5\u05D9\u05E7\u05D8\u05D9\u05DD \u05D4\u05EA\u05D5\u05D0\u05DE\u05D9\u05DD \u05DC\u05E1\u05D9\u05E0\u05D5\u05DF',
+    },
+    projectDetails: {
+      print: '\u05D4\u05D3\u05E4\u05E1\u05D4',
+      material: '\u05D7\u05D5\u05DE\u05E8',
+      variant: '\u05D2\u05E8\u05E1\u05D4',
+      unitPrice: '\u05DE\u05D7\u05D9\u05E8 \u05D9\u05D7\u05D9\u05D3\u05D4',
+      noMaterials: '\u05DC\u05D0 \u05E0\u05D5\u05E1\u05E4\u05D5 \u05D7\u05D5\u05DE\u05E8\u05D9\u05DD',
+      partName: '\u05E9\u05DD \u05D7\u05DC\u05E7',
+      lengthMm: '\u05D0\u05D5\u05E8\u05DA (\u05DE"\u05DE)',
+      widthMm: '\u05E8\u05D5\u05D7\u05D1 (\u05DE"\u05DE)',
+      areaMm2: '\u05E9\u05D8\u05D7 (\u05DE"\u05DE\u00B2)',
+      noWoodParts: '\u05DC\u05D0 \u05D4\u05D5\u05D2\u05D3\u05E8\u05D5 \u05D7\u05DC\u05E7\u05D9 \u05E2\u05E5',
+      unknownMaterial: '\u05D7\u05D5\u05DE\u05E8 \u05DC\u05D0 \u05D9\u05D3\u05D5\u05E2',
+      buyer: '\u05DC\u05E7\u05D5\u05D7:',
+      exportPdf: '\u05D9\u05D9\u05E6\u05D5\u05D0 PDF',
+      costBreakdown: '\u05E4\u05D9\u05E8\u05D5\u05D8 \u05E2\u05DC\u05D5\u05D9\u05D5\u05EA',
+      woodParts: '\u05D7\u05DC\u05E7\u05D9 \u05E2\u05E5',
+      totalPieces: '\u05E1\u05D4"\u05DB \u05D7\u05DC\u05E7\u05D9\u05DD',
+      sheetsRequired: '\u05DC\u05D5\u05D7\u05D5\u05EA \u05E0\u05D3\u05E8\u05E9\u05D9\u05DD',
+      waste: '\u05E4\u05D7\u05EA',
+    },
+    months: {
+      jan: '\u05D9\u05E0\u05D5\u05F3',
+      feb: '\u05E4\u05D1\u05E8\u05F3',
+      mar: '\u05DE\u05E8\u05E5',
+      apr: '\u05D0\u05E4\u05E8\u05F3',
+      may: '\u05DE\u05D0\u05D9',
+      jun: '\u05D9\u05D5\u05E0\u05F3',
+      jul: '\u05D9\u05D5\u05DC\u05F3',
+      aug: '\u05D0\u05D5\u05D2\u05F3',
+      sep: '\u05E1\u05E4\u05D8\u05F3',
+      oct: '\u05D0\u05D5\u05E7\u05F3',
+      nov: '\u05E0\u05D5\u05D1\u05F3',
+      dec: '\u05D3\u05E6\u05DE\u05F3',
     },
   },
 };
