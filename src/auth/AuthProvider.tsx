@@ -27,14 +27,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Supabase re-emits auth events (e.g. TOKEN_REFRESHED) every time the tab
+    // regains focus; only re-initialize shop data when the user actually
+    // changes, otherwise the refetch remounts the page and wipes form state.
+    let initializedUserId: string | null = null;
+
+    const initializeIfNewUser = (userId: string | undefined) => {
+      if (userId && userId !== initializedUserId) {
+        initializedUserId = userId;
+        initializeShopData();
+      }
+      if (!userId) {
+        initializedUserId = null;
+      }
+    };
+
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
-
-      if (currentSession?.user) {
-        initializeShopData();
-      }
-
+      initializeIfNewUser(currentSession?.user?.id);
       setLoading(false);
     });
 
@@ -43,11 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession);
       setUser(newSession?.user ?? null);
-
-      if (newSession?.user) {
-        initializeShopData();
-      }
-
+      initializeIfNewUser(newSession?.user?.id);
       setLoading(false);
     });
 
