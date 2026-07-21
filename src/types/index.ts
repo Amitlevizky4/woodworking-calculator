@@ -76,6 +76,9 @@ export interface WoodPart {
   lengthMm: number;
   widthMm: number;
   quantity: number;
+  // Which of the part's dimensions must run along the sheet's grain (the
+  // long, 2440mm axis). Defaults to 'length'.
+  grainDirection?: 'length' | 'width';
 }
 
 export interface Project {
