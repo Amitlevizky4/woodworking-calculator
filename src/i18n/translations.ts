@@ -102,6 +102,12 @@ interface TranslationSet {
     materialsOnly: string;
     materialsPlusLabor: string;
     percentSuffix: string;
+    partialSheet: string;
+    pieceSize: string;
+    sheetSize: string;
+    ofSheet: string;
+    length: string;
+    width: string;
   };
   expenses: {
     title: string;
@@ -533,6 +539,12 @@ export const translations: Translations = {
       materialsOnly: 'Materials only',
       materialsPlusLabor: 'Materials + Labor',
       percentSuffix: 'pct',
+      partialSheet: 'Partial sheet usage',
+      pieceSize: 'Piece (cm)',
+      sheetSize: 'Sheet (cm)',
+      ofSheet: 'of a sheet',
+      length: 'Length',
+      width: 'Width',
     },
     expenses: {
       title: 'Expenses',
@@ -958,6 +970,12 @@ export const translations: Translations = {
       materialsOnly: '\u05D7\u05D5\u05DE\u05E8\u05D9\u05DD \u05D1\u05DC\u05D1\u05D3',
       materialsPlusLabor: '\u05D7\u05D5\u05DE\u05E8\u05D9\u05DD + \u05E2\u05D1\u05D5\u05D3\u05D4',
       percentSuffix: '\u05D0\u05D7\u05D5\u05D6',
+      partialSheet: '\u05E9\u05D9\u05DE\u05D5\u05E9 \u05D7\u05DC\u05E7\u05D9 \u05D1\u05E4\u05DC\u05D8\u05D4',
+      pieceSize: '\u05D4\u05D7\u05DC\u05E7 (\u05E1"\u05DE)',
+      sheetSize: '\u05D4\u05E4\u05DC\u05D8\u05D4 (\u05E1"\u05DE)',
+      ofSheet: '\u05DE\u05D4\u05E4\u05DC\u05D8\u05D4',
+      length: '\u05D0\u05D5\u05E8\u05DA',
+      width: '\u05E8\u05D5\u05D7\u05D1',
     },
     expenses: {
       title: '\u05D4\u05D5\u05E6\u05D0\u05D5\u05EA',

@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { Fragment, useState, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { useStore } from '@/stores/useStore';
@@ -47,6 +47,25 @@ const PIECE_COLORS = [
 
 const INPUT_CLASS =
   'w-full bg-surface-container-highest border-b-2 border-outline focus:border-primary focus:ring-0 px-4 py-3 outline-none rounded-t-md text-on-surface';
+
+interface PartialSheetDims {
+  pieceL: string;
+  pieceW: string;
+  sheetL: string;
+  sheetW: string;
+}
+
+// Fraction of a sheet covered by the used piece, rounded to the 2 decimals
+// the DB stores for quantities. Null until all four dimensions are entered.
+function sheetFraction(dims: PartialSheetDims): number | null {
+  const pieceL = parseFloat(dims.pieceL);
+  const pieceW = parseFloat(dims.pieceW);
+  const sheetL = parseFloat(dims.sheetL);
+  const sheetW = parseFloat(dims.sheetW);
+  if (!pieceL || !pieceW || !sheetL || !sheetW) return null;
+  const fraction = (pieceL * pieceW) / (sheetL * sheetW);
+  return Math.max(0.01, Math.round(fraction * 100) / 100);
+}
 
 function SectionHeader({ icon, label }: { icon: string; label: string }) {
   return (
@@ -352,6 +371,16 @@ export function Calculator() {
   const [selectedMaterials, setSelectedMaterials] = useState<ProjectMaterial[]>(
     existingProject?.materials ?? [],
   );
+  // Per-row helper for sheet materials: enter the used piece's dimensions and
+  // the row quantity becomes the proportional fraction of a sheet, so the
+  // client pays only for the part actually used. Keyed by row id; presence
+  // means the helper is open. Dimensions are in cm (standard sheet: 244x122).
+  const [partialSheetRows, setPartialSheetRows] = useState<
+    Record<
+      string,
+      { pieceL: string; pieceW: string; sheetL: string; sheetW: string }
+    >
+  >({});
   const [woodParts, setWoodParts] = useState<WoodPart[]>(
     existingProject?.woodParts ?? [],
   );
@@ -501,6 +530,30 @@ export function Calculator() {
       );
     },
     [],
+  );
+
+  const handleTogglePartialSheet = useCallback((rowId: string) => {
+    setPartialSheetRows((prev) => {
+      if (prev[rowId]) {
+        const { [rowId]: _removed, ...rest } = prev;
+        return rest;
+      }
+      return {
+        ...prev,
+        [rowId]: { pieceL: '', pieceW: '', sheetL: '244', sheetW: '122' },
+      };
+    });
+  }, []);
+
+  const handlePartialSheetChange = useCallback(
+    (rowId: string, dims: PartialSheetDims) => {
+      setPartialSheetRows((prev) => ({ ...prev, [rowId]: dims }));
+      const fraction = sheetFraction(dims);
+      if (fraction !== null) {
+        handleMaterialQuantityChange(rowId, fraction);
+      }
+    },
+    [handleMaterialQuantityChange],
   );
 
   const handleAddWoodPart = useCallback(() => {
@@ -820,10 +873,17 @@ export function Calculator() {
                     if (!material) return null;
                     const unitCost = getUnitCost(pm);
                     const total = unitCost * pm.quantity;
+                    const partialDims =
+                      material.unit === 'sheet'
+                        ? partialSheetRows[pm.id]
+                        : undefined;
+                    const partialFraction = partialDims
+                      ? sheetFraction(partialDims)
+                      : null;
 
                     return (
+                      <Fragment key={pm.id}>
                       <tr
-                        key={pm.id}
                         className="border-b border-outline-variant/50"
                       >
                         <td className="py-3 pe-4">
@@ -898,6 +958,21 @@ export function Calculator() {
                             <span className="text-xs text-secondary ms-1">
                               {UNIT_ABBR[material.unit] ?? material.unit}
                             </span>
+                            {material.unit === 'sheet' && (
+                              <button
+                                type="button"
+                                onClick={() => handleTogglePartialSheet(pm.id)}
+                                className={`w-6 h-6 flex items-center justify-center rounded shrink-0 ms-1 transition-colors ${
+                                  partialDims
+                                    ? 'bg-primary/10 text-primary'
+                                    : 'bg-surface-container-highest hover:bg-surface-container text-secondary'
+                                }`}
+                                title={t('calculator.partialSheet')}
+                                aria-label={t('calculator.partialSheet')}
+                              >
+                                <Icon name="crop" className="text-sm" />
+                              </button>
+                            )}
                           </div>
                         </td>
                         <td className="py-3 pe-4 font-mono text-sm text-secondary">
@@ -916,6 +991,93 @@ export function Calculator() {
                           </button>
                         </td>
                       </tr>
+                      {partialDims && (
+                        <tr className="border-b border-outline-variant/50 bg-surface-container-highest/40">
+                          <td colSpan={6} className="py-3 px-4">
+                            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+                              <span className="text-[10px] font-bold uppercase tracking-widest text-secondary">
+                                {t('calculator.pieceSize')}
+                              </span>
+                              <div className="flex items-center gap-1">
+                                <input
+                                  type="number"
+                                  dir="ltr"
+                                  value={partialDims.pieceL}
+                                  onChange={(e) =>
+                                    handlePartialSheetChange(pm.id, {
+                                      ...partialDims,
+                                      pieceL: e.target.value,
+                                    })
+                                  }
+                                  min={0}
+                                  step="any"
+                                  placeholder={t('calculator.length')}
+                                  className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none w-20 font-mono text-sm text-on-surface focus:border-primary text-center"
+                                />
+                                <span className="text-secondary">×</span>
+                                <input
+                                  type="number"
+                                  dir="ltr"
+                                  value={partialDims.pieceW}
+                                  onChange={(e) =>
+                                    handlePartialSheetChange(pm.id, {
+                                      ...partialDims,
+                                      pieceW: e.target.value,
+                                    })
+                                  }
+                                  min={0}
+                                  step="any"
+                                  placeholder={t('calculator.width')}
+                                  className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none w-20 font-mono text-sm text-on-surface focus:border-primary text-center"
+                                />
+                              </div>
+                              <span className="text-[10px] font-bold uppercase tracking-widest text-secondary">
+                                {t('calculator.sheetSize')}
+                              </span>
+                              <div className="flex items-center gap-1">
+                                <input
+                                  type="number"
+                                  dir="ltr"
+                                  value={partialDims.sheetL}
+                                  onChange={(e) =>
+                                    handlePartialSheetChange(pm.id, {
+                                      ...partialDims,
+                                      sheetL: e.target.value,
+                                    })
+                                  }
+                                  min={0}
+                                  step="any"
+                                  placeholder={t('calculator.length')}
+                                  className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none w-20 font-mono text-sm text-on-surface focus:border-primary text-center"
+                                />
+                                <span className="text-secondary">×</span>
+                                <input
+                                  type="number"
+                                  dir="ltr"
+                                  value={partialDims.sheetW}
+                                  onChange={(e) =>
+                                    handlePartialSheetChange(pm.id, {
+                                      ...partialDims,
+                                      sheetW: e.target.value,
+                                    })
+                                  }
+                                  min={0}
+                                  step="any"
+                                  placeholder={t('calculator.width')}
+                                  className="bg-surface-container-highest border-b border-outline px-2 py-1 outline-none w-20 font-mono text-sm text-on-surface focus:border-primary text-center"
+                                />
+                              </div>
+                              {partialFraction !== null && (
+                                <span className="font-mono font-medium text-primary">
+                                  ≈ {Math.round(partialFraction * 100)}%{' '}
+                                  {t('calculator.ofSheet')}
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                      </Fragment>
                     );
                   })}
                 </tbody>
@@ -1117,9 +1279,10 @@ export function Calculator() {
                     onChange={(e) => setLaborHours(parseFloat(e.target.value) || 0)}
                     min={0}
                     step="0.5"
-                    className={`${INPUT_CLASS} pe-14 font-mono`}
+                    dir="ltr"
+                    className={`${INPUT_CLASS} pr-14 font-mono`}
                   />
-                  <span className="absolute end-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
                     {t('common.hrs')}
                   </span>
                 </div>
@@ -1134,9 +1297,10 @@ export function Calculator() {
                     value={hourlyRate || ''}
                     onChange={(e) => setHourlyRate(parseFloat(e.target.value) || 0)}
                     min={0}
-                    className={`${INPUT_CLASS} pe-14 font-mono`}
+                    dir="ltr"
+                    className={`${INPUT_CLASS} pr-14 font-mono`}
                   />
-                  <span className="absolute end-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
                     {t('calculator.perHour')}
                   </span>
                 </div>
@@ -1153,9 +1317,10 @@ export function Calculator() {
                       setTargetHourlyRate(parseFloat(e.target.value) || 0)
                     }
                     min={0}
-                    className={`${INPUT_CLASS} pe-14 font-mono`}
+                    dir="ltr"
+                    className={`${INPUT_CLASS} pr-14 font-mono`}
                   />
-                  <span className="absolute end-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
                     {t('calculator.perHour')}
                   </span>
                 </div>
@@ -1179,9 +1344,10 @@ export function Calculator() {
                     onChange={(e) => setMarkupFactor(parseFloat(e.target.value) || 1)}
                     min={1}
                     step="0.05"
-                    className={`${INPUT_CLASS} pe-20 font-mono`}
+                    dir="ltr"
+                    className={`${INPUT_CLASS} pr-20 font-mono`}
                   />
-                  <span className="absolute end-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
                     {t('calculator.factorSuffix')}
                   </span>
                 </div>
@@ -1225,9 +1391,10 @@ export function Calculator() {
                     }
                     min={0}
                     max={100}
-                    className={`${INPUT_CLASS} pe-16 font-mono`}
+                    dir="ltr"
+                    className={`${INPUT_CLASS} pr-16 font-mono`}
                   />
-                  <span className="absolute end-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-secondary text-sm">
                     % {t('calculator.percentSuffix')}
                   </span>
                 </div>
