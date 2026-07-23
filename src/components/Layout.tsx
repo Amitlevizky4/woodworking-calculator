@@ -68,7 +68,7 @@ function Sidebar() {
   const activeShop = shops.find((s) => s.id === activeShopId);
 
   return (
-    <aside className="hidden md:flex md:flex-col md:fixed md:inset-y-0 md:start-0 md:w-64 bg-[#eeeeeb] border-e border-outline-variant z-30">
+    <aside className="hidden md:flex md:flex-col md:fixed md:inset-y-0 md:start-0 md:w-64 bg-[#eeeeeb] border-e border-outline-variant z-30 print:hidden">
       <div className="p-6">
         <h1 className="font-headline text-primary font-bold text-lg">
           {activeShop?.name || t('auth.precisionWorkshop')}
@@ -159,7 +159,7 @@ function TopBar() {
   const navigate = useNavigate();
 
   return (
-    <header className="sticky top-0 z-20 bg-surface/80 backdrop-blur-md border-b border-outline-variant">
+    <header className="sticky top-0 z-20 bg-surface/80 backdrop-blur-md border-b border-outline-variant print:hidden">
       <div className="flex items-center justify-between px-4 md:px-6 h-14">
         <h2 className="font-headline text-on-surface font-bold text-sm uppercase tracking-wider">
           {t('auth.precisionWorkshop')}
@@ -189,7 +189,7 @@ function MobileBottomNav() {
   const { t } = useTranslation();
 
   return (
-    <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-surface border-t border-outline-variant">
+    <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-surface border-t border-outline-variant print:hidden">
       <div className="flex items-center justify-around h-16">
         {MOBILE_NAV_ITEMS.map((item) => (
           <NavLink
@@ -217,9 +217,9 @@ export function Layout() {
   return (
     <div className="min-h-screen bg-surface font-body text-on-surface">
       <Sidebar />
-      <div className="md:ms-64">
+      <div className="md:ms-64 print:ms-0">
         <TopBar />
-        <main className="p-4 md:p-6 pb-20 md:pb-6">
+        <main className="p-4 md:p-6 pb-20 md:pb-6 print:p-0">
           <Outlet />
         </main>
       </div>

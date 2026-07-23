@@ -74,7 +74,7 @@ function TimeLogSection({ projectId }: { projectId: string }) {
   };
 
   return (
-    <div>
+    <div className="print:break-inside-avoid-page">
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-headline text-lg font-bold uppercase tracking-wide">
           {t('timeLog.title')}
@@ -446,7 +446,7 @@ export function ProjectDetails() {
   const showPaymentsSection = paymentCells.length > 0 || showEffectiveRate;
 
   return (
-    <div className="p-8 max-w-4xl mx-auto space-y-8">
+    <div className="p-8 max-w-4xl mx-auto space-y-8 print:p-0 print:max-w-none">
       <div>
         <div className="flex items-start justify-between">
           <div>
@@ -525,7 +525,7 @@ export function ProjectDetails() {
       </div>
 
       {costBreakdown && (
-        <div>
+        <div className="print:break-inside-avoid-page">
           <h2 className="font-headline text-lg font-bold uppercase tracking-wide mb-4">
             {t('projectDetails.costBreakdown')}
           </h2>
@@ -583,7 +583,7 @@ export function ProjectDetails() {
       )}
 
       {showPaymentsSection && (
-        <div>
+        <div className="print:break-inside-avoid-page">
           <h2 className="font-headline text-lg font-bold uppercase tracking-wide mb-4">
             {t('income.payments')}
           </h2>
@@ -616,7 +616,7 @@ export function ProjectDetails() {
 
       <TimeLogSection projectId={project.id} />
 
-      <div>
+      <div className="print:break-inside-avoid-page">
         <h2 className="font-headline text-lg font-bold uppercase tracking-wide mb-4">
           {t('calculator.materialsList')}
         </h2>
@@ -644,7 +644,9 @@ export function ProjectDetails() {
         )}
       </div>
 
-      <div>
+      {/* In print, the cut-list details start on their own page so the
+          materials list above stays one uninterrupted block. */}
+      <div className="print:break-before-page">
         <h2 className="font-headline text-lg font-bold uppercase tracking-wide mb-4">
           {t('projectDetails.woodParts')}
         </h2>
@@ -652,7 +654,7 @@ export function ProjectDetails() {
       </div>
 
       {sheetPackingResult && (
-        <div>
+        <div className="print:break-inside-avoid-page">
           <h2 className="font-headline text-lg font-bold uppercase tracking-wide mb-4">
             {t('calculator.sheetOptimization')}
           </h2>
