@@ -1,4 +1,4 @@
-export type Unit = 'meter' | 'sheet' | 'liter' | 'piece' | 'kg' | 'm2';
+export type Unit = 'meter' | 'sheet' | 'liter' | 'piece' | 'kg' | 'm2' | 'm3';
 export type Status =
   | 'lead'
   | 'quoted'

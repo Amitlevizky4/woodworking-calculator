@@ -7,6 +7,7 @@ export const UNIT_ABBR: Record<Unit, string> = {
   piece: 'pc',
   kg: 'kg',
   m2: 'm²',
+  m3: 'm³',
 };
 
 export interface MaterialUsageRow {

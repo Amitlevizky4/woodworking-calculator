@@ -300,6 +300,7 @@ interface TranslationSet {
     piece: string;
     kg: string;
     m2: string;
+    m3: string;
   };
   projectTypes: {
     furniture: string;
@@ -742,6 +743,7 @@ export const translations: Translations = {
       piece: 'Piece',
       kg: 'Kg',
       m2: 'm\u00B2',
+      m3: 'm\u00B3',
     },
     projectTypes: {
       furniture: 'Furniture',
@@ -1177,6 +1179,7 @@ export const translations: Translations = {
       piece: '\u05D9\u05D7\u05D9\u05D3\u05D4',
       kg: '\u05E7\u05F4\u05D2',
       m2: '\u05DE\u05F4\u05E8',
+      m3: '\u05E7\u05D5\u05D1',
     },
     projectTypes: {
       furniture: '\u05E8\u05D4\u05D9\u05D8',
