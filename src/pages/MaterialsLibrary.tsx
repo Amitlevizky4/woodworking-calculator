@@ -6,7 +6,15 @@ import { Icon } from '@/components/Icon';
 import { formatCurrency } from '@/utils/cost-calculator';
 import type { Material, MaterialVariant, Unit } from '@/types';
 
-const UNIT_OPTIONS: Unit[] = ['meter', 'sheet', 'liter', 'piece', 'kg', 'm2'];
+const UNIT_OPTIONS: Unit[] = [
+  'meter',
+  'sheet',
+  'liter',
+  'piece',
+  'kg',
+  'm2',
+  'm3',
+];
 
 interface MaterialFormState {
   name: string;
